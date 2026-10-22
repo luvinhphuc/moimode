@@ -1,0 +1,11 @@
+@theme {
+	--font-display: "Fredoka", "Arial Rounded MT Bold", sans-serif;
+	--font-body: "Nunito", ui-rounded, system-ui, sans-serif;
+	--color-moi-bg: #f8fcff;
+	--color-moi-surface: #eaf6ff;
+	--color-moi-powder: #d8edfc;
+	--color-moi-sky: #b9defa;
+	--color-moi-mid: #8ec9f4;
+	--color-moi-accent: #4da8ed;
+	--color-moi-ink: #245b95;
+}
