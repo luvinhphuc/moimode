@@ -5,6 +5,30 @@ import * as THREE from "three";
 
 import { CAMERA, CROCS_MODEL_URL, CROCS_POSE } from "./sceneConfig.js";
 
+function fitCameraToModel({ camera, height, radius, width }) {
+	const viewportWidth = Math.max(width, 1);
+	const viewportHeight = Math.max(height, 1);
+	const aspect = viewportWidth / viewportHeight;
+	const verticalFov = THREE.MathUtils.degToRad(camera.fov);
+	const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * aspect);
+	const limitingFov = Math.min(verticalFov, horizontalFov);
+	const framing = viewportWidth < 768 ? 0.86 : 0.72;
+	const distance = (radius / Math.sin(limitingFov / 2)) * framing;
+	const direction = new THREE.Vector3(...CAMERA.direction).normalize();
+
+	// Always derive the camera from the original model radius and CSS-pixel
+	// canvas size. Never scale from the previous camera position.
+	camera.position.set(
+		direction.x * distance,
+		direction.y * distance,
+		direction.z * distance,
+	);
+	camera.near = Math.max(0.01, distance - radius * 3);
+	camera.far = distance + radius * 8;
+	camera.lookAt(0, 0, 0);
+	camera.updateProjectionMatrix();
+}
+
 function CrocsModel({
 	modelUrl = CROCS_MODEL_URL,
 	onReady,
@@ -43,17 +67,18 @@ function CrocsModel({
 		rotationRef.current = baseRotation;
 	}, [baseRotation]);
 
-	useEffect(() => {
-		window.setShoeRotation = (x, y, z) => {
-			rotationRef.current = [x, y, z].map(THREE.MathUtils.degToRad);
+	// get the rotation of the crocs
+	// useEffect(() => {
+	// 	window.setShoeRotation = (x, y, z) => {
+	// 		rotationRef.current = [x, y, z].map(THREE.MathUtils.degToRad);
 
-			console.log("Crocs rotation:", { x, y, z });
-		};
+	// 		console.log("Crocs rotation:", { x, y, z });
+	// 	};
 
-		return () => {
-			delete window.setShoeRotation;
-		};
-	}, []);
+	// 	return () => {
+	// 		delete window.setShoeRotation;
+	// 	};
+	// }, []);
 
 	useEffect(() => {
 		onReady?.(model);
@@ -103,19 +128,12 @@ function CrocsModel({
 	}, [enablePointerMotion]);
 
 	useEffect(() => {
-		const aspect = Math.max(size.width, 1) / Math.max(size.height, 1);
-		const verticalFov = THREE.MathUtils.degToRad(camera.fov);
-		const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * aspect);
-		const limitingFov = Math.min(verticalFov, horizontalFov);
-		const framing = window.innerWidth < 768 ? 0.76 : 0.82;
-		const distance = (radius / Math.sin(limitingFov / 2)) * framing;
-		const direction = new THREE.Vector3(...CAMERA.direction).normalize();
-
-		camera.position.copy(direction.multiplyScalar(distance));
-		camera.near = Math.max(0.01, distance - radius * 3);
-		camera.far = distance + radius * 8;
-		camera.lookAt(0, 0, 0);
-		camera.updateProjectionMatrix();
+		fitCameraToModel({
+			camera,
+			height: size.height,
+			radius,
+			width: size.width,
+		});
 	}, [camera, radius, size.height, size.width]);
 
 	useFrame((_, delta) => {
