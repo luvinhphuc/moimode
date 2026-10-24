@@ -664,17 +664,6 @@
 		padding: 0.85rem;
 	}
 
-	.charm-catalog__canvas {
-		position: absolute !important;
-		top: 0;
-		left: 0;
-		z-index: 0;
-		display: block;
-		width: 100% !important;
-		height: var(--charm-catalog-height, 100%) !important;
-		pointer-events: none !important;
-	}
-
 	.charm-catalog__heading p,
 	.charm-catalog__heading h2 {
 		margin: 0;
@@ -786,11 +775,16 @@
 		background: color-mix(in srgb, var(--pink-soft) 42%, transparent);
 	}
 
-	.charm-card__view {
+	.charm-card__image {
 		position: absolute;
 		inset: 0.16rem;
 		z-index: 1;
+		display: block;
+		width: calc(100% - 0.32rem);
+		height: calc(100% - 0.32rem);
+		object-fit: contain;
 		pointer-events: none;
+		user-select: none;
 	}
 
 	.charm-card__selected {

@@ -4,8 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "generate:charm-previews": "node scripts/generate-charm-previews.mjs",
     "dev": "vite",
     "build": "vite build",
+    "generate:charm-previews": "node scripts/generate-charm-previews.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
   },
