@@ -8,4 +8,9 @@
 	--color-moi-mid: #8ec9f4;
 	--color-moi-accent: #4da8ed;
 	--color-moi-ink: #245b95;
+	--color-moi-muted: #5f7fa3;
+	--color-moi-line: rgba(36, 91, 149, 0.16);
+	--color-moi-shadow: rgba(36, 91, 149, 0.12);
+	--color-moi-danger: #a22f43;
+	--color-moi-danger-soft: #fff0f3;
 }
