@@ -2,6 +2,7 @@ import {
 	Suspense,
 	useCallback,
 	useEffect,
+	useLayoutEffect,
 	useMemo,
 	useRef,
 	useState,
@@ -56,7 +57,7 @@ function CharmThumbnail({ charm }) {
 
 function CharmCardPreview({ charm }) {
 	return (
-		<View className="charm-card__view" frames={1}>
+		<View className="charm-card__view" frames={Infinity}>
 			<Suspense fallback={null}>
 				<CharmThumbnail charm={charm} />
 			</Suspense>
@@ -65,10 +66,12 @@ function CharmCardPreview({ charm }) {
 }
 
 function CharmCatalogCanvas({ contentHeight, onReady }) {
+	const canvasHeight = contentHeight > 0 ? `${contentHeight}px` : "100%";
+
 	return (
 		<Canvas
 			className="charm-catalog__canvas"
-			style={{ "--charm-catalog-height": `${contentHeight}px` }}
+			style={{ "--charm-catalog-height": canvasHeight }}
 			camera={{ position: [0, 0, 3], fov: 34 }}
 			dpr={[1, 1.5]}
 			frameloop="demand"
@@ -115,24 +118,54 @@ function CharmCatalog({ onSelect, selectedCharmId }) {
 	const updateContentHeight = useCallback(() => {
 		const grid = gridRef.current;
 		if (!grid) return;
-		setContentHeight(grid.scrollHeight);
+		const nextHeight = grid.scrollHeight;
+		setContentHeight((currentHeight) =>
+			currentHeight === nextHeight ? currentHeight : nextHeight,
+		);
 	}, []);
 
-	useEffect(() => {
-		updateContentHeight();
-		const frame = window.requestAnimationFrame(updateContentHeight);
-		const observer = new ResizeObserver(updateContentHeight);
+	useLayoutEffect(() => {
+		let frame = 0;
+		const measure = () => {
+			window.cancelAnimationFrame(frame);
+			frame = window.requestAnimationFrame(() => {
+				updateContentHeight();
+				refreshPreviews();
+			});
+		};
+
+		measure();
+		const observer = new ResizeObserver(measure);
 		if (gridRef.current) observer.observe(gridRef.current);
+		window.addEventListener("resize", measure, { passive: true });
+		window.visualViewport?.addEventListener("resize", measure, {
+			passive: true,
+		});
 
 		return () => {
 			window.cancelAnimationFrame(frame);
 			observer.disconnect();
+			window.removeEventListener("resize", measure);
+			window.visualViewport?.removeEventListener("resize", measure);
 		};
-	}, [filteredCharms, updateContentHeight]);
+	}, [filteredCharms, refreshPreviews, updateContentHeight]);
 
 	useEffect(() => {
 		refreshPreviews();
 	}, [contentHeight, filteredCharms, refreshPreviews]);
+
+	useEffect(() => {
+		const grid = gridRef.current;
+		if (!grid) return undefined;
+
+		grid.addEventListener("scroll", refreshPreviews, { passive: true });
+		window.addEventListener("scroll", refreshPreviews, { passive: true });
+
+		return () => {
+			grid.removeEventListener("scroll", refreshPreviews);
+			window.removeEventListener("scroll", refreshPreviews);
+		};
+	}, [refreshPreviews]);
 
 	useEffect(() => {
 		return () => {
