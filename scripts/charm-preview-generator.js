@@ -9,7 +9,8 @@ import {
 
 const size = 160;
 const requestedId = new URLSearchParams(window.location.search).get("id");
-const charmIds = requestedId === "all" ? Object.keys(CHARM_BY_ID) : [requestedId];
+const charmIds =
+	requestedId === "all" ? Object.keys(CHARM_BY_ID) : [requestedId];
 
 if (!requestedId || charmIds.some((charmId) => !CHARM_BY_ID[charmId])) {
 	document.title = "error:unknown-charm";
@@ -43,7 +44,12 @@ scene.add(fillLight);
 async function renderCharm(charmId) {
 	const charm = CHARM_BY_ID[charmId];
 	const source = await new Promise((resolve, reject) => {
-		new GLTFLoader().load(charm.url, ({ scene: loadedScene }) => resolve(loadedScene), undefined, reject);
+		new GLTFLoader().load(
+			charm.url,
+			({ scene: loadedScene }) => resolve(loadedScene),
+			undefined,
+			reject,
+		);
 	});
 	const normalized = normalizeCharmScene(source, charm.orientation);
 	const group = new THREE.Group();
@@ -63,13 +69,10 @@ async function renderCharm(charmId) {
 	scene.add(group);
 	renderer.render(scene, camera);
 
-	await fetch(
-		`http://127.0.0.1:4174/save?id=${encodeURIComponent(charmId)}`,
-		{
-			method: "POST",
-			body: renderer.domElement.toDataURL("image/png"),
-		},
-	);
+	await fetch(`http://127.0.0.1:4174/save?id=${encodeURIComponent(charmId)}`, {
+		method: "POST",
+		body: renderer.domElement.toDataURL("image/png"),
+	});
 	scene.remove(group);
 }
 

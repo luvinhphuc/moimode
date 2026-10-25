@@ -9,11 +9,14 @@ const VIEW_POSITIONS = Object.freeze({
 });
 
 function CustomizerCameraRig({ controlsRef, modelSize, view }) {
-	const { camera } = useThree();
+	const { camera, size } = useThree();
 
 	useFrame((_, delta) => {
 		if (view === "free" || !controlsRef.current) return;
-		const multiplier = Math.max(modelSize, 1);
+		// Increase camera distance on narrow canvases to avoid clipping the shoe.
+		const aspect = size.width / Math.max(size.height, 1);
+		const mobileFit = size.width < 768 ? Math.max(1.3, 1.35 / Math.max(aspect, 0.75)) : 1;
+		const multiplier = Math.max(modelSize, 1) * mobileFit;
 		const targetPosition = VIEW_POSITIONS[view]
 			.clone()
 			.multiplyScalar(multiplier);

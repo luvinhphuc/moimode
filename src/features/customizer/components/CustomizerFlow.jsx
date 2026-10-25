@@ -5,6 +5,7 @@ import {
 	Check,
 	Pencil,
 	RefreshCcw,
+	RotateCw,
 	Shuffle,
 	Sparkles,
 	Trash2,
@@ -29,7 +30,8 @@ function createInitialState() {
 		modelId: "classic-clog",
 		colourId: DEFAULT_COLOUR_ID,
 		placements: {},
-		selectedCharmId: "flower",
+		rotations: {},
+		selectedCharmId: null,
 		editingSlot: null,
 		step: 1,
 		phase: "customize",
@@ -50,12 +52,14 @@ function customizerReducer(state, action) {
 		case "SELECT_CHARM":
 			return { ...state, selectedCharmId: action.charmId };
 		case "PLACE_CHARM":
+			if (!state.selectedCharmId) return state;
 			return {
 				...state,
 				placements: {
 					...state.placements,
 					[action.slotName]: state.selectedCharmId,
 				},
+				rotations: { ...state.rotations, [action.slotName]: 0 },
 				editingSlot: null,
 			};
 		case "OPEN_SLOT_EDITOR":
@@ -63,27 +67,49 @@ function customizerReducer(state, action) {
 		case "CLOSE_SLOT_EDITOR":
 			return { ...state, editingSlot: null };
 		case "REPLACE_CHARM":
+			if (!state.selectedCharmId) return state;
 			return {
 				...state,
 				placements: {
 					...state.placements,
 					[action.slotName]: state.selectedCharmId,
 				},
+				rotations: { ...state.rotations, [action.slotName]: 0 },
 				editingSlot: null,
+			};
+		case "ROTATE_CHARM":
+			return {
+				...state,
+				rotations: {
+					...state.rotations,
+					[action.slotName]:
+						(state.rotations[action.slotName] ?? 0) + Math.PI / 2,
+				},
+			};
+		case "SET_CHARM_ROTATION":
+			return {
+				...state,
+				rotations: {
+					...state.rotations,
+					[action.slotName]: action.rotation,
+				},
 			};
 		case "REMOVE_CHARM": {
 			const placements = { ...state.placements };
+			const rotations = { ...state.rotations };
 			delete placements[action.slotName];
-			return { ...state, placements, editingSlot: null };
+			delete rotations[action.slotName];
+			return { ...state, placements, rotations, editingSlot: null };
 		}
 		case "CLEAR_CHARMS":
-			return { ...state, placements: {}, editingSlot: null };
+			return { ...state, placements: {}, rotations: {}, editingSlot: null };
 		case "RESET_DESIGN":
 			return {
 				...state,
 				colourId: DEFAULT_COLOUR_ID,
 				placements: {},
-				selectedCharmId: "flower",
+				rotations: {},
+				selectedCharmId: null,
 				editingSlot: null,
 			};
 		case "SET_RANDOM_DESIGN":
@@ -91,6 +117,7 @@ function customizerReducer(state, action) {
 				...state,
 				colourId: action.colourId,
 				placements: action.placements,
+				rotations: {},
 				editingSlot: null,
 			};
 		case "SHOW_SHARE":
@@ -118,7 +145,9 @@ function ProgressDots({ step }) {
 			{CUSTOMIZER_STEPS.map((item) => (
 				<span
 					key={item.id}
-					className={item.id === step ? "is-active" : item.id < step ? "is-done" : ""}
+					className={
+						item.id === step ? "is-active" : item.id < step ? "is-done" : ""
+					}
 				/>
 			))}
 		</div>
@@ -168,12 +197,20 @@ function ViewControls({ view, onChange }) {
 function FlowFooter({ backLabel = "Back", nextLabel, onBack, onNext, step }) {
 	return (
 		<footer className="customizer-footer">
-			<button className="paper-button paper-button--back" type="button" onClick={onBack}>
+			<button
+				className="paper-button paper-button--back"
+				type="button"
+				onClick={onBack}
+			>
 				<ArrowLeft aria-hidden="true" size={17} />
 				{backLabel}
 			</button>
 			<ProgressDots step={step} />
-			<button className="paper-button paper-button--primary" type="button" onClick={onNext}>
+			<button
+				className="paper-button paper-button--primary"
+				type="button"
+				onClick={onNext}
+			>
 				{nextLabel}
 				<ArrowRight aria-hidden="true" size={18} />
 			</button>
@@ -181,11 +218,21 @@ function FlowFooter({ backLabel = "Back", nextLabel, onBack, onNext, step }) {
 	);
 }
 
-function StyleStep({ colour, onExit, onNext, placements, view, onViewChange }) {
+function StyleStep({
+	colour,
+	onExit,
+	onNext,
+	placements,
+	rotations,
+	view,
+	onViewChange,
+}) {
 	return (
 		<main className="customizer-main customizer-main--style">
 			<div className="tape-note tape-note--blue" aria-hidden="true">
-				Same canvas.<br />Different vibes.
+				Same canvas.
+				<br />
+				Different vibes.
 			</div>
 			<StepHeading
 				step={1}
@@ -195,20 +242,27 @@ function StyleStep({ colour, onExit, onNext, placements, view, onViewChange }) {
 
 			<section className="style-grid" aria-label="Available Crocs styles">
 				<article className="style-card is-selected">
-					<span className="style-card__radio"><Check size={13} /></span>
+					<span className="style-card__radio">
+						<Check size={13} />
+					</span>
 					<span className="style-card__tag">Classic & timeless ♡</span>
 					<div className="style-card__scene">
 						<CustomizerScene
+							controlsEnabled={false}
 							bodyColour={colour.value}
 							onSlotSelect={() => {}}
 							onViewChange={onViewChange}
 							placements={placements}
+							rotations={rotations}
 							view={view}
 						/>
 					</div>
 					<div className="style-card__copy">
 						<h2>Classic Clog</h2>
-						<p>The original icon. Versatile, comfortable and ready for your own twist.</p>
+						<p>
+							The original icon. Versatile, comfortable and ready for your own
+							twist.
+						</p>
 					</div>
 				</article>
 			</section>
@@ -231,13 +285,16 @@ function ColourStep({
 	onNext,
 	onSelectColour,
 	placements,
+	rotations,
 	view,
 	onViewChange,
 }) {
 	return (
 		<main className="customizer-main customizer-main--colour">
 			<div className="tape-note tape-note--blue" aria-hidden="true">
-				Same shoe.<br />Different you.
+				Same shoe.
+				<br />
+				Different you.
 			</div>
 			<StepHeading
 				step={2}
@@ -269,7 +326,10 @@ function ColourStep({
 					))}
 				</section>
 
-				<section className="product-paper" aria-label="Selected Crocs colour preview">
+				<section
+					className="product-paper"
+					aria-label="Selected Crocs colour preview"
+				>
 					<ViewControls view={view} onChange={onViewChange} />
 					<div className="product-paper__scene">
 						<CustomizerScene
@@ -277,13 +337,16 @@ function ColourStep({
 							onSlotSelect={() => {}}
 							onViewChange={onViewChange}
 							placements={placements}
+							rotations={rotations}
 							view={view}
 						/>
 					</div>
 					<p className="selected-colour">
 						Selected colour: <strong>{colour.label}</strong>
 					</p>
-					<span className="paper-doodle" aria-hidden="true">♡</span>
+					<span className="paper-doodle" aria-hidden="true">
+						♡
+					</span>
 				</section>
 			</div>
 
@@ -317,21 +380,65 @@ function DesignSummary({ colour }) {
 	);
 }
 
-function SlotEditor({ currentCharmId, onClose, onRemove, onReplace, selectedCharmId }) {
+function SlotEditor({
+	currentCharmId,
+	onClose,
+	onRemove,
+	onRotate,
+	onRotationChange,
+	onReplace,
+	rotation = 0,
+	selectedCharmId,
+}) {
 	const currentCharm = CHARM_BY_ID[currentCharmId];
 	const selectedCharm = CHARM_BY_ID[selectedCharmId];
+	const rotationDegrees = Math.round(
+		((((rotation * 180) / Math.PI) % 360) + 360) % 360,
+	);
 
 	return (
 		<div className="slot-editor" role="dialog" aria-label="Edit placed charm">
-			<button className="slot-editor__close" type="button" onClick={onClose} aria-label="Close">
+			<button
+				className="slot-editor__close"
+				type="button"
+				onClick={onClose}
+				aria-label="Close"
+			>
 				<X size={15} />
 			</button>
 			<p>Placed charm</p>
 			<strong>{currentCharm.label}</strong>
-			<div>
-				<button type="button" onClick={onReplace} disabled={currentCharmId === selectedCharmId}>
+			<div className="slot-editor__rotation">
+				<label htmlFor="charm-rotation">
+					<span>Rotation</span>
+					<output>{rotationDegrees}°</output>
+				</label>
+				<input
+					id="charm-rotation"
+					max="359"
+					min="0"
+					onChange={(event) =>
+						onRotationChange((Number(event.target.value) * Math.PI) / 180)
+					}
+					step="1"
+					type="range"
+					value={rotationDegrees}
+				/>
+			</div>
+			<div className="slot-editor__actions">
+				<button type="button" onClick={onRotate}>
+					<RotateCw size={14} />
+					Rotate
+				</button>
+				<button
+					type="button"
+					onClick={onReplace}
+					disabled={!selectedCharm || currentCharmId === selectedCharmId}
+				>
 					<RefreshCcw size={14} />
-					Replace with {selectedCharm.label}
+					{selectedCharm
+						? `Replace with ${selectedCharm.label}`
+						: "Select a charm to replace"}
 				</button>
 				<button type="button" className="is-danger" onClick={onRemove}>
 					<Trash2 size={14} />
@@ -350,10 +457,13 @@ function CharmsStep({
 	onCloseEditor,
 	onNext,
 	onRemove,
+	onRotate,
+	onRotationChange,
 	onReplace,
 	onSelectCharm,
 	onSlotSelect,
 	placements,
+	rotations,
 	selectedCharmId,
 	view,
 	onViewChange,
@@ -363,7 +473,9 @@ function CharmsStep({
 	return (
 		<main className="customizer-main customizer-main--charms">
 			<div className="tape-note tape-note--pink" aria-hidden="true">
-				Small charms.<br />Big personality.
+				Small charms.
+				<br />
+				Big personality.
 			</div>
 			<StepHeading
 				step={3}
@@ -374,10 +486,17 @@ function CharmsStep({
 
 			<div className="charms-layout">
 				<DesignSummary colour={colour} />
-				<section className="charms-stage" aria-label="Place charms on your Crocs">
+				<section
+					className="charms-stage"
+					aria-label="Place charms on your Crocs"
+				>
 					<div className="charms-stage__topbar">
 						<span>{placementCount}/13 slots filled</span>
-						<button type="button" onClick={onClear} disabled={placementCount === 0}>
+						<button
+							type="button"
+							onClick={onClear}
+							disabled={placementCount === 0}
+						>
 							<Trash2 size={14} /> Clear all
 						</button>
 					</div>
@@ -388,6 +507,8 @@ function CharmsStep({
 							onSlotSelect={onSlotSelect}
 							onViewChange={onViewChange}
 							placements={placements}
+							selectedSlot={editingSlot}
+							rotations={rotations}
 							view={view}
 						/>
 					</div>
@@ -400,12 +521,18 @@ function CharmsStep({
 							currentCharmId={placements[editingSlot]}
 							onClose={onCloseEditor}
 							onRemove={onRemove}
+							onRotate={onRotate}
+							onRotationChange={onRotationChange}
 							onReplace={onReplace}
+							rotation={rotations?.[editingSlot] ?? 0}
 							selectedCharmId={selectedCharmId}
 						/>
 					) : null}
 				</section>
-				<CharmCatalog onSelect={onSelectCharm} selectedCharmId={selectedCharmId} />
+				<CharmCatalog
+					onSelect={onSelectCharm}
+					selectedCharmId={selectedCharmId}
+				/>
 			</div>
 
 			<FlowFooter
@@ -442,13 +569,16 @@ function PreviewStep({
 	onReset,
 	onShare,
 	placements,
+	rotations,
 	view,
 	onViewChange,
 }) {
 	return (
 		<main className="customizer-main customizer-main--preview">
 			<div className="tape-note tape-note--blue" aria-hidden="true">
-				Your style.<br />Your story.
+				Your style.
+				<br />
+				Your story.
 			</div>
 			<StepHeading
 				step={4}
@@ -476,11 +606,9 @@ function PreviewStep({
 							onSlotSelect={() => {}}
 							onViewChange={onViewChange}
 							placements={placements}
+							rotations={rotations}
 							view={view}
 						/>
-					</div>
-					<div className="preview-angle-strip" aria-hidden="true">
-						<span className="is-active">Side</span><span>Top</span><span>Back</span>
 					</div>
 				</section>
 
@@ -492,11 +620,16 @@ function PreviewStep({
 						</button>
 					</div>
 					<button type="button" onClick={() => onEdit(1)}>
-						<span>Style</span><strong>Classic Clog</strong><ArrowRight size={16} />
+						<span>Style</span>
+						<strong>Classic Clog</strong>
+						<ArrowRight size={16} />
 					</button>
 					<button type="button" onClick={() => onEdit(2)}>
 						<span>Colour</span>
-						<strong><i style={{ backgroundColor: colour.value }} />{colour.label}</strong>
+						<strong>
+							<i style={{ backgroundColor: colour.value }} />
+							{colour.label}
+						</strong>
 						<ArrowRight size={16} />
 					</button>
 					<div className="customisation-recap__charms">
@@ -507,10 +640,18 @@ function PreviewStep({
 			</div>
 
 			<footer className="preview-footer">
-				<button className="paper-button paper-button--back" type="button" onClick={() => onEdit(3)}>
+				<button
+					className="paper-button paper-button--back"
+					type="button"
+					onClick={() => onEdit(3)}
+				>
 					<ArrowLeft size={17} /> Back to edit
 				</button>
-				<button className="paper-button paper-button--primary" type="button" onClick={onShare}>
+				<button
+					className="paper-button paper-button--primary"
+					type="button"
+					onClick={onShare}
+				>
 					Save & share my design <ArrowRight size={18} />
 				</button>
 			</footer>
@@ -522,13 +663,23 @@ function SkeletonBlock({ className = "" }) {
 	return <span className={`skeleton-block ${className}`} />;
 }
 
-function SaveShareSkeleton({ colour, onBack, placements }) {
+function SaveShareSkeleton({ colour, onBack, placements, rotations }) {
 	return (
-		<main className="share-skeleton" aria-busy="true" aria-label="Save and share coming soon">
+		<main
+			className="share-skeleton"
+			aria-busy="true"
+			aria-label="Save and share coming soon"
+		>
 			<section className="share-skeleton__hero">
-				<div className="tape-note tape-note--blue" aria-hidden="true">Your personality is...</div>
+				<div className="tape-note tape-note--blue" aria-hidden="true">
+					Your personality is...
+				</div>
 				<p className="share-skeleton__eyebrow">Coming next</p>
-				<h1>Save & Share<br />Your Crocs Style</h1>
+				<h1>
+					Save & Share
+					<br />
+					Your Crocs Style
+				</h1>
 				<SkeletonBlock className="is-copy" />
 				<SkeletonBlock className="is-copy is-short" />
 				<div className="share-skeleton__shoe">
@@ -537,6 +688,7 @@ function SaveShareSkeleton({ colour, onBack, placements }) {
 						onSlotSelect={() => {}}
 						onViewChange={() => {}}
 						placements={placements}
+						rotations={rotations}
 						view="side"
 					/>
 				</div>
@@ -550,7 +702,10 @@ function SaveShareSkeleton({ colour, onBack, placements }) {
 				</div>
 				<div className="share-skeleton__platforms">
 					{Array.from({ length: 4 }, (_, index) => (
-						<span key={index}><SkeletonBlock className="is-circle" /><SkeletonBlock className="is-label" /></span>
+						<span key={index}>
+							<SkeletonBlock className="is-circle" />
+							<SkeletonBlock className="is-label" />
+						</span>
 					))}
 				</div>
 				<div className="share-skeleton__socials">
@@ -561,9 +716,17 @@ function SaveShareSkeleton({ colour, onBack, placements }) {
 
 			<section className="share-skeleton__recap">
 				<h2>Your customisation recap</h2>
-				<div><SkeletonBlock /><SkeletonBlock /><SkeletonBlock /></div>
+				<div>
+					<SkeletonBlock />
+					<SkeletonBlock />
+					<SkeletonBlock />
+				</div>
 			</section>
-			<button className="paper-button paper-button--back share-skeleton__back" type="button" onClick={onBack}>
+			<button
+				className="paper-button paper-button--back share-skeleton__back"
+				type="button"
+				onClick={onBack}
+			>
 				<ArrowLeft size={17} /> Back to preview
 			</button>
 		</main>
@@ -571,7 +734,11 @@ function SaveShareSkeleton({ colour, onBack, placements }) {
 }
 
 function CustomizerFlow({ onExit }) {
-	const [state, dispatch] = useReducer(customizerReducer, undefined, createInitialState);
+	const [state, dispatch] = useReducer(
+		customizerReducer,
+		undefined,
+		createInitialState,
+	);
 	const [view, setView] = useState("side");
 	const colour = COLOUR_BY_ID[state.colourId];
 
@@ -599,10 +766,12 @@ function CustomizerFlow({ onExit }) {
 		const shuffledSlots = [...CHARM_SLOT_NAMES].sort(() => Math.random() - 0.5);
 		const count = 3 + Math.floor(Math.random() * 4);
 		const placements = Object.fromEntries(
-			shuffledSlots.slice(0, count).map((slotName, index) => [
-				slotName,
-				shuffledCharms[index % shuffledCharms.length].id,
-			]),
+			shuffledSlots
+				.slice(0, count)
+				.map((slotName, index) => [
+					slotName,
+					shuffledCharms[index % shuffledCharms.length].id,
+				]),
 		);
 		dispatch({ type: "SET_RANDOM_DESIGN", colourId, placements });
 	}, []);
@@ -611,9 +780,10 @@ function CustomizerFlow({ onExit }) {
 		if (state.phase === "share") {
 			return (
 				<SaveShareSkeleton
-					colour={colour}
+						colour={colour}
 					onBack={() => dispatch({ type: "BACK_TO_PREVIEW" })}
 					placements={state.placements}
+					rotations={state.rotations}
 				/>
 			);
 		}
@@ -626,6 +796,7 @@ function CustomizerFlow({ onExit }) {
 						onExit={onExit}
 						onNext={() => goToStep(2)}
 						placements={state.placements}
+						rotations={state.rotations}
 						view={view}
 						onViewChange={setView}
 					/>
@@ -637,8 +808,11 @@ function CustomizerFlow({ onExit }) {
 						colourId={state.colourId}
 						onBack={() => goToStep(1)}
 						onNext={() => goToStep(3)}
-						onSelectColour={(colourId) => dispatch({ type: "SELECT_COLOUR", colourId })}
+						onSelectColour={(colourId) =>
+							dispatch({ type: "SELECT_COLOUR", colourId })
+						}
 						placements={state.placements}
+						rotations={state.rotations}
 						view={view}
 						onViewChange={setView}
 					/>
@@ -655,12 +829,25 @@ function CustomizerFlow({ onExit }) {
 						onRemove={() =>
 							dispatch({ type: "REMOVE_CHARM", slotName: state.editingSlot })
 						}
+						onRotate={() =>
+							dispatch({ type: "ROTATE_CHARM", slotName: state.editingSlot })
+						}
+						onRotationChange={(rotation) =>
+							dispatch({
+								type: "SET_CHARM_ROTATION",
+								slotName: state.editingSlot,
+								rotation,
+							})
+						}
 						onReplace={() =>
 							dispatch({ type: "REPLACE_CHARM", slotName: state.editingSlot })
 						}
-						onSelectCharm={(charmId) => dispatch({ type: "SELECT_CHARM", charmId })}
+						onSelectCharm={(charmId) =>
+							dispatch({ type: "SELECT_CHARM", charmId })
+						}
 						onSlotSelect={handleSlotSelect}
 						placements={state.placements}
+						rotations={state.rotations}
 						selectedCharmId={state.selectedCharmId}
 						view={view}
 						onViewChange={setView}
@@ -675,6 +862,7 @@ function CustomizerFlow({ onExit }) {
 						onReset={() => dispatch({ type: "RESET_DESIGN" })}
 						onShare={() => dispatch({ type: "SHOW_SHARE" })}
 						placements={state.placements}
+						rotations={state.rotations}
 						view={view}
 						onViewChange={setView}
 					/>
@@ -696,7 +884,8 @@ function CustomizerFlow({ onExit }) {
 			<Header onAction={onExit} />
 			{currentContent}
 			<p className="sr-only" aria-live="polite">
-				Step {state.step} of 4. {Object.keys(state.placements).length} charms placed.
+				Step {state.step} of 4. {Object.keys(state.placements).length} charms
+				placed.
 			</p>
 		</div>
 	);

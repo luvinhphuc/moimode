@@ -620,16 +620,46 @@
 		font-size: 1rem;
 	}
 
-	.slot-editor > div {
+	.slot-editor__rotation {
+		margin-top: 0.7rem;
+	}
+
+	.slot-editor__rotation label {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 0.35rem;
+		color: var(--muted);
+		font-size: 0.58rem;
+		font-weight: 800;
+		text-transform: uppercase;
+	}
+
+	.slot-editor__rotation output {
+		color: var(--ink);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.slot-editor__rotation input {
+		display: block;
+		width: 100%;
+		margin: 0;
+		accent-color: var(--pink);
+		cursor: pointer;
+	}
+
+	.slot-editor__actions {
 		display: flex;
 		gap: 0.5rem;
 		margin-top: 0.7rem;
 	}
 
-	.slot-editor > div button {
+	.slot-editor__actions button {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+		min-width: 0;
+		flex: 1 1 0;
 		gap: 0.35rem;
 		padding: 0.5rem 0.65rem;
 		border: 1px solid var(--line);
@@ -637,14 +667,22 @@
 		background: white;
 		font-size: 0.58rem;
 		font-weight: 800;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
-	.slot-editor > div button.is-danger {
+	.slot-editor__actions button:not(.is-danger) {
+		color: var(--pink);
+		background: var(--pink-soft);
+	}
+
+	.slot-editor__actions button.is-danger {
 		color: var(--color-moi-danger);
 		background: var(--color-moi-danger-soft);
 	}
 
-	.slot-editor > div button:disabled {
+	.slot-editor__actions button:disabled {
 		display: none;
 	}
 
@@ -806,7 +844,6 @@
 		opacity: 1;
 	}
 
-
 	.charm-empty {
 		margin: 2rem 0;
 		color: var(--muted);
@@ -908,28 +945,6 @@
 
 	.preview-stage__scene {
 		min-height: 20rem;
-	}
-
-	.preview-angle-strip {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 0.65rem;
-	}
-
-	.preview-angle-strip span {
-		display: grid;
-		place-items: center;
-		min-height: 3.1rem;
-		border-radius: 0.65rem;
-		background: var(--pink-soft);
-		font-size: 0.55rem;
-		font-weight: 800;
-		text-transform: uppercase;
-	}
-
-	.preview-angle-strip span.is-active {
-		border: 2px solid var(--ink);
-		background: var(--paper-light);
 	}
 
 	.customisation-recap {
@@ -1280,7 +1295,9 @@
 	}
 
 	.customizer-heading h1 {
-		font-size: clamp(2.25rem, 12.5vw, 3.7rem);
+		font-size: clamp(1.85rem, 8.5vw, 3rem);
+		line-height: 0.98;
+		letter-spacing: -0.055em;
 	}
 
 	.customizer-heading > span {
@@ -1328,13 +1345,65 @@
 		min-width: 0;
 	}
 
+	/* Compact, mobile-first sizing inspired by the Home hero. */
+	.customizer-heading {
+		margin-bottom: 0.85rem;
+	}
+
+	.customizer-heading > p {
+		font-size: clamp(0.75rem, 2.8vw, 0.95rem);
+	}
+
+	.customizer-heading > span {
+		font-size: clamp(0.75rem, 3.2vw, 0.9rem);
+		line-height: 1.45;
+	}
+
 	.style-grid {
-		min-height: 25rem;
+		min-height: 0;
+		flex: initial;
 	}
 
 	.style-card {
-		min-height: 25rem;
-		grid-template-rows: minmax(18rem, 1fr) auto;
+		width: min(100%, 29rem);
+		min-height: 0;
+		grid-template-rows: clamp(12rem, 56vw, 17rem) auto;
+		padding: clamp(0.65rem, 2.7vw, 0.9rem);
+		border-radius: 1rem;
+	}
+
+	.style-card__scene {
+		min-height: 0;
+		height: 100%;
+	}
+
+	.style-card__copy h2 {
+		font-size: clamp(1.1rem, 4.7vw, 1.4rem);
+	}
+
+	.style-card__copy p {
+		font-size: clamp(0.72rem, 3.2vw, 0.82rem);
+	}
+
+	.style-card__tag {
+		right: 0.75rem;
+		top: 0.75rem;
+		font-size: 0.53rem;
+		padding: 0.3rem 0.55rem;
+	}
+
+	.style-card__radio {
+		left: 0.75rem;
+		top: 0.75rem;
+	}
+
+	.customizer-footer {
+		gap: 0.55rem;
+	}
+
+	.paper-button {
+		gap: 0.35rem;
+		letter-spacing: 0.09em;
 	}
 
 	.colour-layout {

@@ -3,10 +3,7 @@ import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 
 import { MODEL_ASSETS } from "../../../config/modelAssets.js";
-import {
-	ACESFilmicToneMapping,
-	SRGBColorSpace,
-} from "../../../utils/three.js";
+import { ACESFilmicToneMapping, SRGBColorSpace } from "../../../utils/three.js";
 import CustomizableCrocs from "./CustomizableCrocs.jsx";
 import CustomizerCameraRig from "./CustomizerCameraRig.jsx";
 import {
@@ -40,8 +37,11 @@ function WebGLContextMonitor({ onLost, onRestored }) {
 function CustomizerScene({
 	bodyColour,
 	interactiveSlots = false,
+	controlsEnabled = true,
 	onSlotSelect,
 	placements,
+	rotations,
+	selectedSlot,
 	view,
 	onViewChange,
 }) {
@@ -56,12 +56,19 @@ function CustomizerScene({
 	}, []);
 
 	return (
-		<div className="customizer-scene" aria-label="Interactive Classic Clog preview">
+		<div
+			className="customizer-scene"
+			aria-label="Interactive Classic Clog preview"
+		>
 			<SceneErrorBoundary>
 				<Canvas
 					camera={{ fov: 36, near: 0.01, far: 200, position: [4, 2.2, 7] }}
 					dpr={[1, 2]}
-					gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
+					gl={{
+						alpha: true,
+						antialias: true,
+						powerPreference: "high-performance",
+					}}
 					onCreated={({ gl }) => {
 						gl.outputColorSpace = SRGBColorSpace;
 						gl.toneMapping = ACESFilmicToneMapping;
@@ -85,10 +92,13 @@ function CustomizerScene({
 							onMetrics={setModelSize}
 							onSlotSelect={onSlotSelect}
 							placements={placements}
+							rotations={rotations}
+							selectedSlot={selectedSlot}
 						/>
 					</Suspense>
 					<OrbitControls
 						ref={controlsRef}
+						enableRotate={controlsEnabled}
 						enableDamping
 						dampingFactor={0.08}
 						enablePan={false}

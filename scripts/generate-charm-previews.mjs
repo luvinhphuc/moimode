@@ -10,9 +10,11 @@ const outputDir = path.join(root, "public", "model", "charms", "previews");
 const chromePath =
 	process.env.CHROME_PATH ??
 	"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-const viteUrl = "http://127.0.0.1:4173/charm-preview-generator.html";
+const viteUrl = "http://127.0.0.1:0871/script/charm-preview-generator.html";
 const useExternalBrowser = process.env.PREVIEW_BROWSER === "external";
-const chromeProfileDir = await mkdtemp(path.join(tmpdir(), "moimode-charm-preview-"));
+const chromeProfileDir = await mkdtemp(
+	path.join(tmpdir(), "moimode-charm-preview-"),
+);
 
 const charmIds = [
 	"an-gi-chua",
@@ -45,7 +47,9 @@ const saveServer = createServer(async (request, response) => {
 		return;
 	}
 
-	const id = new URL(request.url, "http://127.0.0.1:4174").searchParams.get("id");
+	const id = new URL(request.url, "http://127.0.0.1:4174").searchParams.get(
+		"id",
+	);
 	if (!id || !/^[a-z0-9-]+$/.test(id)) {
 		response.writeHead(400);
 		response.end("Invalid charm id");
@@ -56,7 +60,10 @@ const saveServer = createServer(async (request, response) => {
 	for await (const chunk of request) chunks.push(chunk);
 	const payload = Buffer.concat(chunks).toString("utf8");
 	const base64 = payload.replace(/^data:image\/png;base64,/, "");
-	await writeFile(path.join(outputDir, `${id}.png`), Buffer.from(base64, "base64"));
+	await writeFile(
+		path.join(outputDir, `${id}.png`),
+		Buffer.from(base64, "base64"),
+	);
 	response.writeHead(204);
 	response.end();
 });
@@ -65,7 +72,13 @@ await new Promise((resolve) => saveServer.listen(4174, "127.0.0.1", resolve));
 
 const vite = spawn(
 	process.execPath,
-	[path.join(root, "node_modules", "vite", "bin", "vite.js"), "--host", "127.0.0.1", "--port", "4173"],
+	[
+		path.join(root, "node_modules", "vite", "bin", "vite.js"),
+		"--host",
+		"127.0.0.1",
+		"--port",
+		"0871",
+	],
 	{ cwd: root, stdio: "ignore" },
 );
 
@@ -119,7 +132,9 @@ async function waitForAllFiles() {
 		const filesReady = await Promise.all(
 			charmIds.map(async (charmId) => {
 				try {
-					return (await stat(path.join(outputDir, `${charmId}.png`))).size > 100;
+					return (
+						(await stat(path.join(outputDir, `${charmId}.png`))).size > 100
+					);
 				} catch {
 					return false;
 				}

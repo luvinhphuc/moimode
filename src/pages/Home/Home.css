@@ -138,14 +138,14 @@
 	.hero-slogan-crocs {
 		align-self: flex-start;
 		transform: rotate(-11deg);
-		top: 36px;
+		top: 64px;
 		margin: 0 2vw 0 0;
 	}
 
 	.hero-slogan-way {
 		align-self: flex-end;
-		transform: rotate(7deg);
-		bottom: 36px;
+		transform: rotate(5deg);
+		bottom: 24px;
 		margin: 0 0 0 2vw;
 	}
 

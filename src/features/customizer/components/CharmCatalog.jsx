@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useGLTF } from "@react-three/drei";
 import { Check, Search } from "lucide-react";
 
 import { CHARM_CATALOG, CHARM_CATEGORIES } from "../config/customizerConfig.js";
@@ -6,6 +7,28 @@ import { CHARM_CATALOG, CHARM_CATEGORIES } from "../config/customizerConfig.js";
 function CharmCatalog({ onSelect, selectedCharmId }) {
 	const [activeCategory, setActiveCategory] = useState("all");
 	const [query, setQuery] = useState("");
+
+	useEffect(() => {
+		// Preload the first visible cards immediately, then warm the rest of the
+		// cache when the browser is idle so opening the customizer stays quick.
+		const immediateCharms = CHARM_CATALOG.slice(0, 4);
+		immediateCharms.forEach((item) => useGLTF.preload(item.url));
+
+		const preloadRemaining = () => {
+			CHARM_CATALOG.slice(4).forEach((item) => useGLTF.preload(item.url));
+		};
+		const idleWindow = window.requestIdleCallback
+			? window.requestIdleCallback(preloadRemaining)
+			: window.setTimeout(preloadRemaining, 250);
+
+		return () => {
+			if (window.cancelIdleCallback && typeof idleWindow === "number") {
+				window.cancelIdleCallback(idleWindow);
+			} else {
+				window.clearTimeout(idleWindow);
+			}
+		};
+	}, []);
 
 	const filteredCharms = useMemo(() => {
 		const normalizedQuery = query.trim().toLocaleLowerCase("vi");
@@ -69,6 +92,8 @@ function CharmCatalog({ onSelect, selectedCharmId }) {
 								aria-label={`Select ${item.label} charm`}
 								aria-selected={isSelected}
 								title={item.label}
+								onPointerEnter={() => useGLTF.preload(item.url)}
+								onFocus={() => useGLTF.preload(item.url)}
 								onClick={() => onSelect(item.id)}
 							>
 								<img
