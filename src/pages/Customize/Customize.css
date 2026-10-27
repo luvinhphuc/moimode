@@ -1467,6 +1467,37 @@
 		min-height: 19rem;
 	}
 
+	.slot-editor {
+		position: relative;
+		right: auto;
+		bottom: auto;
+		width: 100%;
+		margin-top: 0.5rem;
+		padding: 0.7rem;
+		box-shadow: none;
+	}
+
+	.slot-editor__close {
+		top: 0.45rem;
+		right: 0.45rem;
+	}
+
+	.slot-editor p {
+		font-size: 0.55rem;
+	}
+
+	.slot-editor strong {
+		font-size: 0.9rem;
+	}
+
+	.slot-editor__rotation {
+		margin-top: 0.55rem;
+	}
+
+	.slot-editor__actions {
+		margin-top: 0.55rem;
+	}
+
 	.charm-catalog {
 		min-height: 21rem;
 	}

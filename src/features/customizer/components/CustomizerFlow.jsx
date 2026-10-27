@@ -252,7 +252,7 @@ function StyleStep({
 							bodyColour={colour.value}
 							onSlotSelect={() => {}}
 							onViewChange={onViewChange}
-							placements={placements}
+							placements={{}}
 							rotations={rotations}
 							view={view}
 						/>
@@ -512,10 +512,6 @@ function CharmsStep({
 							view={view}
 						/>
 					</div>
-					<ViewControls view={view} onChange={onViewChange} />
-					<p className="placement-hint">
-						<Sparkles size={14} /> Select a charm, then tap a pink marker.
-					</p>
 					{editingSlot ? (
 						<SlotEditor
 							currentCharmId={placements[editingSlot]}
@@ -528,6 +524,10 @@ function CharmsStep({
 							selectedCharmId={selectedCharmId}
 						/>
 					) : null}
+					<ViewControls view={view} onChange={onViewChange} />
+					<p className="placement-hint">
+						<Sparkles size={14} /> Select a charm, then tap a pink marker.
+					</p>
 				</section>
 				<CharmCatalog
 					onSelect={onSelectCharm}
@@ -780,7 +780,7 @@ function CustomizerFlow({ onExit }) {
 		if (state.phase === "share") {
 			return (
 				<SaveShareSkeleton
-						colour={colour}
+					colour={colour}
 					onBack={() => dispatch({ type: "BACK_TO_PREVIEW" })}
 					placements={state.placements}
 					rotations={state.rotations}
