@@ -3,7 +3,6 @@ import { useEffect, useRef } from 'react';
 import { gsap, useGSAP } from '../../../utils/gsap.js';
 
 const SELECTORS = Object.freeze({
-    itText: '[data-hero="it-text"]',
     intro: '[data-hero="intro"]',
     introMark: '[data-hero="intro-mark"]',
     introProgress: '[data-hero="intro-progress"]',
@@ -149,7 +148,6 @@ function HeroAnimation({
             const modelMotion = query(root, SELECTORS.modelMotion);
             const words = [
                 query(root, SELECTORS.makeText),
-                query(root, SELECTORS.itText),
                 query(root, SELECTORS.yoursText),
             ];
 
@@ -188,8 +186,6 @@ function HeroAnimation({
                         y: 18,
                         scale: 0.96,
                     });
-                    gsap.set(words[1], { rotation: -7 });
-
                     const timeline = gsap.timeline({
                         defaults: { ease: 'back.out(1.45)' },
                     });
@@ -208,17 +204,6 @@ function HeroAnimation({
                         })
                         .to(
                             words[1],
-                            {
-                                autoAlpha: 1,
-                                y: 0,
-                                rotation: 0,
-                                scale: 1,
-                                duration: 0.5,
-                            },
-                            '<0.16',
-                        )
-                        .to(
-                            words[2],
                             { autoAlpha: 1, y: 0, scale: 1, duration: 0.64 },
                             '>',
                         );

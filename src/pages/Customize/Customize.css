@@ -1,5 +1,8 @@
+@reference "../../styles/globals.css";
+
 @layer components {
 	.customizer-shell {
+		@apply relative isolate min-h-svh overflow-x-clip bg-moi-bg font-body text-moi-ink;
 		--paper: var(--color-moi-bg);
 		--paper-light: var(--color-moi-surface);
 		--paper-shadow: var(--color-moi-shadow);
@@ -10,45 +13,30 @@
 		--blue: var(--color-moi-sky);
 		--blue-soft: var(--color-moi-surface);
 		--line: var(--color-moi-line);
-		position: relative;
-		isolation: isolate;
-		min-height: 100svh;
 		padding-top: 4.75rem;
-		overflow-x: clip;
 		overflow-y: visible;
-		color: var(--ink);
-		background: var(--paper);
-		font-family: var(--font-body);
 	}
 
 	.customizer-main {
-		position: relative;
+		@apply relative mx-auto flex flex-col;
 		z-index: 2;
-		display: flex;
-		flex-direction: column;
 		width: min(100% - 2.5rem, 90rem);
 		min-height: calc(100svh - 4.75rem);
-		height: auto;
-		margin: 0 auto;
 		padding: clamp(1rem, 2.2vw, 2rem) 0 1.5rem;
 	}
 
 	.customizer-heading {
-		position: relative;
+		@apply relative;
 		z-index: 3;
 		width: min(100%, 48rem);
 		margin-bottom: 1.4rem;
 	}
 
 	.customizer-heading > p {
-		position: relative;
-		display: inline-block;
+		@apply relative inline-block font-display font-bold uppercase;
 		margin: 0 0 0.2rem;
-		font-family: var(--font-display);
 		font-size: clamp(1rem, 1.5vw, 1.3rem);
-		font-weight: 700;
 		letter-spacing: 0.03em;
-		text-transform: uppercase;
 		transform: rotate(-3deg);
 	}
 
@@ -68,17 +56,14 @@
 	}
 
 	.customizer-heading h1 {
-		margin: 0;
-		font-family: var(--font-display);
+		@apply m-0 font-display font-bold uppercase;
 		font-size: clamp(2.35rem, 5.1vw, 4.6rem);
-		font-weight: 700;
 		line-height: 0.92;
 		letter-spacing: -0.065em;
-		text-transform: uppercase;
 	}
 
 	.customizer-heading > span {
-		display: block;
+		@apply block;
 		margin-top: 0.5rem;
 		color: var(--muted);
 		font-size: clamp(0.82rem, 1.2vw, 1rem);
@@ -133,27 +118,18 @@
 
 	.customizer-footer,
 	.preview-footer {
-		display: grid;
+		@apply grid items-center gap-4 pt-5;
 		grid-template-columns: 1fr auto 1fr;
-		align-items: center;
-		gap: 1rem;
 		margin-top: auto;
-		padding-top: 1.25rem;
 	}
 
 	.paper-button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.75rem;
+		@apply inline-flex items-center justify-center gap-3 rounded-full font-extrabold uppercase;
 		min-height: 2.8rem;
 		padding: 0.7rem 1.35rem;
 		border: 1.5px solid var(--ink);
-		border-radius: 999px;
 		font-size: 0.64rem;
-		font-weight: 800;
 		letter-spacing: 0.2em;
-		text-transform: uppercase;
 		transition:
 			transform 180ms ease,
 			box-shadow 180ms ease,
@@ -161,7 +137,7 @@
 	}
 
 	.paper-button:hover {
-		transform: translateY(-2px);
+		@apply -translate-y-0.5;
 	}
 
 	.paper-button:focus-visible,
@@ -187,9 +163,7 @@
 	}
 
 	.customizer-progress {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
+		@apply flex items-center gap-4;
 	}
 
 	.customizer-progress span {
@@ -252,15 +226,12 @@
 	}
 
 	.style-grid {
-		display: grid;
-		place-items: center;
-		flex: 1;
+		@apply grid flex-1 place-items-center;
 		min-height: 20rem;
 	}
 
 	.style-card {
-		position: relative;
-		display: grid;
+		@apply relative grid;
 		grid-template-rows: minmax(15rem, 1fr) auto;
 		width: min(100%, 42rem);
 		min-height: 24rem;
@@ -323,19 +294,14 @@
 	}
 
 	.colour-layout {
-		display: grid;
+		@apply grid flex-1 items-stretch;
 		grid-template-columns: minmax(20rem, 0.85fr) minmax(30rem, 1.35fr);
 		gap: clamp(1.5rem, 4vw, 4.5rem);
-		align-items: stretch;
-		flex: 1;
 		min-height: 25rem;
 	}
 
 	.colour-palette {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		gap: 1.5rem;
+		@apply flex flex-col justify-center gap-6;
 	}
 
 	.colour-group + .colour-group {
@@ -352,20 +318,15 @@
 	}
 
 	.colour-swatches {
-		display: grid;
+		@apply grid;
 		grid-template-columns: repeat(5, minmax(3.5rem, 1fr));
 		gap: 0.9rem 0.65rem;
 	}
 
 	.colour-swatches button {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.38rem;
+		@apply flex flex-col items-center gap-1 border-0 bg-transparent;
 		padding: 0;
-		border: 0;
 		color: var(--ink);
-		background: transparent;
 	}
 
 	.colour-swatches button > span {
@@ -410,8 +371,7 @@
 	}
 
 	.product-paper {
-		position: relative;
-		display: grid;
+		@apply relative grid;
 		grid-template-rows: auto 1fr auto;
 		min-height: 25rem;
 		padding: 0.9rem 1rem 1rem;
@@ -422,10 +382,7 @@
 	}
 
 	.view-controls {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.45rem;
+		@apply flex items-center justify-center gap-2;
 	}
 
 	.view-controls button,
@@ -474,14 +431,11 @@
 	}
 
 	.charms-layout {
-		display: grid;
+		@apply grid flex-1 items-stretch gap-4;
 		grid-template-columns: minmax(11rem, 0.58fr) minmax(27rem, 1.6fr) minmax(
 				18rem,
 				0.88fr
 			);
-		gap: 1rem;
-		align-items: stretch;
-		flex: 1;
 		min-height: 29rem;
 	}
 
@@ -527,18 +481,14 @@
 	}
 
 	.charms-stage {
-		position: relative;
-		display: grid;
+		@apply relative grid;
 		grid-template-rows: auto 1fr auto auto;
 		min-height: 29rem;
 		padding: 0.75rem;
 	}
 
 	.charms-stage__topbar {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.75rem;
+		@apply flex items-center justify-between gap-3;
 		padding: 0.2rem 0.35rem;
 		font-size: 0.65rem;
 		font-weight: 800;
@@ -693,12 +643,8 @@
 	}
 
 	.charm-catalog__content {
-		position: relative;
-		z-index: 3;
-		display: flex;
-		flex-direction: column;
+		@apply relative z-[3] flex min-h-full flex-col;
 		height: auto;
-		min-height: 100%;
 		padding: 0.85rem;
 	}
 
@@ -744,10 +690,8 @@
 	}
 
 	.charm-filters {
-		display: flex;
-		gap: 0.35rem;
+		@apply flex gap-1.5 overflow-x-auto;
 		margin: 0.6rem -0.1rem;
-		overflow-x: auto;
 		scrollbar-width: none;
 	}
 
@@ -787,16 +731,13 @@
 	}
 
 	.charm-card {
-		position: relative;
-		z-index: 1;
-		width: 100%;
+		@apply relative z-[1] w-full overflow-hidden;
 		min-width: 0;
 		aspect-ratio: 1;
 		padding: 0;
 		border: 1px solid var(--line);
 		border-radius: 0.58rem;
 		background: color-mix(in srgb, var(--paper-light) 20%, transparent);
-		overflow: hidden;
 		transition:
 			transform 150ms ease,
 			border-color 150ms ease,
@@ -856,19 +797,14 @@
 	}
 
 	.preview-layout {
-		display: grid;
+		@apply grid flex-1 items-stretch gap-4;
 		grid-template-columns: 7.5rem minmax(30rem, 1.65fr) minmax(18rem, 0.75fr);
-		gap: 1rem;
-		align-items: stretch;
-		flex: 1;
 		min-height: 28rem;
 	}
 
 	.step-rail {
+		@apply m-0 list-none p-0;
 		align-self: center;
-		margin: 0;
-		padding: 0;
-		list-style: none;
 	}
 
 	.step-rail li {
@@ -887,14 +823,9 @@
 	}
 
 	.step-rail button {
-		display: grid;
+		@apply grid items-center gap-2 border-0 bg-transparent p-0 text-left;
 		grid-template-columns: 1.6rem 1fr;
-		align-items: center;
-		gap: 0.45rem;
-		padding: 0;
-		border: 0;
 		color: var(--ink);
-		background: transparent;
 		font-size: 0.57rem;
 		font-weight: 800;
 		line-height: 1.1;
@@ -918,22 +849,18 @@
 	}
 
 	.preview-stage {
-		display: grid;
+		@apply grid;
 		grid-template-rows: auto 1fr auto;
 		min-height: 28rem;
 		padding: 0.8rem;
 	}
 
 	.preview-stage__toolbar {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 1rem;
+		@apply flex items-center justify-between gap-4;
 	}
 
 	.preview-stage__toolbar > div {
-		display: flex;
-		gap: 0.4rem;
+		@apply flex gap-1.5;
 	}
 
 	.preview-stage__toolbar > div > button {
@@ -953,9 +880,7 @@
 	}
 
 	.customisation-recap__title {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
+		@apply flex items-center justify-between;
 		padding-bottom: 0.8rem;
 		border-bottom: 1px solid var(--line);
 	}
@@ -1029,9 +954,7 @@
 	}
 
 	.recap-charms {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.35rem;
+		@apply flex flex-wrap gap-1.5;
 		margin-top: 0.7rem;
 	}
 
@@ -1057,15 +980,11 @@
 	}
 
 	.share-skeleton {
-		position: relative;
-		z-index: 2;
-		display: grid;
+		@apply relative z-[2] mx-auto grid gap-4;
 		grid-template-columns: minmax(24rem, 1.25fr) minmax(22rem, 0.75fr);
 		grid-template-rows: 1fr auto;
-		gap: 1rem;
 		width: min(100% - 2.5rem, 78rem);
 		min-height: calc(100svh - 4.75rem);
-		margin: 0 auto;
 		padding: 1rem 0 1.5rem;
 	}
 
@@ -1154,17 +1073,13 @@
 	}
 
 	.share-skeleton__platforms {
-		display: grid;
+		@apply grid gap-4;
 		grid-template-columns: repeat(4, 1fr);
-		gap: 1rem;
 		margin: 2rem 0;
 	}
 
 	.share-skeleton__platforms > span {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.6rem;
+		@apply flex flex-col items-center gap-2.5;
 	}
 
 	.skeleton-block.is-circle {
@@ -1180,9 +1095,8 @@
 	}
 
 	.share-skeleton__socials {
-		display: grid;
+		@apply grid gap-3;
 		grid-template-columns: 1fr 1fr;
-		gap: 0.7rem;
 	}
 
 	.skeleton-block.is-social {
@@ -1206,9 +1120,8 @@
 	}
 
 	.share-skeleton__recap > div {
-		display: grid;
+		@apply grid gap-3;
 		grid-template-columns: repeat(3, 1fr);
-		gap: 0.7rem;
 	}
 
 	.share-skeleton__recap .skeleton-block {

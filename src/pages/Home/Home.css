@@ -103,11 +103,7 @@
     }
 
     .hero-stack {
-        display: grid;
-        grid-template-rows: auto minmax(0, 1fr) auto;
-        align-items: center;
-        justify-items: center;
-        gap: clamp(0.25rem, 1.35svh, 1rem);
+        position: relative;
         width: min(100%, 72rem);
         max-height: 100%;
     }
@@ -122,41 +118,38 @@
     }
 
     .hero-slogan--top {
-        display: flex;
-        align-items: baseline;
-        justify-content: center;
-        gap: clamp(0.3rem, 1.15vw, 1rem);
+        position: absolute;
+        top: clamp(0.5rem, 4svh, 2.75rem);
+        left: clamp(0.75rem, 8vw, 6rem);
     }
 
     .hero-slogan--bottom {
-        justify-self: center;
+        position: absolute;
+        right: clamp(0rem, 1.5vw, 1.25rem);
+        bottom: clamp(0rem, 1.5svh, 1rem);
     }
 
     .hero-slogan-text {
         @apply block font-display font-bold;
         visibility: hidden;
-        font-size: clamp(3rem, 11.3vw, 7.5rem);
+        font-size: clamp(3rem, 21vw, 5.5rem);
         letter-spacing: -0.065em;
         will-change: transform, opacity;
     }
 
+    .hero-slogan--top .hero-slogan-text {
+        font-size: clamp(2.4rem, 18vw, 6rem);
+    }
+
     .hero-slogan-word--make {
         color: var(--color-moi-ink);
+        font-size: clamp(2rem, 9.3vw, 5.5rem);
         letter-spacing: 0.01rem;
     }
 
-    .hero-slogan-word--it,
     .hero-slogan-word--yours {
         color: var(--color-moi-accent);
         letter-spacing: 0.01rem;
-    }
-
-    .hero-slogan-word--it {
-        text-transform: uppercase;
-        font-family: var(--font-serif);
-        font-style: italic;
-        margin-left: 20px;
-        font-weight: 500;
     }
 
     .hero-model-stage {
@@ -164,6 +157,8 @@
         width: min(100%, 50rem);
         height: min(47svh, 34rem);
         min-height: clamp(11.5rem, 30svh, 19rem);
+        margin-inline: auto;
+        z-index: 90;
     }
 
     .hero-model-motion {
@@ -258,15 +253,49 @@
     .hero-slogan-text {
         font-size: clamp(2.75rem, 12vw, 4.5rem);
     }
+
+    .hero-slogan--top .hero-slogan-text {
+        font-size: clamp(2.2rem, 9.5vw, 3.7rem);
+    }
 }
 
 @media (min-width: 768px) {
+    .hero-slogan--top {
+        left: clamp(0.75rem, 18vw, 11rem);
+    }
+
+    .hero-slogan--bottom {
+        right: clamp(0rem, 10.5vw, 6.25rem);
+    }
+
     .hero-slogan-text {
-        font-size: clamp(4.25rem, 13.3vw, 7.5rem);
+        font-size: clamp(4.25rem, 10.3vw, 5rem);
+    }
+
+    .hero-slogan--top .hero-slogan-text {
+        font-size: clamp(3.4rem, 10.4vw, 4rem);
     }
 
     .hero-model-stage {
         width: min(100%, 52rem);
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero-slogan--top {
+        left: clamp(0.75rem, 18vw, 17rem);
+    }
+
+    .hero-slogan--bottom {
+        right: clamp(0rem, 10.5vw, 8.25rem);
+    }
+
+    .hero-slogan-text {
+        font-size: clamp(4.25rem, 6.8vw, 6.25rem);
+    }
+
+    .hero-slogan--top .hero-slogan-text {
+        font-size: clamp(3.4rem, 5.44vw, 5rem);
     }
 }
 
