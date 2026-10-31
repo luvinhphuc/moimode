@@ -50,35 +50,45 @@ function HeroSection() {
 			<main id="home" className="hero-composition">
 				<h1 className="sr-only">{HERO_COPY.heading}</h1>
 
-				<div
-					className="hero-slogan hero-slogan-crocs"
-					data-hero="first-slogan"
-					aria-hidden="true"
-				>
-					<span className="hero-slogan-text" data-hero="first-slogan-text">
-						{HERO_COPY.firstSlogan}
-					</span>
-				</div>
+				<div className="hero-stack">
+					<div
+						className="hero-slogan hero-slogan--top"
+						data-hero="top-slogan"
+						aria-hidden="true"
+					>
+						<span
+							className="hero-slogan-text hero-slogan-word--make"
+							data-hero="make-text"
+						>
+							{HERO_COPY.make}
+						</span>
+						<span
+							className="hero-slogan-text hero-slogan-word--it"
+							data-hero="it-text"
+						>
+							{HERO_COPY.it}
+						</span>
+					</div>
 
-				<ModelStage
-					ariaLabel={HERO_COPY.modelAlt}
-					hasError={hasSceneError}
-					isReady={isSceneReady}
-					progress={loadProgress}
-					stageLabel={HERO_COPY.modelLabel}
-					onReady={handleSceneReady}
-					onLoadProgress={setLoadProgress}
-					onError={handleSceneError}
-				/>
+					<ModelStage
+						ariaLabel={HERO_COPY.modelAlt}
+						hasError={hasSceneError}
+						isReady={isSceneReady}
+						progress={loadProgress}
+						stageLabel={HERO_COPY.modelLabel}
+						onReady={handleSceneReady}
+						onLoadProgress={setLoadProgress}
+						onError={handleSceneError}
+					/>
 
-				<div
-					className="hero-slogan hero-slogan-way"
-					data-hero="second-slogan"
-					aria-hidden="true"
-				>
-					<span className="hero-slogan-text" data-hero="second-slogan-text">
-						{HERO_COPY.secondSlogan}
-					</span>
+					<div className="hero-slogan hero-slogan--bottom" aria-hidden="true">
+						<span
+							className="hero-slogan-text hero-slogan-word--yours"
+							data-hero="yours-text"
+						>
+							{HERO_COPY.yours}
+						</span>
+					</div>
 				</div>
 
 				<Sparkle className="hero-sparkle hero-sparkle-one" />
