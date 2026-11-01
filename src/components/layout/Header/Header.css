@@ -1,11 +1,12 @@
 @reference "../../../styles/globals.css";
 
 @layer components {
-    .site-header {
-        @apply absolute inset-x-0 top-0 z-50 flex items-center justify-between;
-        padding: max(1.75rem, env(safe-area-inset-top))
-            clamp(1.5rem, 3.5vw, 3rem) 0;
-    }
+	.site-header {
+		@apply fixed inset-x-0 top-0 z-50 flex items-center justify-between;
+		padding: max(1.75rem, env(safe-area-inset-top))
+			clamp(1.5rem, 3.5vw, 3rem) 0;
+		will-change: transform, opacity;
+	}
 
     .site-header__brand {
         @apply font-display text-2xl font-bold leading-none tracking-[-0.045em] text-moi-ink no-underline;

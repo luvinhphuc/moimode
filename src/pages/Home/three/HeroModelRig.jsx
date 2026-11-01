@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { Suspense, useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 
 import { MathUtils, Vector3 } from '../../../utils/three.js';
 import { CAMERA } from '../config/sceneConfig.js';
+import PlacedCharm from '../../Customize/three/PlacedCharm.jsx';
 
 function fitCameraToModel({ camera, height, radius, width }) {
     const viewportWidth = Math.max(width, 1);
@@ -11,7 +12,8 @@ function fitCameraToModel({ camera, height, radius, width }) {
     const verticalFov = MathUtils.degToRad(camera.fov);
     const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * aspect);
     const limitingFov = Math.min(verticalFov, horizontalFov);
-    const framing = viewportWidth < 768 ? 0.8 : 0.71;
+    const framing =
+        viewportWidth < 768 ? (aspect < 0.8 ? 1.05 : 1.55) : 1.45;
     const distance = (radius / Math.sin(limitingFov / 2)) * framing;
     const direction = new Vector3(...CAMERA.direction).normalize();
 
@@ -26,7 +28,16 @@ function fitCameraToModel({ camera, height, radius, width }) {
     camera.updateProjectionMatrix();
 }
 
-function HeroModelRig({ enablePointerMotion, model, pose, radius }) {
+function HeroModelRig({
+    enablePointerMotion,
+    charmAnimationReady,
+    model,
+    modelSize,
+    pose,
+    radius,
+    slots,
+    transitionControlRef,
+}) {
     const groupRef = useRef(null);
     const motionRef = useRef({ x: 0, y: 0 });
     const targetRef = useRef({ x: 0, y: 0 });
@@ -37,10 +48,38 @@ function HeroModelRig({ enablePointerMotion, model, pose, radius }) {
         [pose.rotationDegrees],
     );
     const rotationRef = useRef(baseRotation);
+    const transitionStateRef = useRef({
+        active: 0,
+        pointerInfluence: 1,
+        rotationX: baseRotation[0],
+        rotationY: baseRotation[1],
+        rotationZ: baseRotation[2],
+        scale: 1,
+    });
 
     useEffect(() => {
         rotationRef.current = baseRotation;
+
+        const transition = transitionStateRef.current;
+        if (!transition.active) {
+            transition.rotationX = baseRotation[0];
+            transition.rotationY = baseRotation[1];
+            transition.rotationZ = baseRotation[2];
+        }
     }, [baseRotation]);
+
+    useEffect(() => {
+        if (!transitionControlRef) return undefined;
+
+        const transition = transitionStateRef.current;
+        transitionControlRef.current = transition;
+
+        return () => {
+            if (transitionControlRef.current === transition) {
+                transitionControlRef.current = null;
+            }
+        };
+    }, [transitionControlRef]);
 
     useEffect(() => {
         const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -105,21 +144,41 @@ function HeroModelRig({ enablePointerMotion, model, pose, radius }) {
         motion.x = MathUtils.damp(motion.x, target.x, 5, delta);
         motion.y = MathUtils.damp(motion.y, target.y, 5, delta);
 
-        const [x, y, z] = rotationRef.current;
+        const [baseX, baseY, baseZ] = rotationRef.current;
+        const transition = transitionStateRef.current;
+        const pointerInfluence = transition.pointerInfluence;
+        const x = transition.active ? transition.rotationX : baseX;
+        const y = transition.active ? transition.rotationY : baseY;
+        const z = transition.active ? transition.rotationZ : baseZ;
 
         groupRef.current.rotation.set(
-            x - motion.y * 0.08,
-            y + motion.x * 0.12,
-            z - motion.x * 0.045,
+            x - motion.y * 0.08 * pointerInfluence,
+            y + motion.x * 0.12 * pointerInfluence,
+            z - motion.x * 0.045 * pointerInfluence,
         );
-        groupRef.current.position.y = -motion.y * 0.008;
+        groupRef.current.position.y = -motion.y * 0.008 * pointerInfluence;
+        groupRef.current.scale.setScalar(transition.scale);
     });
 
     return (
         <group ref={groupRef}>
             <primitive object={model} dispose={null} />
+            <Suspense fallback={null}>
+                {slots.map((slot, index) => (
+                    <PlacedCharm
+                        key={slot.name}
+                        charmId={slot.charmId}
+                        animationDelay={index * 0.1}
+                        startAnimation={charmAnimationReady}
+                        interactive={false}
+                        modelSize={modelSize}
+                        slot={slot}
+                    />
+                ))}
+            </Suspense>
         </group>
     );
 }
 
 export default HeroModelRig;
+

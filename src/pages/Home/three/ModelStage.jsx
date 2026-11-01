@@ -6,7 +6,9 @@ function ModelStage({
 	hasError,
 	isReady,
 	progress,
+	charmsReady,
 	stageLabel,
+	transitionControlRef,
 	onError,
 	onLoadProgress,
 	onReady,
@@ -16,6 +18,8 @@ function ModelStage({
 			<div className="hero-model-motion" data-hero="model-motion">
 				<HeroScene
 					ariaLabel={ariaLabel}
+					charmAnimationReady={charmsReady}
+					transitionControlRef={transitionControlRef}
 					onReady={onReady}
 					onLoadProgress={onLoadProgress}
 					onError={onError}
@@ -31,3 +35,4 @@ function ModelStage({
 }
 
 export default ModelStage;
+

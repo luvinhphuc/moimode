@@ -16,6 +16,7 @@ import {
 } from "../utils/charmModel.js";
 
 function PlacedCharm({
+	animationDelay = 0,
 	charmId,
 	interactive,
 	modelSize,
@@ -23,6 +24,7 @@ function PlacedCharm({
 	rotation = 0,
 	selected = false,
 	slot,
+	startAnimation = true,
 }) {
 	const charm = CHARM_BY_ID[charmId];
 	const { scene } = useGLTF(charm.url);
@@ -102,15 +104,30 @@ function PlacedCharm({
 	useEffect(() => {
 		const media = window.matchMedia("(prefers-reduced-motion: reduce)");
 		reducedMotionRef.current = media.matches;
-		progressRef.current = media.matches ? 1 : 0;
-	}, [charmId, slot.name]);
+		progressRef.current = startAnimation && media.matches
+			? animationDelay + 0.48
+			: 0;
+	}, [animationDelay, charmId, slot.name, startAnimation]);
 
 	useFrame((_, delta) => {
 		const group = groupRef.current;
 		if (!group) return;
 
-		progressRef.current = Math.min(1, progressRef.current + delta / 0.48);
-		const raw = progressRef.current;
+		if (!startAnimation) {
+			group.position.copy(startPosition);
+			group.quaternion.copy(targetQuaternion);
+			group.scale.setScalar(0);
+			return;
+		}
+
+		progressRef.current = Math.min(
+			animationDelay + 0.48,
+			progressRef.current + delta,
+		);
+		const raw = Math.max(
+			0,
+			Math.min(1, (progressRef.current - animationDelay) / 0.48),
+		);
 		const ease = 1 - (1 - raw) ** 3;
 		const pop =
 			raw > 0.78 && !reducedMotionRef.current
@@ -126,6 +143,7 @@ function PlacedCharm({
 		<group
 			ref={groupRef}
 			position={startPosition}
+			scale={startAnimation ? 1 : 0}
 			onClick={(event) => {
 				if (!interactive || event.delta > 6) return;
 				event.stopPropagation();

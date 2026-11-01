@@ -15,7 +15,11 @@ function LoadingProgress({ onLoadProgress }) {
 	const { progress } = useProgress();
 
 	useEffect(() => {
-		onLoadProgress?.(Math.min(99, Math.round(progress)));
+		const frame = window.requestAnimationFrame(() => {
+			onLoadProgress?.(Math.min(99, Math.round(progress)));
+		});
+
+		return () => window.cancelAnimationFrame(frame);
 	}, [onLoadProgress, progress]);
 
 	return null;
@@ -37,7 +41,14 @@ class SceneErrorBoundary extends Component {
 	}
 }
 
-function HeroScene({ ariaLabel, onError, onLoadProgress, onReady }) {
+function HeroScene({
+	ariaLabel,
+	charmAnimationReady,
+	transitionControlRef,
+	onError,
+	onLoadProgress,
+	onReady,
+}) {
 	return (
 		<div className="hero-canvas" role="img" aria-label={ariaLabel}>
 			<SceneErrorBoundary onError={onError}>
@@ -64,7 +75,12 @@ function HeroScene({ ariaLabel, onError, onLoadProgress, onReady }) {
 					<LoadingProgress onLoadProgress={onLoadProgress} />
 					<HeroStudioLights />
 					<Suspense fallback={null}>
-						<CrocsModel onReady={onReady} pose={CROCS_POSE} />
+						<CrocsModel
+							charmAnimationReady={charmAnimationReady}
+							onReady={onReady}
+							pose={CROCS_POSE}
+							transitionControlRef={transitionControlRef}
+						/>
 					</Suspense>
 				</Canvas>
 			</SceneErrorBoundary>
@@ -75,3 +91,4 @@ function HeroScene({ ariaLabel, onError, onLoadProgress, onReady }) {
 useGLTF.preload(MODEL_ASSETS.classicClog);
 
 export default HeroScene;
+

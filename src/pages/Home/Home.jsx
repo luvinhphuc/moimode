@@ -1,13 +1,18 @@
-import HeroSection from "../../features/hero/components/HeroSection.jsx";
-import SmoothScroll from "../../features/hero/components/SmoothScroll.jsx";
+import HeroSection from "./components/HeroSection.jsx";
+import SmoothScroll from "./components/SmoothScroll.jsx";
+import HomeCanvas from "./three/HomeCanvas.jsx";
 import "./Home.css";
 
 function Home() {
 	return (
 		<SmoothScroll>
-			<HeroSection />
+			<div className="home-shell">
+				<HomeCanvas />
+				<HeroSection />
+			</div>
 		</SmoothScroll>
 	);
 }
 
 export default Home;
+
