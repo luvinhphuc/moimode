@@ -1,4 +1,4 @@
-export const ABOUT_STACK_MOTION = Object.freeze({
+export const GALLERY_STACK_MOTION = Object.freeze({
 	duration: 1150,
 	easing: "cubic-bezier(0.22, 1, 0.36, 1)",
 	hold: 280,
@@ -8,7 +8,7 @@ export const ABOUT_STACK_MOTION = Object.freeze({
 	tilt: 11,
 });
 
-export const ABOUT_SPLIT_MOTION = Object.freeze({
+export const GALLERY_SPLIT_MOTION = Object.freeze({
 	duration: 1350,
 	easing: "cubic-bezier(0.65, 0, 0.35, 1)",
 	hold: 180,
@@ -18,7 +18,7 @@ export const ABOUT_SPLIT_MOTION = Object.freeze({
 	stagger: 70,
 });
 
-export const ABOUT_MOBILE_GALLERY_MOTION = Object.freeze({
+export const MOBILE_GALLERY_MOTION = Object.freeze({
 	galleryScrollEnd: 0.5,
 	titleFadeEnd: 0.2,
 	titleFadeStart: 0.08,
@@ -26,7 +26,7 @@ export const ABOUT_MOBILE_GALLERY_MOTION = Object.freeze({
 
 // Edit only this map to reposition the cards after the stack splits.
 // Use CSS values for the four edges; leave unused edges as "auto".
-export const ABOUT_SPLIT_LAYOUTS = Object.freeze({
+export const GALLERY_SPLIT_LAYOUTS = Object.freeze({
 	desktop: Object.freeze({
 		make: { top: "15%", right: "auto", bottom: "auto", left: "8%", rotation: 0 },
 		play: { top: "8%", right: "auto", bottom: "auto", left: "43%", rotation: 0 },

@@ -17,20 +17,20 @@ function SmoothScroll({ children }) {
 		lenis.scrollTo(0, { immediate: true, force: true });
 		const update = (time) => lenis.raf(time * 1000);
 		const syncScroll = () => ScrollTrigger.update();
-		const lockAboutAnimation = () => lenis.stop();
-		const unlockAboutAnimation = () => lenis.start();
+		const lockGalleryAnimation = () => lenis.stop();
+		const unlockGalleryAnimation = () => lenis.start();
 
 		lenis.on("scroll", syncScroll);
-		window.addEventListener("about-animation-lock", lockAboutAnimation);
-		window.addEventListener("about-animation-unlock", unlockAboutAnimation);
+		window.addEventListener("gallery-animation-lock", lockGalleryAnimation);
+		window.addEventListener("gallery-animation-unlock", unlockGalleryAnimation);
 		gsap.ticker.add(update);
 		gsap.ticker.lagSmoothing(500, 33);
 		ScrollTrigger.refresh();
 
 		return () => {
 			lenis.off("scroll", syncScroll);
-			window.removeEventListener("about-animation-lock", lockAboutAnimation);
-			window.removeEventListener("about-animation-unlock", unlockAboutAnimation);
+			window.removeEventListener("gallery-animation-lock", lockGalleryAnimation);
+			window.removeEventListener("gallery-animation-unlock", unlockGalleryAnimation);
 			lenis.start();
 			gsap.ticker.remove(update);
 			lenis.destroy();

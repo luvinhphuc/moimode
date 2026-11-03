@@ -344,7 +344,7 @@ async function buildAtlas(items, width, height, imageCache) {
 	return { atlas, viewHeight: height };
 }
 
-const FisheyeCollage = forwardRef(function FisheyeCollage({ items }, ref) {
+const FisheyeGallery = forwardRef(function FisheyeGallery({ items }, ref) {
 	const stageRef = useRef(null);
 	const canvasRef = useRef(null);
 	const imageCacheRef = useRef(new Map());
@@ -563,13 +563,13 @@ const FisheyeCollage = forwardRef(function FisheyeCollage({ items }, ref) {
 	return (
 		<div
 			ref={stageRef}
-			className={`fisheye-collage${isActive ? " is-active" : ""}`}
-			data-fisheye-collage=""
+			className={`fisheye-gallery${isActive ? " is-active" : ""}`}
+			data-fisheye-gallery=""
 			aria-hidden="true"
 		>
-			<canvas ref={canvasRef} className="fisheye-collage__canvas" />
+			<canvas ref={canvasRef} className="fisheye-gallery__canvas" />
 		</div>
 	);
 });
 
-export default FisheyeCollage;
+export default FisheyeGallery;

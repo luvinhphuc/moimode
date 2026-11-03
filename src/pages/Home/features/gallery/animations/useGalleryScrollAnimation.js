@@ -1,13 +1,13 @@
-import { gsap, ScrollTrigger, useGSAP } from "../../../utils/gsap.js";
+import { gsap, ScrollTrigger, useGSAP } from "../../../../../utils/gsap.js";
 import {
-	ABOUT_MOBILE_GALLERY_MOTION,
-	ABOUT_SPLIT_LAYOUTS,
-	ABOUT_SPLIT_MOTION,
-	ABOUT_STACK_MOTION,
-} from "../config/aboutMotionConfig.js";
+	GALLERY_SPLIT_LAYOUTS,
+	GALLERY_SPLIT_MOTION,
+	GALLERY_STACK_MOTION,
+	MOBILE_GALLERY_MOTION,
+} from "../config/galleryMotionConfig.js";
 
-const ABOUT_ANIMATION_LOCK = "about-animation-lock";
-const ABOUT_ANIMATION_UNLOCK = "about-animation-unlock";
+const GALLERY_ANIMATION_LOCK = "gallery-animation-lock";
+const GALLERY_ANIMATION_UNLOCK = "gallery-animation-unlock";
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
@@ -26,7 +26,7 @@ function getLayoutCenterOffset(element) {
 }
 
 function getSplitRotation(card, splitLayout) {
-	return splitLayout[card.dataset.aboutCard]?.rotation ?? 0;
+	return splitLayout[card.dataset.galleryCard]?.rotation ?? 0;
 }
 
 function placeCard(card, x, y, rotation, opacity) {
@@ -69,11 +69,11 @@ function createCardStackAnimation(cards, splitLayout, onComplete) {
 			const rotation = getSplitRotation(card, splitLayout);
 			const midpoint = {
 				x:
-					stack.x * ABOUT_SPLIT_MOTION.midpointPull +
-					side * ABOUT_SPLIT_MOTION.midpointX,
+					stack.x * GALLERY_SPLIT_MOTION.midpointPull +
+					side * GALLERY_SPLIT_MOTION.midpointX,
 				y:
-					stack.y * ABOUT_SPLIT_MOTION.midpointPull +
-					ABOUT_SPLIT_MOTION.midpointY,
+					stack.y * GALLERY_SPLIT_MOTION.midpointPull +
+					GALLERY_SPLIT_MOTION.midpointY,
 			};
 
 			placeCard(card, stack.x, stack.y, 0, 1);
@@ -94,9 +94,9 @@ function createCardStackAnimation(cards, splitLayout, onComplete) {
 					},
 				],
 				{
-					delay: index * ABOUT_SPLIT_MOTION.stagger,
-					duration: ABOUT_SPLIT_MOTION.duration,
-					easing: ABOUT_SPLIT_MOTION.easing,
+					delay: index * GALLERY_SPLIT_MOTION.stagger,
+					duration: GALLERY_SPLIT_MOTION.duration,
+					easing: GALLERY_SPLIT_MOTION.easing,
 					fill: "both",
 				},
 			);
@@ -142,12 +142,12 @@ function createCardStackAnimation(cards, splitLayout, onComplete) {
 						{
 							offset: 0,
 							opacity: 0,
-							transform: `translate3d(${stack.x + side * ABOUT_STACK_MOTION.startX}px, ${stack.y - ABOUT_STACK_MOTION.startY}px, 0) rotate(${side * ABOUT_STACK_MOTION.tilt}deg)`,
+							transform: `translate3d(${stack.x + side * GALLERY_STACK_MOTION.startX}px, ${stack.y - GALLERY_STACK_MOTION.startY}px, 0) rotate(${side * GALLERY_STACK_MOTION.tilt}deg)`,
 						},
 						{
 							offset: 0.62,
 							opacity: 1,
-							transform: `translate3d(${stack.x + side * ABOUT_STACK_MOTION.startX * 0.25}px, ${stack.y - ABOUT_STACK_MOTION.startY * 0.27}px, 0) rotate(${side * ABOUT_STACK_MOTION.tilt * 0.27}deg)`,
+							transform: `translate3d(${stack.x + side * GALLERY_STACK_MOTION.startX * 0.25}px, ${stack.y - GALLERY_STACK_MOTION.startY * 0.27}px, 0) rotate(${side * GALLERY_STACK_MOTION.tilt * 0.27}deg)`,
 						},
 						{
 							opacity: 1,
@@ -156,10 +156,10 @@ function createCardStackAnimation(cards, splitLayout, onComplete) {
 					],
 					{
 						delay:
-							ABOUT_STACK_MOTION.hold +
-							index * ABOUT_STACK_MOTION.stagger,
-						duration: ABOUT_STACK_MOTION.duration,
-						easing: ABOUT_STACK_MOTION.easing,
+							GALLERY_STACK_MOTION.hold +
+							index * GALLERY_STACK_MOTION.stagger,
+						duration: GALLERY_STACK_MOTION.duration,
+						easing: GALLERY_STACK_MOTION.easing,
 						fill: "both",
 					},
 				);
@@ -168,7 +168,7 @@ function createCardStackAnimation(cards, splitLayout, onComplete) {
 					animation.onfinish = () => {
 						splitTimer = window.setTimeout(
 							playSplit,
-							ABOUT_SPLIT_MOTION.hold,
+							GALLERY_SPLIT_MOTION.hold,
 						);
 					};
 				}
@@ -179,14 +179,14 @@ function createCardStackAnimation(cards, splitLayout, onComplete) {
 	};
 }
 
-function useAboutScrollAnimation(rootRef, fisheyeRef) {
+function useGalleryScrollAnimation(rootRef, fisheyeRef) {
 	useGSAP(
 		() => {
 			const root = rootRef.current;
-			const panel = root?.querySelector(".about-panel");
-			const collage = root?.querySelector('[data-hero="about-collage"]');
-			const title = root?.querySelector("[data-about-title]");
-			const cards = gsap.utils.toArray("[data-about-card]", root);
+			const panel = root?.querySelector(".gallery-panel");
+			const collage = root?.querySelector("[data-gallery-stack]");
+			const title = root?.querySelector("[data-gallery-title]");
+			const cards = gsap.utils.toArray("[data-gallery-card]", root);
 
 			if (!root || !panel || !collage || !title || cards.length === 0) {
 				return undefined;
@@ -202,7 +202,7 @@ function useAboutScrollAnimation(rootRef, fisheyeRef) {
 				(context) => {
 					const { isDesktop, isMobile, reduceMotion } = context.conditions;
 					const fisheye = fisheyeRef.current;
-					const splitLayout = ABOUT_SPLIT_LAYOUTS[isDesktop ? "desktop" : "mobile"];
+					const splitLayout = GALLERY_SPLIT_LAYOUTS[isDesktop ? "desktop" : "mobile"];
 
 					if (isMobile) {
 						gsap.set(panel, { autoAlpha: 1 });
@@ -231,11 +231,11 @@ function useAboutScrollAnimation(rootRef, fisheyeRef) {
 
 							const reducedTrigger = ScrollTrigger.create({
 								end: "bottom bottom",
-								id: "about-mobile-static-scroll",
+								id: "gallery-mobile-static-scroll",
 								onUpdate: (self) => {
 									const galleryProgress = clamp(
 										self.progress /
-											ABOUT_MOBILE_GALLERY_MOTION.galleryScrollEnd,
+											MOBILE_GALLERY_MOTION.galleryScrollEnd,
 										0,
 										1,
 									);
@@ -289,7 +289,7 @@ function useAboutScrollAnimation(rootRef, fisheyeRef) {
 
 						const mobilePreEntryTrigger = ScrollTrigger.create({
 							end: "bottom top",
-							id: "about-mobile-gallery-pre-entry",
+							id: "gallery-mobile-pre-entry",
 							invalidateOnRefresh: true,
 							onRefresh: syncPreEntry,
 							onToggle: syncPreEntry,
@@ -299,7 +299,7 @@ function useAboutScrollAnimation(rootRef, fisheyeRef) {
 
 						mobileGalleryTrigger = ScrollTrigger.create({
 							end: "bottom bottom",
-							id: "about-mobile-gallery-fisheye",
+							id: "gallery-mobile-fisheye",
 							invalidateOnRefresh: true,
 							onRefresh: syncMobileGallery,
 							onUpdate: syncMobileGallery,
@@ -338,7 +338,7 @@ function useAboutScrollAnimation(rootRef, fisheyeRef) {
 					const unlockScroll = () => {
 						if (!scrollLocked) return;
 						scrollLocked = false;
-						window.dispatchEvent(new CustomEvent(ABOUT_ANIMATION_UNLOCK));
+						window.dispatchEvent(new CustomEvent(GALLERY_ANIMATION_UNLOCK));
 					};
 
 					const finishStack = () => {
@@ -372,7 +372,7 @@ function useAboutScrollAnimation(rootRef, fisheyeRef) {
 						scrollLocked = true;
 						fisheye?.setActive(false);
 						fisheye?.setOpacity(0);
-						window.dispatchEvent(new CustomEvent(ABOUT_ANIMATION_LOCK));
+						window.dispatchEvent(new CustomEvent(GALLERY_ANIMATION_LOCK));
 						titleTimeline.play(0);
 						cardAnimation.play();
 					};
@@ -423,7 +423,7 @@ function useAboutScrollAnimation(rootRef, fisheyeRef) {
 
 					galleryTrigger = ScrollTrigger.create({
 						end: "bottom bottom",
-						id: "about-stack-fisheye",
+						id: "gallery-stack-fisheye",
 						invalidateOnRefresh: true,
 						onEnter: playStackOnce,
 						onEnterBack: () => syncGallery(galleryTrigger),
@@ -457,4 +457,4 @@ function useAboutScrollAnimation(rootRef, fisheyeRef) {
 	);
 }
 
-export default useAboutScrollAnimation;
+export default useGalleryScrollAnimation;
