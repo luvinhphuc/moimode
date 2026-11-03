@@ -44,6 +44,7 @@ class SceneErrorBoundary extends Component {
 function HeroScene({
 	ariaLabel,
 	charmAnimationReady,
+	isRenderActive = true,
 	transitionControlRef,
 	onError,
 	onLoadProgress,
@@ -51,9 +52,11 @@ function HeroScene({
 }) {
 	return (
 		<div className="hero-canvas" role="img" aria-label={ariaLabel}>
+			<LoadingProgress onLoadProgress={onLoadProgress} />
 			<SceneErrorBoundary onError={onError}>
 				<Canvas
 					className="hero-canvas-output"
+					frameloop={isRenderActive ? "always" : "never"}
 					camera={{
 						fov: CAMERA.fov,
 						near: CAMERA.near,
@@ -72,11 +75,11 @@ function HeroScene({
 						gl.toneMappingExposure = 1;
 					}}
 				>
-					<LoadingProgress onLoadProgress={onLoadProgress} />
 					<HeroStudioLights />
 					<Suspense fallback={null}>
 						<CrocsModel
 							charmAnimationReady={charmAnimationReady}
+							enablePointerMotion={isRenderActive}
 							onReady={onReady}
 							pose={CROCS_POSE}
 							transitionControlRef={transitionControlRef}
@@ -91,4 +94,3 @@ function HeroScene({
 useGLTF.preload(MODEL_ASSETS.classicClog);
 
 export default HeroScene;
-

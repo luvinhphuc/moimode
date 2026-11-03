@@ -82,13 +82,20 @@ function HeroModelRig({
     }, [transitionControlRef]);
 
     useEffect(() => {
+        if (!enablePointerMotion) {
+            targetRef.current.x = 0;
+            targetRef.current.y = 0;
+            motionRef.current.x = 0;
+            motionRef.current.y = 0;
+            return undefined;
+        }
+
         const media = window.matchMedia('(prefers-reduced-motion: reduce)');
         const syncReducedMotion = () => {
             reducedMotionRef.current = media.matches;
         };
         const handlePointerMove = (event) => {
             if (
-                !enablePointerMotion ||
                 reducedMotionRef.current ||
                 event.pointerType === 'touch'
             )

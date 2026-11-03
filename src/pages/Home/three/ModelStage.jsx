@@ -7,6 +7,7 @@ function ModelStage({
 	isReady,
 	progress,
 	charmsReady,
+	isRenderActive,
 	stageLabel,
 	transitionControlRef,
 	onError,
@@ -19,6 +20,7 @@ function ModelStage({
 				<HeroScene
 					ariaLabel={ariaLabel}
 					charmAnimationReady={charmsReady}
+					isRenderActive={isRenderActive}
 					transitionControlRef={transitionControlRef}
 					onReady={onReady}
 					onLoadProgress={onLoadProgress}

@@ -1,10 +1,8 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import Header from "../../../components/layout/Header/Header.jsx";
 import HeroAnimation from "../animations/HeroAnimation.jsx";
 import { HERO_COPY } from "../config/heroContent.js";
 import ModelStage from "../three/ModelStage.jsx";
-import AboutCollage from "./AboutCollage.jsx";
 import Preloader from "./Preloader.jsx";
 
 function HeroSection() {
@@ -16,9 +14,20 @@ function HeroSection() {
 	const [isIntroDone, setIsIntroDone] = useState(false);
 	const [areHeroCharmsReady, setAreHeroCharmsReady] = useState(false);
 	const [isHeroReady, setIsHeroReady] = useState(false);
-	const [isTransitionStarted, setIsTransitionStarted] = useState(false);
-	const [isTransitionComplete, setIsTransitionComplete] = useState(false);
-	const [ctaStatus, setCtaStatus] = useState("");
+	const [isRenderActive, setIsRenderActive] = useState(true);
+
+	useEffect(() => {
+		const root = rootRef.current;
+		if (!root) return undefined;
+
+		const observer = new IntersectionObserver(
+			([entry]) => setIsRenderActive(entry.isIntersecting),
+			{ rootMargin: "100% 0px" },
+		);
+		observer.observe(root);
+
+		return () => observer.disconnect();
+	}, []);
 
 	const handleSceneReady = useCallback(() => {
 		setIsSceneReady(true);
@@ -43,45 +52,19 @@ function HeroSection() {
 		setIsHeroReady(true);
 	}, []);
 
-	const handleTransitionStart = useCallback(() => {
-		setIsTransitionStarted(true);
-	}, []);
-
-	const handleTransitionComplete = useCallback(() => {
-		setIsTransitionComplete(true);
-	}, []);
-
-	const handleTransitionReverse = useCallback(() => {
-		setIsTransitionComplete(false);
-	}, []);
-
-	const handleTransitionReverseComplete = useCallback(() => {
-		setIsTransitionStarted(false);
-	}, []);
-
-	const handleStartCustomizing = useCallback(() => {
-		setCtaStatus(HERO_COPY.buttonStatus);
-	}, []);
-
 	return (
-		<div
+		<section
 			ref={rootRef}
-			className={`hero-transition-track${
-				isTransitionStarted ? " is-transitioning" : ""
-			}${isTransitionComplete ? " is-transition-complete" : ""}`}
+			className="hero-transition-track"
+			aria-label="MOIMODE hero"
 		>
 			<Preloader isDone={isIntroDone} progress={loadProgress} />
-			<Header onAction={handleStartCustomizing} />
 
 			<div className="hero-sticky-viewport">
-				<section className="hero-shell" aria-label="MOIMODE hero">
+				<div className="hero-shell">
 					<div className="hero-backdrop" data-hero="backdrop" aria-hidden="true" />
 
-					<main
-						id="home"
-						className="hero-composition"
-						aria-hidden={isTransitionComplete || undefined}
-					>
+					<main id="home" className="hero-composition">
 						<h1 className="sr-only">{HERO_COPY.heading}</h1>
 
 						<div className="hero-stack">
@@ -102,6 +85,7 @@ function HeroSection() {
 								ariaLabel={HERO_COPY.modelAlt}
 								hasError={hasSceneError}
 								isReady={isSceneReady}
+								isRenderActive={isRenderActive}
 								progress={loadProgress}
 								charmsReady={areHeroCharmsReady}
 								stageLabel={HERO_COPY.modelLabel}
@@ -124,25 +108,8 @@ function HeroSection() {
 							</div>
 						</div>
 					</main>
-				</section>
-
-				<section
-					id="about"
-					className="about-panel"
-					data-hero="about-panel"
-					aria-labelledby="about-title"
-					aria-hidden={!isTransitionComplete}
-				>
-					<AboutCollage />
-					<h2 id="about-title" data-hero="about-title">
-						ABOUT US
-					</h2>
-				</section>
+				</div>
 			</div>
-
-			<p className="sr-only" role="status" aria-live="polite">
-				{ctaStatus}
-			</p>
 
 			<HeroAnimation
 				hasSceneError={hasSceneError}
@@ -152,14 +119,10 @@ function HeroSection() {
 				onHeroReady={handleHeroReady}
 				onIntroComplete={handleIntroComplete}
 				onModelSettled={handleModelSettled}
-				onTransitionComplete={handleTransitionComplete}
-				onTransitionReverse={handleTransitionReverse}
-				onTransitionReverseComplete={handleTransitionReverseComplete}
-				onTransitionStart={handleTransitionStart}
 				rootRef={rootRef}
 				transitionControlRef={transitionControlRef}
 			/>
-		</div>
+		</section>
 	);
 }
 
