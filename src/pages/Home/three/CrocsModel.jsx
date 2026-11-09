@@ -11,7 +11,6 @@ import HeroModelRig from "./HeroModelRig.jsx";
 
 function CrocsModel({
 	modelUrl = MODEL_ASSETS.classicClog,
-	charmAnimationReady = false,
 	onReady,
 	pose = CROCS_POSE,
 	enablePointerMotion = true,
@@ -59,7 +58,6 @@ function CrocsModel({
 			enablePointerMotion={enablePointerMotion}
 			model={model}
 			modelSize={modelSize}
-			charmAnimationReady={charmAnimationReady}
 			pose={pose}
 			radius={radius}
 			slots={slots}

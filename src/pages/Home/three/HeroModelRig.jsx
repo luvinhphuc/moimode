@@ -30,7 +30,6 @@ function fitCameraToModel({ camera, height, radius, width }) {
 
 function HeroModelRig({
     enablePointerMotion,
-    charmAnimationReady,
     model,
     modelSize,
     pose,
@@ -42,6 +41,7 @@ function HeroModelRig({
     const motionRef = useRef({ x: 0, y: 0 });
     const targetRef = useRef({ x: 0, y: 0 });
     const reducedMotionRef = useRef(false);
+    const spinAngleRef = useRef(0);
     const { camera, size } = useThree();
     const baseRotation = useMemo(
         () => pose.rotationDegrees.map(MathUtils.degToRad),
@@ -54,7 +54,9 @@ function HeroModelRig({
         rotationX: baseRotation[0],
         rotationY: baseRotation[1],
         rotationZ: baseRotation[2],
-        scale: 1,
+        poseActive: 0,
+        spinActive: 0,
+        scale: 0,
     });
 
     useEffect(() => {
@@ -154,13 +156,18 @@ function HeroModelRig({
         const [baseX, baseY, baseZ] = rotationRef.current;
         const transition = transitionStateRef.current;
         const pointerInfluence = transition.pointerInfluence;
-        const x = transition.active ? transition.rotationX : baseX;
-        const y = transition.active ? transition.rotationY : baseY;
-        const z = transition.active ? transition.rotationZ : baseZ;
+        const usesTransitionPose = transition.poseActive || transition.active;
+        const x = usesTransitionPose ? transition.rotationX : baseX;
+        const y = usesTransitionPose ? transition.rotationY : baseY;
+        const z = usesTransitionPose ? transition.rotationZ : baseZ;
+
+        if (transition.spinActive && !transition.active) {
+            spinAngleRef.current += (delta * Math.PI * 2) / 4;
+        }
 
         groupRef.current.rotation.set(
             x - motion.y * 0.08 * pointerInfluence,
-            y + motion.x * 0.12 * pointerInfluence,
+            y + motion.x * 0.12 * pointerInfluence + spinAngleRef.current,
             z - motion.x * 0.045 * pointerInfluence,
         );
         groupRef.current.position.y = -motion.y * 0.008 * pointerInfluence;
@@ -171,12 +178,11 @@ function HeroModelRig({
         <group ref={groupRef}>
             <primitive object={model} dispose={null} />
             <Suspense fallback={null}>
-                {slots.map((slot, index) => (
+                {slots.map((slot) => (
                     <PlacedCharm
                         key={slot.name}
                         charmId={slot.charmId}
-                        animationDelay={index * 0.1}
-                        startAnimation={charmAnimationReady}
+                        animateIn={false}
                         interactive={false}
                         modelSize={modelSize}
                         slot={slot}

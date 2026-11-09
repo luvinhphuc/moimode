@@ -16,6 +16,7 @@ import {
 } from "../utils/charmModel.js";
 
 function PlacedCharm({
+	animateIn = true,
 	animationDelay = 0,
 	charmId,
 	interactive,
@@ -112,6 +113,12 @@ function PlacedCharm({
 	useFrame((_, delta) => {
 		const group = groupRef.current;
 		if (!group) return;
+		if (!animateIn) {
+			group.position.copy(slot.position);
+			group.quaternion.copy(targetQuaternion);
+			group.scale.setScalar(targetScale);
+			return;
+		}
 
 		if (!startAnimation) {
 			group.position.copy(startPosition);
@@ -142,8 +149,8 @@ function PlacedCharm({
 	return (
 		<group
 			ref={groupRef}
-			position={startPosition}
-			scale={startAnimation ? 1 : 0}
+			position={animateIn ? startPosition : slot.position}
+			scale={animateIn ? (startAnimation ? 1 : 0) : targetScale}
 			onClick={(event) => {
 				if (!interactive || event.delta > 6) return;
 				event.stopPropagation();

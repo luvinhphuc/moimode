@@ -1,17 +1,23 @@
 import { useEffect, useRef } from "react";
 import { SplitText } from "gsap/SplitText";
 
-import { gsap, useGSAP } from "../../../utils/gsap.js";
+import { gsap, ScrollTrigger, useGSAP } from "../../../utils/gsap.js";
 import { CROCS_TRANSITION_POSE } from "../config/sceneConfig.js";
 
 gsap.registerPlugin(SplitText);
 
 const SELECTORS = Object.freeze({
 	backdrop: '[data-hero="backdrop"]',
+	bottomSlogan: '[data-hero="bottom-slogan"]',
+	crocsSlide: '[data-hero="crocs-slide"]',
 	introMark: '[data-hero="intro-mark"]',
 	introProgress: '[data-hero="intro-progress"]',
+	makeHinge: '[data-hero="make-hinge"]',
 	makeText: '[data-hero="make-text"]',
-	modelMotion: '[data-hero="model-motion"]',
+	quote: '[data-hero="quote"]',
+	quoteExit: '[data-hero="quote-exit"]',
+	sloganStack: '[data-hero="slogan-stack"]',
+	topSlogan: '[data-hero="top-slogan"]',
 	yoursText: '[data-hero="yours-text"]',
 });
 
@@ -26,30 +32,25 @@ function getIntroExitOffset() {
 	return -Math.min(window.innerHeight * 0.64, 640);
 }
 
-function getCenterOffset(element) {
-	const rect = element.getBoundingClientRect();
-	return {
-		x: window.innerWidth / 2 - (rect.left + rect.width / 2),
-		y: window.innerHeight / 2 - (rect.top + rect.height / 2),
-	};
-}
-
 function query(root, selector) {
 	return root?.querySelector(selector);
 }
 
 function HeroAnimation({
-	hasSceneError,
 	isHeroReady,
 	isIntroDone,
-	isSceneReady,
+	isIntroReady,
+	modelStatus,
 	onHeroReady,
 	onIntroComplete,
-	onModelSettled,
+	onModelVisibilityChange,
 	rootRef,
 	transitionControlRef,
 }) {
 	const introStartedRef = useRef(false);
+	const copyRevealedRef = useRef(false);
+	const rewindRef = useRef(0);
+	const syncHatchRef = useRef(null);
 
 	useGSAP(
 		() => {
@@ -80,14 +81,12 @@ function HeroAnimation({
 
 	useGSAP(
 		() => {
-			if (!isSceneReady || hasSceneError) return undefined;
+			if (!isIntroReady || isIntroDone) return undefined;
 
 			const root = rootRef.current;
 			const mark = query(root, SELECTORS.introMark);
 			const progress = query(root, SELECTORS.introProgress);
-			const modelMotion = query(root, SELECTORS.modelMotion);
-
-			if (!mark || !progress || !modelMotion) return undefined;
+			if (!mark || !progress) return undefined;
 
 			const media = gsap.matchMedia();
 			media.add(
@@ -97,18 +96,12 @@ function HeroAnimation({
 				},
 				(context) => {
 					if (context.conditions.reduceMotion) {
-						gsap.set(modelMotion, { y: 0 });
 						gsap.set([mark, progress], { autoAlpha: 0 });
 						onIntroComplete();
 						return undefined;
 					}
 
 					introStartedRef.current = true;
-					const motionRect = modelMotion.getBoundingClientRect();
-					gsap.set(modelMotion, {
-						y: -(window.innerHeight + motionRect.height),
-					});
-
 					const timeline = gsap.timeline({
 						defaults: { ease: "power3.inOut" },
 						onComplete: onIntroComplete,
@@ -137,7 +130,7 @@ function HeroAnimation({
 			return () => media.revert();
 		},
 		{
-			dependencies: [hasSceneError, isSceneReady, onIntroComplete],
+			dependencies: [isIntroReady, isIntroDone, onIntroComplete],
 			revertOnUpdate: true,
 			scope: rootRef,
 		},
@@ -148,88 +141,70 @@ function HeroAnimation({
 			if (!isIntroDone) return undefined;
 
 			const root = rootRef.current;
-			const modelMotion = query(root, SELECTORS.modelMotion);
+			const quote = query(root, SELECTORS.quote);
 			const words = [
 				query(root, SELECTORS.makeText),
 				query(root, SELECTORS.yoursText),
 			];
-
-			if (!modelMotion || words.some((item) => !item)) return undefined;
+			if (!quote || words.some((item) => !item)) return undefined;
 
 			const media = gsap.matchMedia();
 			media.add(
 				{
-					base: "(min-width: 0px)",
 					reduceMotion: "(prefers-reduced-motion: reduce)",
+					standardMotion: "(prefers-reduced-motion: no-preference)",
 				},
 				(context) => {
-					if (context.conditions.reduceMotion) {
-						gsap.set(modelMotion, { y: 0 });
-						gsap.set(words, {
-							autoAlpha: 1,
-							rotation: 0,
-							scale: 1,
-							x: 0,
-							y: 0,
-						});
-						onModelSettled?.();
-						onHeroReady?.();
+					const finishReveal = () => {
+						copyRevealedRef.current = true;
+						onHeroReady();
+					};
+					gsap.set(words, { autoAlpha: 1 });
+
+					if (context.conditions.reduceMotion || copyRevealedRef.current) {
+						gsap.set(quote, { autoAlpha: 1, y: 0 });
+						finishReveal();
 						return undefined;
 					}
 
-					const wordSplit = words.map((word) =>
+					const wordSplits = words.map((word) =>
 						SplitText.create(word, { aria: "none", type: "words" }),
 					);
-					const splitWords = wordSplit.flatMap((split) => split.words);
-					const modelRect = modelMotion.getBoundingClientRect();
-
-					gsap.set(modelMotion, {
-						y: -(window.innerHeight + modelRect.height),
-					});
-					gsap.set(words, { autoAlpha: 1 });
-					gsap.set(splitWords, {
-						autoAlpha: 0,
-						scale: 0.96,
-						y: 18,
-					});
-
+					const [makeWords, yoursWords] = wordSplits.map(
+						(split) => split.words,
+					);
 					const timeline = gsap.timeline({
-						defaults: { ease: "back.out(1.45)" },
+						defaults: { ease: "back.out(1.5)" },
 					});
 
+					gsap.set([...makeWords, ...yoursWords], {
+						autoAlpha: 0,
+						scale: 0.72,
+						y: 24,
+					});
+					gsap.set(quote, { autoAlpha: 0, y: 8 });
+
+					const reveal = {
+						autoAlpha: 1,
+						duration: 0.45,
+						scale: 1,
+						stagger: 0.06,
+						y: 0,
+					};
 					timeline
-						.to(
-							modelMotion,
-							{ duration: 1.35, ease: "power3.out", y: 0 },
-							">+0.1",
-						)
-						.addLabel("model-landed")
-						.call(onModelSettled, [], "model-landed")
-						.addLabel("copy-enter", "model-landed+=0.95")
-						.to(
-							splitWords,
-							{
-								autoAlpha: 1,
-								duration: 0.68,
-								scale: 1,
-								stagger: 0.08,
-								y: 0,
-							},
-							"copy-enter",
-						)
-						.call(onHeroReady);
+						.to(makeWords, reveal)
+						.to(yoursWords, reveal)
+						.call(finishReveal)
+						.to(quote, {
+							autoAlpha: 1,
+							y: 0,
+							duration: 0.32,
+							ease: "power2.out",
+						});
 
 					return () => {
 						timeline.kill();
-						wordSplit.forEach((split) => split.revert());
-						gsap.set(modelMotion, { y: 0 });
-						gsap.set(words, {
-							autoAlpha: 0,
-							rotation: 0,
-							scale: 1,
-							x: 0,
-							y: 0,
-						});
+						wordSplits.forEach((split) => split.revert());
 					};
 				},
 			);
@@ -237,7 +212,7 @@ function HeroAnimation({
 			return () => media.revert();
 		},
 		{
-			dependencies: [isIntroDone, onHeroReady, onModelSettled],
+			dependencies: [isIntroDone, onHeroReady],
 			revertOnUpdate: true,
 			scope: rootRef,
 		},
@@ -249,110 +224,177 @@ function HeroAnimation({
 
 			const root = rootRef.current;
 			const backdrop = query(root, SELECTORS.backdrop);
-			const makeText = query(root, SELECTORS.makeText);
-			const modelMotion = query(root, SELECTORS.modelMotion);
-			const yoursText = query(root, SELECTORS.yoursText);
-			const transitionState = transitionControlRef.current;
+			const stack = query(root, SELECTORS.sloganStack);
+			const topSlogan = query(root, SELECTORS.topSlogan);
+			const bottomSlogan = query(root, SELECTORS.bottomSlogan);
+			const quoteExit = query(root, SELECTORS.quoteExit);
+			const about = root?.parentElement?.querySelector("#about");
 
 			if (
 				!root ||
 				!backdrop ||
-				!makeText ||
-				!modelMotion ||
-				!yoursText
+				!stack ||
+				!topSlogan ||
+				!bottomSlogan ||
+				!quoteExit ||
+				!about
 			) {
 				return undefined;
 			}
 
+			const media = gsap.matchMedia();
+			media.add("(prefers-reduced-motion: no-preference)", () => {
+				const rewind = { progress: 0 };
+				const syncRewind = () => {
+					rewindRef.current = rewind.progress;
+					syncHatchRef.current?.();
+				};
+
+				const exit = gsap.timeline({ defaults: { ease: "power2.inOut" } });
+				exit
+					.to(rewind, { progress: 1, duration: 0.6, ease: "none" }, 0)
+					.to(quoteExit, { autoAlpha: 0, y: 8, duration: 0.22 }, 0)
+					.to(
+						stack,
+						{
+							scale: 1.07,
+							transformOrigin: () =>
+								`50% ${(topSlogan.offsetTop + bottomSlogan.offsetTop) / 2}px`,
+							duration: 0.13,
+						},
+						0.6,
+					)
+					.to(stack, { autoAlpha: 0, scale: 0.72, duration: 0.27 });
+				exit.eventCallback("onUpdate", syncRewind);
+
+				ScrollTrigger.create({
+					animation: exit,
+					id: "home-hero-exit",
+					trigger: root,
+					start: "top top",
+					end: () => {
+						// About covers the sticky hero from the bottom as it scrolls up.
+						const sloganBottom = stack.offsetTop + Math.max(
+							topSlogan.offsetTop + topSlogan.offsetHeight / 2,
+							bottomSlogan.offsetTop + bottomSlogan.offsetHeight / 2,
+						);
+						const aboutStart = about.offsetTop - root.offsetTop;
+						return `+=${Math.max(1, aboutStart - sloganBottom - 16)}`;
+					},
+					invalidateOnRefresh: true,
+					refreshPriority: -10,
+					scrub: true,
+				});
+				syncRewind();
+
+				gsap.timeline({
+					scrollTrigger: {
+						trigger: root,
+						start: "top top",
+						end: "bottom bottom",
+						scrub: 0.8,
+					},
+				}).to(backdrop, { autoAlpha: 0, duration: 0.4, ease: "power2.in" }, 0.6);
+
+				return () => {
+					rewindRef.current = 0;
+				};
+			});
+
+			return () => media.revert();
+		},
+		{
+			dependencies: [isHeroReady],
+			revertOnUpdate: true,
+			scope: rootRef,
+		},
+	);
+
+	useGSAP(
+		() => {
+			if (!isHeroReady || modelStatus !== "ready") return undefined;
+
+			const root = rootRef.current;
+			const hinge = query(root, SELECTORS.makeHinge);
+			const slide = query(root, SELECTORS.crocsSlide);
+			const model = transitionControlRef.current;
+			if (!hinge || !slide || !model) return undefined;
+
+			const [rotationX, rotationY, rotationZ] =
+				CROCS_TRANSITION_POSE.rotationDegrees.map(
+					(value) => (value * Math.PI) / 180,
+				);
 			const media = gsap.matchMedia();
 			media.add(
 				{
 					reduceMotion: "(prefers-reduced-motion: reduce)",
 					standardMotion: "(prefers-reduced-motion: no-preference)",
 				},
-				(context) => {
-					if (
-						context.conditions.reduceMotion ||
-						hasSceneError ||
-						!transitionState
-					) {
+				({ conditions }) => {
+					gsap.set(model, {
+						pointerInfluence: 0,
+						poseActive: 1,
+						rotationX,
+						rotationY,
+						rotationZ,
+						scale: 1.45,
+						spinActive: 0,
+					});
+
+					if (conditions.reduceMotion) {
+						gsap.set(slide, { autoAlpha: 1, xPercent: 100 });
+						onModelVisibilityChange(true);
 						return undefined;
 					}
 
-					const [targetX, targetY, targetZ] =
-						CROCS_TRANSITION_POSE.rotationDegrees.map(
-							(value) => (value * Math.PI) / 180,
-						);
-
-					const timeline = gsap.timeline({
+					const hatch = gsap.timeline({
+						paused: true,
 						defaults: { ease: "power2.inOut" },
-						scrollTrigger: {
-							end: "bottom bottom",
-							id: "home-hero-exit",
-							invalidateOnRefresh: true,
-							refreshPriority: -10,
-							scrub: 0.8,
-							start: "top top",
-							trigger: root,
-						},
 					});
+					hatch
+						.to(hinge, { rotation: -15, duration: 0.55 })
+						.addLabel("slide")
+						.set(slide, { autoAlpha: 1 }, "slide")
+						.to(slide, { xPercent: 100, duration: 0.8 }, "slide");
 
-					timeline
-						.addLabel("absorb-copy", 0)
-						.to(
-							[makeText, yoursText],
-							{
-								autoAlpha: 0,
-								duration: 0.35,
-								ease: "back.in(1.35)",
-								scale: 0.04,
-								transformOrigin: "50% 50%",
-								x: (_, element) => getCenterOffset(element).x,
-								y: (_, element) => getCenterOffset(element).y,
-							},
-							"absorb-copy",
-						)
-						.set(transitionState, { active: 1 }, 0.18)
-						.to(
-							transitionState,
-							{ duration: 0.22, pointerInfluence: 0 },
-							0.18,
-						)
-						.to(
-							transitionState,
-							{
-								duration: 0.45,
-								rotationX: targetX,
-								rotationY: targetY,
-								rotationZ: targetZ,
-							},
-							0.28,
-						)
-						.addLabel("hero-exit", 0.58)
-						.to(
-							modelMotion,
-							{
-								autoAlpha: 0,
-								duration: 0.34,
-								ease: "power2.in",
-								yPercent: -12,
-							},
-							"hero-exit",
-						)
-						.to(
-							backdrop,
-							{ autoAlpha: 0, duration: 0.26, ease: "power2.in" },
-							0.62,
-						);
+					const entry = { progress: 0 };
+					const opening = gsap.timeline({ paused: true }).to(
+						entry,
+						{ progress: 1, duration: hatch.duration(), ease: "none" },
+						0.25,
+					);
+					let isModelVisible;
 
-					return () => timeline.kill();
+					const syncHatch = () => {
+						const rewind = rewindRef.current;
+						// Freeze the intro playhead while scroll drives the same pose backward.
+						opening.paused(rewind > 0);
+						const pose = entry.progress * (1 - rewind);
+						hatch.progress(pose, true);
+						model.spinActive = Number(pose === 1);
+
+						const isVisible = hatch.time() >= hatch.labels.slide;
+						if (isVisible !== isModelVisible) {
+							isModelVisible = isVisible;
+							onModelVisibilityChange(isVisible);
+						}
+					};
+
+					opening.eventCallback("onUpdate", syncHatch);
+					syncHatchRef.current = syncHatch;
+					syncHatch();
+
+					return () => {
+						syncHatchRef.current = null;
+						model.spinActive = 0;
+					};
 				},
 			);
 
 			return () => media.revert();
 		},
 		{
-			dependencies: [hasSceneError, isHeroReady],
+			dependencies: [isHeroReady, modelStatus, onModelVisibilityChange],
 			revertOnUpdate: true,
 			scope: rootRef,
 		},

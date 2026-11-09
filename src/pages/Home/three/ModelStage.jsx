@@ -6,7 +6,6 @@ function ModelStage({
 	hasError,
 	isReady,
 	progress,
-	charmsReady,
 	isRenderActive,
 	stageLabel,
 	transitionControlRef,
@@ -19,7 +18,6 @@ function ModelStage({
 			<div className="hero-model-motion" data-hero="model-motion">
 				<HeroScene
 					ariaLabel={ariaLabel}
-					charmAnimationReady={charmsReady}
 					isRenderActive={isRenderActive}
 					transitionControlRef={transitionControlRef}
 					onReady={onReady}

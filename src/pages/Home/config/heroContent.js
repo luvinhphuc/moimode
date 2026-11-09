@@ -5,6 +5,7 @@ export const HERO_COPY = Object.freeze({
 	heading: "Make it yours.",
 	make: "MAKE IT",
 	yours: "YOURS!",
+	quote: "Small charms. Big personality.",
 	modelLabel: "Classic Clog preview",
 	modelAlt: "Three-dimensional Classic Clog product preview",
 	loadingLabel: "LOADING MODEL",

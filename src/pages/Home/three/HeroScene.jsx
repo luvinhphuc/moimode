@@ -43,8 +43,8 @@ class SceneErrorBoundary extends Component {
 
 function HeroScene({
 	ariaLabel,
-	charmAnimationReady,
 	isRenderActive = true,
+	enablePointerMotion = isRenderActive,
 	transitionControlRef,
 	onError,
 	onLoadProgress,
@@ -78,8 +78,7 @@ function HeroScene({
 					<HeroStudioLights />
 					<Suspense fallback={null}>
 						<CrocsModel
-							charmAnimationReady={charmAnimationReady}
-							enablePointerMotion={isRenderActive}
+							enablePointerMotion={enablePointerMotion}
 							onReady={onReady}
 							pose={CROCS_POSE}
 							transitionControlRef={transitionControlRef}
