@@ -1,0 +1,7 @@
+@font-face {
+	font-family: "Karl ST Black VN";
+	src: url("/src/assets/fonts/karlst-black-VN.ttf") format("truetype");
+	font-style: normal;
+	font-weight: 900;
+	font-display: swap;
+}

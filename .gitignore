@@ -7,7 +7,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-docs
+docs/*
+!docs/project-structure.md
 node_modules
 dist
 dist-ssr

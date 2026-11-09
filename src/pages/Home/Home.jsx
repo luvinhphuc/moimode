@@ -1,11 +1,28 @@
-import HeroSection from "../../features/hero/components/HeroSection.jsx";
-import SmoothScroll from "../../features/hero/components/SmoothScroll.jsx";
+import { useCallback, useState } from "react";
+
+import Header from "../../components/layout/Header/Header.jsx";
+import { HERO_COPY } from "./config/heroContent.js";
+import AboutSection from "./components/AboutSection.jsx";
+import HeroSection from "./components/HeroSection.jsx";
+import SmoothScroll from "./components/SmoothScroll.jsx";
 import "./Home.css";
 
 function Home() {
+	const [ctaStatus, setCtaStatus] = useState("");
+	const handleStartCustomizing = useCallback(() => {
+		setCtaStatus(HERO_COPY.buttonStatus);
+	}, []);
+
 	return (
 		<SmoothScroll>
-			<HeroSection />
+			<div className="home-shell">
+				<Header onAction={handleStartCustomizing} />
+				<HeroSection />
+				<AboutSection />
+				<p className="sr-only" role="status" aria-live="polite">
+					{ctaStatus}
+				</p>
+			</div>
 		</SmoothScroll>
 	);
 }

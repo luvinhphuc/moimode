@@ -1,52 +1,42 @@
+@reference "../../styles/globals.css";
+
 @layer components {
 	.customizer-shell {
+		@apply relative isolate min-h-svh overflow-x-clip bg-moi-bg font-body text-moi-ink;
 		--paper: var(--color-moi-bg);
 		--paper-light: var(--color-moi-surface);
 		--paper-shadow: var(--color-moi-shadow);
 		--ink: var(--color-moi-ink);
 		--muted: var(--color-moi-muted);
-		--pink: var(--color-moi-accent);
-		--pink-soft: var(--color-moi-powder);
-		--blue: var(--color-moi-sky);
-		--blue-soft: var(--color-moi-surface);
+		--pink: var(--color-moi-plum);
+		--pink-soft: var(--color-moi-coral);
+		--blue: var(--color-moi-turquoise);
+		--blue-soft: var(--color-moi-sky);
 		--line: var(--color-moi-line);
-		position: relative;
-		isolation: isolate;
-		min-height: 100svh;
 		padding-top: 4.75rem;
-		overflow: hidden;
-		color: var(--ink);
-		background: var(--paper);
-		font-family: var(--font-body);
+		overflow-y: visible;
 	}
 
 	.customizer-main {
-		position: relative;
+		@apply relative mx-auto flex flex-col;
 		z-index: 2;
-		display: flex;
-		flex-direction: column;
 		width: min(100% - 2.5rem, 90rem);
 		min-height: calc(100svh - 4.75rem);
-		margin: 0 auto;
 		padding: clamp(1rem, 2.2vw, 2rem) 0 1.5rem;
 	}
 
 	.customizer-heading {
-		position: relative;
+		@apply relative;
 		z-index: 3;
 		width: min(100%, 48rem);
 		margin-bottom: 1.4rem;
 	}
 
 	.customizer-heading > p {
-		position: relative;
-		display: inline-block;
+		@apply relative inline-block font-display font-bold uppercase;
 		margin: 0 0 0.2rem;
-		font-family: var(--font-display);
 		font-size: clamp(1rem, 1.5vw, 1.3rem);
-		font-weight: 700;
 		letter-spacing: 0.03em;
-		text-transform: uppercase;
 		transform: rotate(-3deg);
 	}
 
@@ -66,17 +56,14 @@
 	}
 
 	.customizer-heading h1 {
-		margin: 0;
-		font-family: var(--font-display);
+		@apply m-0 font-display font-bold uppercase;
 		font-size: clamp(2.35rem, 5.1vw, 4.6rem);
-		font-weight: 700;
 		line-height: 0.92;
 		letter-spacing: -0.065em;
-		text-transform: uppercase;
 	}
 
 	.customizer-heading > span {
-		display: block;
+		@apply block;
 		margin-top: 0.5rem;
 		color: var(--muted);
 		font-size: clamp(0.82rem, 1.2vw, 1rem);
@@ -131,27 +118,18 @@
 
 	.customizer-footer,
 	.preview-footer {
-		display: grid;
+		@apply grid items-center gap-4 pt-5;
 		grid-template-columns: 1fr auto 1fr;
-		align-items: center;
-		gap: 1rem;
 		margin-top: auto;
-		padding-top: 1.25rem;
 	}
 
 	.paper-button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.75rem;
+		@apply inline-flex items-center justify-center gap-3 rounded-full font-extrabold uppercase;
 		min-height: 2.8rem;
 		padding: 0.7rem 1.35rem;
 		border: 1.5px solid var(--ink);
-		border-radius: 999px;
 		font-size: 0.64rem;
-		font-weight: 800;
 		letter-spacing: 0.2em;
-		text-transform: uppercase;
 		transition:
 			transform 180ms ease,
 			box-shadow 180ms ease,
@@ -159,7 +137,7 @@
 	}
 
 	.paper-button:hover {
-		transform: translateY(-2px);
+		@apply -translate-y-0.5;
 	}
 
 	.paper-button:focus-visible,
@@ -173,7 +151,7 @@
 	.paper-button--back {
 		justify-self: start;
 		color: var(--ink);
-		background: rgba(255, 255, 255, 0.3);
+		background: color-mix(in srgb, var(--color-moi-bg) 30%, transparent);
 	}
 
 	.paper-button--primary {
@@ -185,9 +163,7 @@
 	}
 
 	.customizer-progress {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
+		@apply flex items-center gap-4;
 	}
 
 	.customizer-progress span {
@@ -250,22 +226,19 @@
 	}
 
 	.style-grid {
-		display: grid;
-		place-items: center;
-		flex: 1;
+		@apply grid flex-1 place-items-center;
 		min-height: 20rem;
 	}
 
 	.style-card {
-		position: relative;
-		display: grid;
+		@apply relative grid;
 		grid-template-rows: minmax(15rem, 1fr) auto;
 		width: min(100%, 42rem);
 		min-height: 24rem;
 		padding: 1rem;
 		border: 2px solid var(--ink);
 		border-radius: 1.25rem;
-		background: rgba(255, 255, 255, 0.42);
+		background: color-mix(in srgb, var(--color-moi-bg) 64%, transparent);
 		box-shadow: 0 1.2rem 3rem var(--paper-shadow);
 	}
 
@@ -321,19 +294,14 @@
 	}
 
 	.colour-layout {
-		display: grid;
+		@apply grid flex-1 items-stretch;
 		grid-template-columns: minmax(20rem, 0.85fr) minmax(30rem, 1.35fr);
 		gap: clamp(1.5rem, 4vw, 4.5rem);
-		align-items: stretch;
-		flex: 1;
 		min-height: 25rem;
 	}
 
 	.colour-palette {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		gap: 1.5rem;
+		@apply flex flex-col justify-center gap-6;
 	}
 
 	.colour-group + .colour-group {
@@ -350,20 +318,15 @@
 	}
 
 	.colour-swatches {
-		display: grid;
+		@apply grid;
 		grid-template-columns: repeat(5, minmax(3.5rem, 1fr));
 		gap: 0.9rem 0.65rem;
 	}
 
 	.colour-swatches button {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.38rem;
+		@apply flex flex-col items-center gap-1 border-0 bg-transparent;
 		padding: 0;
-		border: 0;
 		color: var(--ink);
-		background: transparent;
 	}
 
 	.colour-swatches button > span {
@@ -372,7 +335,8 @@
 		aspect-ratio: 1;
 		border: 1px solid var(--line);
 		border-radius: 50%;
-		box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.55);
+		box-shadow: inset 0 0 0 2px
+			color-mix(in srgb, var(--color-moi-bg) 55%, transparent);
 		transition: transform 180ms ease;
 	}
 
@@ -400,16 +364,16 @@
 	.customisation-recap,
 	.design-summary,
 	.charm-catalog {
-		border: 1px solid rgba(255, 255, 255, 0.86);
+		border: 1px solid
+			color-mix(in srgb, var(--color-moi-bg) 86%, transparent);
 		border-radius: 1.2rem;
-		background: rgba(255, 255, 255, 0.5);
+		background: color-mix(in srgb, var(--color-moi-bg) 50%, transparent);
 		box-shadow: 0 1rem 2.4rem var(--paper-shadow);
 		backdrop-filter: blur(12px);
 	}
 
 	.product-paper {
-		position: relative;
-		display: grid;
+		@apply relative grid;
 		grid-template-rows: auto 1fr auto;
 		min-height: 25rem;
 		padding: 0.9rem 1rem 1rem;
@@ -420,10 +384,7 @@
 	}
 
 	.view-controls {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.45rem;
+		@apply flex items-center justify-center gap-2;
 	}
 
 	.view-controls button,
@@ -433,7 +394,7 @@
 		border: 1px solid var(--line);
 		border-radius: 999px;
 		color: var(--ink);
-		background: rgba(255, 255, 255, 0.54);
+		background: color-mix(in srgb, var(--color-moi-bg) 54%, transparent);
 		font-size: 0.5rem;
 		font-weight: 800;
 		text-transform: uppercase;
@@ -472,14 +433,11 @@
 	}
 
 	.charms-layout {
-		display: grid;
+		@apply grid flex-1 items-stretch gap-4;
 		grid-template-columns: minmax(11rem, 0.58fr) minmax(27rem, 1.6fr) minmax(
 				18rem,
 				0.88fr
 			);
-		gap: 1rem;
-		align-items: stretch;
-		flex: 1;
 		min-height: 29rem;
 	}
 
@@ -525,18 +483,14 @@
 	}
 
 	.charms-stage {
-		position: relative;
-		display: grid;
+		@apply relative grid;
 		grid-template-rows: auto 1fr auto auto;
 		min-height: 29rem;
 		padding: 0.75rem;
 	}
 
 	.charms-stage__topbar {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.75rem;
+		@apply flex items-center justify-between gap-3;
 		padding: 0.2rem 0.35rem;
 		font-size: 0.65rem;
 		font-weight: 800;
@@ -618,31 +572,69 @@
 		font-size: 1rem;
 	}
 
-	.slot-editor > div {
+	.slot-editor__rotation {
+		margin-top: 0.7rem;
+	}
+
+	.slot-editor__rotation label {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 0.35rem;
+		color: var(--muted);
+		font-size: 0.58rem;
+		font-weight: 800;
+		text-transform: uppercase;
+	}
+
+	.slot-editor__rotation output {
+		color: var(--ink);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.slot-editor__rotation input {
+		display: block;
+		width: 100%;
+		margin: 0;
+		accent-color: var(--pink);
+		cursor: pointer;
+	}
+
+	.slot-editor__actions {
 		display: flex;
 		gap: 0.5rem;
 		margin-top: 0.7rem;
 	}
 
-	.slot-editor > div button {
+	.slot-editor__actions button {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+		min-width: 0;
+		flex: 1 1 0;
 		gap: 0.35rem;
 		padding: 0.5rem 0.65rem;
 		border: 1px solid var(--line);
 		border-radius: 0.55rem;
-		background: white;
+		background: var(--color-moi-bg);
 		font-size: 0.58rem;
 		font-weight: 800;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
-	.slot-editor > div button.is-danger {
+	.slot-editor__actions button:not(.is-danger) {
+		color: var(--pink);
+		background: var(--pink-soft);
+	}
+
+	.slot-editor__actions button.is-danger {
 		color: var(--color-moi-danger);
 		background: var(--color-moi-danger-soft);
 	}
 
-	.slot-editor > div button:disabled {
+	.slot-editor__actions button:disabled {
 		display: none;
 	}
 
@@ -653,23 +645,9 @@
 	}
 
 	.charm-catalog__content {
-		position: relative;
-		z-index: 3;
-		display: flex;
-		flex-direction: column;
-		height: 100%;
+		@apply relative z-[3] flex min-h-full flex-col;
+		height: auto;
 		padding: 0.85rem;
-	}
-
-	.charm-catalog__canvas {
-		position: absolute !important;
-		top: 0;
-		left: 0;
-		z-index: 0;
-		display: block;
-		width: 100% !important;
-		height: var(--charm-catalog-height, 100%) !important;
-		pointer-events: none !important;
 	}
 
 	.charm-catalog__heading p,
@@ -698,7 +676,7 @@
 		padding: 0.55rem 0.65rem;
 		border: 1px solid var(--line);
 		border-radius: 0.65rem;
-		background: rgba(255, 255, 255, 0.48);
+		background: color-mix(in srgb, var(--color-moi-bg) 48%, transparent);
 	}
 
 	.charm-search input {
@@ -714,10 +692,8 @@
 	}
 
 	.charm-filters {
-		display: flex;
-		gap: 0.35rem;
+		@apply flex gap-1.5 overflow-x-auto;
 		margin: 0.6rem -0.1rem;
-		overflow-x: auto;
 		scrollbar-width: none;
 	}
 
@@ -757,16 +733,13 @@
 	}
 
 	.charm-card {
-		position: relative;
-		z-index: 1;
-		width: 100%;
+		@apply relative z-[1] w-full overflow-hidden;
 		min-width: 0;
 		aspect-ratio: 1;
 		padding: 0;
 		border: 1px solid var(--line);
 		border-radius: 0.58rem;
 		background: color-mix(in srgb, var(--paper-light) 20%, transparent);
-		overflow: hidden;
 		transition:
 			transform 150ms ease,
 			border-color 150ms ease,
@@ -783,11 +756,16 @@
 		background: color-mix(in srgb, var(--pink-soft) 42%, transparent);
 	}
 
-	.charm-card__view {
+	.charm-card__image {
 		position: absolute;
 		inset: 0.16rem;
 		z-index: 1;
+		display: block;
+		width: calc(100% - 0.32rem);
+		height: calc(100% - 0.32rem);
+		object-fit: contain;
 		pointer-events: none;
+		user-select: none;
 	}
 
 	.charm-card__selected {
@@ -809,7 +787,6 @@
 		opacity: 1;
 	}
 
-
 	.charm-empty {
 		margin: 2rem 0;
 		color: var(--muted);
@@ -822,19 +799,14 @@
 	}
 
 	.preview-layout {
-		display: grid;
+		@apply grid flex-1 items-stretch gap-4;
 		grid-template-columns: 7.5rem minmax(30rem, 1.65fr) minmax(18rem, 0.75fr);
-		gap: 1rem;
-		align-items: stretch;
-		flex: 1;
 		min-height: 28rem;
 	}
 
 	.step-rail {
+		@apply m-0 list-none p-0;
 		align-self: center;
-		margin: 0;
-		padding: 0;
-		list-style: none;
 	}
 
 	.step-rail li {
@@ -853,14 +825,9 @@
 	}
 
 	.step-rail button {
-		display: grid;
+		@apply grid items-center gap-2 border-0 bg-transparent p-0 text-left;
 		grid-template-columns: 1.6rem 1fr;
-		align-items: center;
-		gap: 0.45rem;
-		padding: 0;
-		border: 0;
 		color: var(--ink);
-		background: transparent;
 		font-size: 0.57rem;
 		font-weight: 800;
 		line-height: 1.1;
@@ -884,22 +851,18 @@
 	}
 
 	.preview-stage {
-		display: grid;
+		@apply grid;
 		grid-template-rows: auto 1fr auto;
 		min-height: 28rem;
 		padding: 0.8rem;
 	}
 
 	.preview-stage__toolbar {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 1rem;
+		@apply flex items-center justify-between gap-4;
 	}
 
 	.preview-stage__toolbar > div {
-		display: flex;
-		gap: 0.4rem;
+		@apply flex gap-1.5;
 	}
 
 	.preview-stage__toolbar > div > button {
@@ -913,37 +876,13 @@
 		min-height: 20rem;
 	}
 
-	.preview-angle-strip {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 0.65rem;
-	}
-
-	.preview-angle-strip span {
-		display: grid;
-		place-items: center;
-		min-height: 3.1rem;
-		border-radius: 0.65rem;
-		background: var(--pink-soft);
-		font-size: 0.55rem;
-		font-weight: 800;
-		text-transform: uppercase;
-	}
-
-	.preview-angle-strip span.is-active {
-		border: 2px solid var(--ink);
-		background: var(--paper-light);
-	}
-
 	.customisation-recap {
 		align-self: center;
 		padding: 1rem;
 	}
 
 	.customisation-recap__title {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
+		@apply flex items-center justify-between;
 		padding-bottom: 0.8rem;
 		border-bottom: 1px solid var(--line);
 	}
@@ -1017,9 +956,7 @@
 	}
 
 	.recap-charms {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.35rem;
+		@apply flex flex-wrap gap-1.5;
 		margin-top: 0.7rem;
 	}
 
@@ -1045,15 +982,11 @@
 	}
 
 	.share-skeleton {
-		position: relative;
-		z-index: 2;
-		display: grid;
+		@apply relative z-[2] mx-auto grid gap-4;
 		grid-template-columns: minmax(24rem, 1.25fr) minmax(22rem, 0.75fr);
 		grid-template-rows: 1fr auto;
-		gap: 1rem;
 		width: min(100% - 2.5rem, 78rem);
 		min-height: calc(100svh - 4.75rem);
-		margin: 0 auto;
 		padding: 1rem 0 1.5rem;
 	}
 
@@ -1105,7 +1038,7 @@
 		min-height: 29rem;
 		padding: 1.5rem;
 		border-radius: 1.4rem;
-		background: rgba(255, 255, 255, 0.55);
+		background: color-mix(in srgb, var(--color-moi-bg) 55%, transparent);
 		box-shadow: 0 1rem 3rem var(--paper-shadow);
 	}
 
@@ -1142,17 +1075,13 @@
 	}
 
 	.share-skeleton__platforms {
-		display: grid;
+		@apply grid gap-4;
 		grid-template-columns: repeat(4, 1fr);
-		gap: 1rem;
 		margin: 2rem 0;
 	}
 
 	.share-skeleton__platforms > span {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.6rem;
+		@apply flex flex-col items-center gap-2.5;
 	}
 
 	.skeleton-block.is-circle {
@@ -1168,9 +1097,8 @@
 	}
 
 	.share-skeleton__socials {
-		display: grid;
+		@apply grid gap-3;
 		grid-template-columns: 1fr 1fr;
-		gap: 0.7rem;
 	}
 
 	.skeleton-block.is-social {
@@ -1182,7 +1110,7 @@
 		grid-column: 1;
 		padding: 1rem;
 		border-radius: 1rem;
-		background: rgba(255, 255, 255, 0.55);
+		background: color-mix(in srgb, var(--color-moi-bg) 55%, transparent);
 		box-shadow: 0 0.8rem 2rem var(--paper-shadow);
 	}
 
@@ -1194,9 +1122,8 @@
 	}
 
 	.share-skeleton__recap > div {
-		display: grid;
+		@apply grid gap-3;
 		grid-template-columns: repeat(3, 1fr);
-		gap: 0.7rem;
 	}
 
 	.share-skeleton__recap .skeleton-block {
@@ -1283,7 +1210,9 @@
 	}
 
 	.customizer-heading h1 {
-		font-size: clamp(2.25rem, 12.5vw, 3.7rem);
+		font-size: clamp(1.85rem, 8.5vw, 3rem);
+		line-height: 0.98;
+		letter-spacing: -0.055em;
 	}
 
 	.customizer-heading > span {
@@ -1331,13 +1260,65 @@
 		min-width: 0;
 	}
 
+	/* Compact, mobile-first sizing inspired by the Home hero. */
+	.customizer-heading {
+		margin-bottom: 0.85rem;
+	}
+
+	.customizer-heading > p {
+		font-size: clamp(0.75rem, 2.8vw, 0.95rem);
+	}
+
+	.customizer-heading > span {
+		font-size: clamp(0.75rem, 3.2vw, 0.9rem);
+		line-height: 1.45;
+	}
+
 	.style-grid {
-		min-height: 25rem;
+		min-height: 0;
+		flex: initial;
 	}
 
 	.style-card {
-		min-height: 25rem;
-		grid-template-rows: minmax(18rem, 1fr) auto;
+		width: min(100%, 29rem);
+		min-height: 0;
+		grid-template-rows: clamp(12rem, 56vw, 17rem) auto;
+		padding: clamp(0.65rem, 2.7vw, 0.9rem);
+		border-radius: 1rem;
+	}
+
+	.style-card__scene {
+		min-height: 0;
+		height: 100%;
+	}
+
+	.style-card__copy h2 {
+		font-size: clamp(1.1rem, 4.7vw, 1.4rem);
+	}
+
+	.style-card__copy p {
+		font-size: clamp(0.72rem, 3.2vw, 0.82rem);
+	}
+
+	.style-card__tag {
+		right: 0.75rem;
+		top: 0.75rem;
+		font-size: 0.53rem;
+		padding: 0.3rem 0.55rem;
+	}
+
+	.style-card__radio {
+		left: 0.75rem;
+		top: 0.75rem;
+	}
+
+	.customizer-footer {
+		gap: 0.55rem;
+	}
+
+	.paper-button {
+		gap: 0.35rem;
+		letter-spacing: 0.09em;
 	}
 
 	.colour-layout {
@@ -1399,6 +1380,37 @@
 
 	.charms-stage__scene {
 		min-height: 19rem;
+	}
+
+	.slot-editor {
+		position: relative;
+		right: auto;
+		bottom: auto;
+		width: 100%;
+		margin-top: 0.5rem;
+		padding: 0.7rem;
+		box-shadow: none;
+	}
+
+	.slot-editor__close {
+		top: 0.45rem;
+		right: 0.45rem;
+	}
+
+	.slot-editor p {
+		font-size: 0.55rem;
+	}
+
+	.slot-editor strong {
+		font-size: 0.9rem;
+	}
+
+	.slot-editor__rotation {
+		margin-top: 0.55rem;
+	}
+
+	.slot-editor__actions {
+		margin-top: 0.55rem;
 	}
 
 	.charm-catalog {

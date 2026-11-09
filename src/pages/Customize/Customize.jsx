@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-import CustomizerFlow from "../../features/customizer/components/CustomizerFlow.jsx";
+import CustomizerFlow from "./components/CustomizerFlow.jsx";
 import { ROUTE_PATHS } from "../../config/routePaths.js";
 import "./Customize.css";
 
