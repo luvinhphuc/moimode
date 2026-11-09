@@ -57,8 +57,11 @@ const Header = ({ onAction }) => {
 				to={ROUTE_PATHS.home}
 				aria-label="MOIMODE home"
 			>
-				MOIMODE
-				<span>.</span>
+				<img
+					className="site-header__logo"
+					src="/images/moimode-logo.svg"
+					alt=""
+				/>
 			</Link>
 			<Link
 				className="site-header__action"

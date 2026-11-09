@@ -36,7 +36,7 @@ function SlotMarker({ modelSize, onSelect, slot }) {
 		>
 			<sphereGeometry args={[1, 20, 14]} />
 			<meshBasicMaterial
-				color="#ff70ae"
+				color="#cd5079"
 				depthTest={false}
 				depthWrite={false}
 				transparent

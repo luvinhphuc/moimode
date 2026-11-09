@@ -9,11 +9,15 @@
 	}
 
     .site-header__brand {
-        @apply font-display text-2xl font-bold leading-none tracking-[-0.045em] text-moi-ink no-underline;
+        @apply inline-flex items-center no-underline;
+        line-height: 0;
     }
 
-    .site-header__brand span {
-        @apply text-moi-accent;
+    .site-header__logo {
+        display: block;
+        width: clamp(6.5rem, 12vw, 9rem);
+        height: auto;
+        object-fit: contain;
     }
 
     .site-header__action {
@@ -28,12 +32,6 @@
     .site-header__brand:focus-visible,
     .site-header__action:focus-visible {
         @apply outline-2 outline-moi-accent outline-offset-[6px];
-    }
-}
-
-@media (min-width: 768px) {
-    .site-header__brand {
-        font-size: 1.35rem;
     }
 }
 

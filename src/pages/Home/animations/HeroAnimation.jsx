@@ -10,6 +10,7 @@ const SELECTORS = Object.freeze({
 	backdrop: '[data-hero="backdrop"]',
 	bottomSlogan: '[data-hero="bottom-slogan"]',
 	crocsSlide: '[data-hero="crocs-slide"]',
+	crocsStar: '[data-hero="crocs-star"]',
 	introMark: '[data-hero="intro-mark"]',
 	introProgress: '[data-hero="intro-progress"]',
 	makeHinge: '[data-hero="make-hinge"]',
@@ -317,8 +318,9 @@ function HeroAnimation({
 			const root = rootRef.current;
 			const hinge = query(root, SELECTORS.makeHinge);
 			const slide = query(root, SELECTORS.crocsSlide);
+			const star = query(root, SELECTORS.crocsStar);
 			const model = transitionControlRef.current;
-			if (!hinge || !slide || !model) return undefined;
+			if (!hinge || !slide || !star || !model) return undefined;
 
 			const [rotationX, rotationY, rotationZ] =
 				CROCS_TRANSITION_POSE.rotationDegrees.map(
@@ -340,9 +342,11 @@ function HeroAnimation({
 						scale: 1.45,
 						spinActive: 0,
 					});
+					gsap.set(star, { autoAlpha: 0 });
 
 					if (conditions.reduceMotion) {
 						gsap.set(slide, { autoAlpha: 1, xPercent: 100 });
+						gsap.set(star, { autoAlpha: 1 });
 						onModelVisibilityChange(true);
 						return undefined;
 					}
@@ -355,7 +359,8 @@ function HeroAnimation({
 						.to(hinge, { rotation: -15, duration: 0.55 })
 						.addLabel("slide")
 						.set(slide, { autoAlpha: 1 }, "slide")
-						.to(slide, { xPercent: 100, duration: 0.8 }, "slide");
+						.to(slide, { xPercent: 100, duration: 0.8 }, "slide")
+						.set(star, { autoAlpha: 1 });
 
 					const entry = { progress: 0 };
 					const opening = gsap.timeline({ paused: true }).to(

@@ -22,7 +22,7 @@
 		min-height: 100svh;
 		padding: max(5rem, env(safe-area-inset-top)) 1.5rem
 			max(2rem, env(safe-area-inset-bottom));
-		background: #fff;
+		background: var(--color-moi-bg);
 		overflow: hidden;
 		pointer-events: none;
 	}

@@ -280,7 +280,12 @@ async function buildAtlas(items, width, height, imageCache) {
 	atlas.height = layout.atlasHeight;
 	const context = atlas.getContext("2d", { alpha: false });
 
-	context.fillStyle = "#ffffff";
+	const palette = getComputedStyle(document.documentElement);
+	const paper = palette.getPropertyValue("--color-moi-bg").trim() || "#f6f1e8";
+	const sky = palette.getPropertyValue("--color-moi-sky").trim() || "#a8cdd0";
+	const turquoise =
+		palette.getPropertyValue("--color-moi-turquoise").trim() || "#20afc5";
+	context.fillStyle = paper;
 	context.fillRect(0, 0, atlas.width, atlas.height);
 	context.imageSmoothingEnabled = true;
 
@@ -329,8 +334,8 @@ async function buildAtlas(items, width, height, imageCache) {
 			placement.width / 2,
 			placement.height / 2,
 		);
-		gradient.addColorStop(0, "#b9defa");
-		gradient.addColorStop(1, "#4da8ed");
+		gradient.addColorStop(0, sky);
+		gradient.addColorStop(1, turquoise);
 		context.fillStyle = gradient;
 		context.fillRect(
 			-placement.width / 2,

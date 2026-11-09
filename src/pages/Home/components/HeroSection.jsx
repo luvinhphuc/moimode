@@ -5,6 +5,7 @@ import HeroAnimation from "../animations/HeroAnimation.jsx";
 import { HERO_COPY } from "../config/heroContent.js";
 import heroVideoUrl from "../../../assets/videos/hero.m3u8?url";
 import Preloader from "./Preloader.jsx";
+import { SoftStar } from "../../../components/Shapes.jsx";
 
 function HeroSection() {
 	const rootRef = useRef(null);
@@ -80,7 +81,11 @@ function HeroSection() {
 
 			<div className="hero-sticky-viewport">
 				<div className="hero-shell">
-					<div className="hero-backdrop" data-hero="backdrop" aria-hidden="true">
+					<div
+						className="hero-backdrop"
+						data-hero="backdrop"
+						aria-hidden="true"
+					>
 						<video
 							ref={videoRef}
 							className="hero-section__video"
@@ -112,6 +117,10 @@ function HeroSection() {
 								<div className="hero-crocs-track" data-hero="crocs-track">
 									<div className="hero-crocs-slide" data-hero="crocs-slide">
 										<div className="hero-crocs-model">
+											<SoftStar
+												className="hero-crocs-star"
+												data-hero="crocs-star"
+											/>
 											{HeroScene && (
 												<HeroScene
 													ariaLabel={HERO_COPY.modelAlt}
@@ -127,8 +136,6 @@ function HeroSection() {
 								</div>
 							</div>
 
-							<div className="hero-model-stage" aria-hidden="true" />
-
 							<div
 								className="hero-slogan hero-slogan--bottom"
 								data-hero="bottom-slogan"
@@ -143,7 +150,9 @@ function HeroSection() {
 							</div>
 
 							<div className="hero-quote-slot" data-hero="quote-exit">
-								<p className="hero-quote" data-hero="quote">“{HERO_COPY.quote}”</p>
+								<p className="hero-quote" data-hero="quote">
+									“{HERO_COPY.quote}”
+								</p>
 							</div>
 						</div>
 					</main>

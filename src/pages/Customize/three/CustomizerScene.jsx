@@ -36,6 +36,7 @@ function WebGLContextMonitor({ onLost, onRestored }) {
 
 function CustomizerScene({
 	bodyColour,
+	compactPreview = false,
 	interactiveSlots = false,
 	controlsEnabled = true,
 	onSlotSelect,
@@ -81,6 +82,7 @@ function CustomizerScene({
 					/>
 					<CustomizerStudioLights />
 					<CustomizerCameraRig
+						compactPreview={compactPreview}
 						controlsRef={controlsRef}
 						modelSize={modelSize}
 						view={view}
@@ -99,12 +101,13 @@ function CustomizerScene({
 					<OrbitControls
 						ref={controlsRef}
 						enableRotate={controlsEnabled}
+						enableZoom={controlsEnabled}
 						enableDamping
 						dampingFactor={0.08}
 						enablePan={false}
 						minDistance={modelSize * 0.55}
 						maxDistance={modelSize * 4.5}
-						onStart={() => onViewChange("free")}
+						onStart={() => onViewChange?.("free")}
 					/>
 				</Canvas>
 			</SceneErrorBoundary>

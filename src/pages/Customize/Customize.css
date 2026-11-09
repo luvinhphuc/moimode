@@ -8,10 +8,10 @@
 		--paper-shadow: var(--color-moi-shadow);
 		--ink: var(--color-moi-ink);
 		--muted: var(--color-moi-muted);
-		--pink: var(--color-moi-accent);
-		--pink-soft: var(--color-moi-powder);
-		--blue: var(--color-moi-sky);
-		--blue-soft: var(--color-moi-surface);
+		--pink: var(--color-moi-plum);
+		--pink-soft: var(--color-moi-coral);
+		--blue: var(--color-moi-turquoise);
+		--blue-soft: var(--color-moi-sky);
 		--line: var(--color-moi-line);
 		padding-top: 4.75rem;
 		overflow-y: visible;
@@ -151,7 +151,7 @@
 	.paper-button--back {
 		justify-self: start;
 		color: var(--ink);
-		background: rgba(255, 255, 255, 0.3);
+		background: color-mix(in srgb, var(--color-moi-bg) 30%, transparent);
 	}
 
 	.paper-button--primary {
@@ -238,7 +238,7 @@
 		padding: 1rem;
 		border: 2px solid var(--ink);
 		border-radius: 1.25rem;
-		background: rgba(255, 255, 255, 0.42);
+		background: color-mix(in srgb, var(--color-moi-bg) 64%, transparent);
 		box-shadow: 0 1.2rem 3rem var(--paper-shadow);
 	}
 
@@ -335,7 +335,8 @@
 		aspect-ratio: 1;
 		border: 1px solid var(--line);
 		border-radius: 50%;
-		box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.55);
+		box-shadow: inset 0 0 0 2px
+			color-mix(in srgb, var(--color-moi-bg) 55%, transparent);
 		transition: transform 180ms ease;
 	}
 
@@ -363,9 +364,10 @@
 	.customisation-recap,
 	.design-summary,
 	.charm-catalog {
-		border: 1px solid rgba(255, 255, 255, 0.86);
+		border: 1px solid
+			color-mix(in srgb, var(--color-moi-bg) 86%, transparent);
 		border-radius: 1.2rem;
-		background: rgba(255, 255, 255, 0.5);
+		background: color-mix(in srgb, var(--color-moi-bg) 50%, transparent);
 		box-shadow: 0 1rem 2.4rem var(--paper-shadow);
 		backdrop-filter: blur(12px);
 	}
@@ -392,7 +394,7 @@
 		border: 1px solid var(--line);
 		border-radius: 999px;
 		color: var(--ink);
-		background: rgba(255, 255, 255, 0.54);
+		background: color-mix(in srgb, var(--color-moi-bg) 54%, transparent);
 		font-size: 0.5rem;
 		font-weight: 800;
 		text-transform: uppercase;
@@ -614,7 +616,7 @@
 		padding: 0.5rem 0.65rem;
 		border: 1px solid var(--line);
 		border-radius: 0.55rem;
-		background: white;
+		background: var(--color-moi-bg);
 		font-size: 0.58rem;
 		font-weight: 800;
 		white-space: nowrap;
@@ -674,7 +676,7 @@
 		padding: 0.55rem 0.65rem;
 		border: 1px solid var(--line);
 		border-radius: 0.65rem;
-		background: rgba(255, 255, 255, 0.48);
+		background: color-mix(in srgb, var(--color-moi-bg) 48%, transparent);
 	}
 
 	.charm-search input {
@@ -1036,7 +1038,7 @@
 		min-height: 29rem;
 		padding: 1.5rem;
 		border-radius: 1.4rem;
-		background: rgba(255, 255, 255, 0.55);
+		background: color-mix(in srgb, var(--color-moi-bg) 55%, transparent);
 		box-shadow: 0 1rem 3rem var(--paper-shadow);
 	}
 
@@ -1108,7 +1110,7 @@
 		grid-column: 1;
 		padding: 1rem;
 		border-radius: 1rem;
-		background: rgba(255, 255, 255, 0.55);
+		background: color-mix(in srgb, var(--color-moi-bg) 55%, transparent);
 		box-shadow: 0 0.8rem 2rem var(--paper-shadow);
 	}
 
