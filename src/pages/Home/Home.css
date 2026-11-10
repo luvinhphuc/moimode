@@ -342,13 +342,13 @@
 		pointer-events: none;
 	}
 
-	.about-mini__arrow-line,
-	.about-mini__arrow-head path {
+	.sketch-arrow__line,
+	.sketch-arrow__head path {
 		fill: none;
-		stroke: var(--color-moi-ink);
+		stroke: var(--sketch-arrow-stroke, var(--color-moi-ink));
 		stroke-linecap: round;
 		stroke-linejoin: round;
-		stroke-width: 2.7;
+		stroke-width: var(--sketch-arrow-stroke-width, 2.7);
 	}
 
 	.about-mini__controls {
@@ -391,9 +391,14 @@
 		transition: border-color 160ms ease;
 	}
 
-	.about-mini__options button:hover,
+	.about-mini__options button:not(:disabled):hover,
 	.about-mini__options button:focus-visible {
 		border-color: var(--about-mini-select);
+	}
+
+	.about-mini__options button:disabled {
+		cursor: not-allowed;
+		opacity: 0.45;
 	}
 
 	.about-mini__options button:focus-visible {
@@ -657,6 +662,121 @@
 
 	.hero-canvas-output {
 		@apply block h-full w-full;
+	}
+}
+
+.people-section {
+	--people-portrait-width: clamp(13rem, 19vw, 17rem);
+	--people-portrait-height: calc(var(--people-portrait-width) * 4 / 3);
+	--people-portrait-center: calc((100svh - var(--people-portrait-height)) / 2);
+	--people-portrait-top: 6svh;
+	--people-callout-gap: clamp(0.5rem, 3vw, 3rem);
+}
+
+.people-portrait-stage {
+	position: relative;
+	width: var(--people-portrait-width);
+	height: var(--people-portrait-height);
+}
+
+.people-callout,
+.people-callout__arrow {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+.people-callout__arrow {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+.sketch-arrow__outline {
+	--sketch-arrow-stroke: var(--color-moi-bg);
+	--sketch-arrow-stroke-width: 4.2;
+}
+
+.people-section--motion .sketch-arrow__line {
+	visibility: hidden;
+}
+
+.people-section--motion .sketch-arrow__head {
+	opacity: 0;
+}
+
+.people-callout__name {
+	position: absolute;
+	width: max-content;
+	max-width: calc((100vw - var(--people-portrait-width)) / 2 - var(--people-callout-gap) - 0.5rem);
+	font-family: var(--font-body);
+	font-size: clamp(0.75rem, 1.8vw, 1.65rem);
+	font-weight: 900;
+	line-height: 1.15;
+}
+
+.people-callout--right .people-callout__name {
+	left: calc(100% + var(--people-callout-gap));
+}
+
+.people-callout--left .people-callout__name {
+	right: calc(100% + var(--people-callout-gap));
+	text-align: right;
+}
+
+.people-portrait-track {
+	@apply mt-[clamp(2.5rem,7svh,5rem)] grid justify-items-center;
+}
+
+.people-section--motion .people-intro-track {
+	@apply h-[240svh];
+}
+
+.people-section--motion .people-intro-frame {
+	@apply pointer-events-none sticky top-0 z-20 block h-svh overflow-hidden p-0;
+}
+
+.people-section--motion .people-title {
+	@apply absolute top-1/2 left-1/2 w-max max-w-none;
+	translate: -50% -50%;
+}
+
+.people-section--motion .people-portrait-track {
+	@apply pointer-events-none absolute inset-x-0 bottom-0 z-10 m-0 block;
+	top: var(--people-portrait-top);
+}
+
+.people-section--motion .people-portrait-frame {
+	@apply sticky isolate grid w-full justify-items-center;
+	top: var(--people-portrait-top);
+	/* Start visually centered while keeping the sticky layout at its dock. */
+	transform: translateY(calc(var(--people-portrait-center) - var(--people-portrait-top)));
+	will-change: transform;
+}
+
+.people-section--motion .people-portrait {
+	--people-portrait-mask: 50%;
+	clip-path: inset(var(--people-portrait-mask) 0);
+}
+
+.people-section--motion .people-portrait-frame::before {
+	/* Fade out copy across the full width before it reaches the photo. */
+	content: "";
+	position: absolute;
+	inset: calc(-1 * var(--people-portrait-top)) 0 -1.5rem;
+	z-index: -1;
+	background: linear-gradient(to bottom, var(--color-moi-bg) calc(100% - 1rem), transparent);
+}
+
+.people-section--motion .people-story {
+	@apply relative -mt-[40svh];
+	padding-bottom: max(2rem, calc((100svh - var(--people-portrait-top) - var(--people-portrait-height)) / 3));
+}
+
+@media (max-width: 767px) {
+	.people-section {
+		--people-portrait-width: clamp(12rem, 48vw, 16rem);
+		--people-callout-gap: clamp(0.25rem, 2vw, 0.75rem);
 	}
 }
 

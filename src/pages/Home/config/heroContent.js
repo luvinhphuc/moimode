@@ -1,11 +1,11 @@
 export const HERO_COPY = Object.freeze({
 	brand: "MOIMODE",
 	buttonLabel: "CUSTOMIZE",
-	buttonStatus: "Opening the customizer.",
+	buttonStatus: "Opening the customize.",
 	heading: "Make it yours.",
 	make: "MAKE IT",
 	yours: "YOURS!",
-	quote: "Small charms. Big personality.",
+	quote: "One style doesn't fit all.",
 	modelLabel: "Classic Clog preview",
 	modelAlt: "Three-dimensional Classic Clog product preview",
 	loadingLabel: "LOADING MODEL",

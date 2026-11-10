@@ -1,7 +1,7 @@
 import React from 'react';
 
 /**
- * Móimode decorative shapes, traced as editable vectors from the reference image.
+ * MOIMODE decorative shapes, traced as editable vectors from the reference image.
  * All components accept size (width in px), width, height, color, className,
  * style and standard SVG props.
  *
