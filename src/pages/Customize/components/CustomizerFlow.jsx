@@ -231,10 +231,7 @@ function StyleStep({
     colour,
     onExit,
     onNext,
-    placements,
     rotations,
-    view,
-    onViewChange,
 }) {
     return (
         <main className="customizer-main customizer-main--style">
@@ -259,13 +256,13 @@ function StyleStep({
                     </span>
                     <div className="style-card__scene">
                         <CustomizerScene
+                            compactPreview
                             controlsEnabled={false}
                             bodyColour={colour.value}
                             onSlotSelect={() => {}}
-                            onViewChange={onViewChange}
                             placements={{}}
                             rotations={rotations}
-                            view={view}
+                            view="style"
                         />
                     </div>
                     <div className="style-card__copy">
@@ -833,10 +830,7 @@ function CustomizerFlow({ onExit }) {
                         colour={colour}
                         onExit={onExit}
                         onNext={() => goToStep(2)}
-                        placements={state.placements}
                         rotations={state.rotations}
-                        view={view}
-                        onViewChange={setView}
                     />
                 );
             case 2:
@@ -932,7 +926,7 @@ function CustomizerFlow({ onExit }) {
             <div className="customizer-paper-texture" aria-hidden="true" />
             <Header onAction={onExit} />
             {currentContent}
-            <p className="sr-only" aria-live="polite">
+            <p className="customizer-shell__status" aria-live="polite">
                 Step {state.step} of 4. {Object.keys(state.placements).length}{' '}
                 charms placed.
             </p>

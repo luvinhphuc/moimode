@@ -21,7 +21,7 @@ function Home() {
 				<HeroSection />
 				<AboutSection />
 				<PeopleSection />
-				<p className="sr-only" role="status" aria-live="polite">
+				<p className="home-shell__status" role="status" aria-live="polite">
 					{ctaStatus}
 				</p>
 			</div>

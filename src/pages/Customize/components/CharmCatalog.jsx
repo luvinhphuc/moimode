@@ -53,7 +53,7 @@ function CharmCatalog({ onSelect, selectedCharmId }) {
 
 				<label className="charm-search">
 					<Search aria-hidden="true" size={15} strokeWidth={2} />
-					<span className="sr-only">Search charms</span>
+					<span className="charm-search__label">Search charms</span>
 					<input
 						type="search"
 						value={query}

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
+import { ArrowDown } from "lucide-react";
 
 import HeroAnimation from "../animations/HeroAnimation.jsx";
 import { HERO_COPY } from "../config/heroContent.js";
@@ -98,7 +99,7 @@ function HeroSection() {
 					</div>
 
 					<main id="home" className="hero-composition">
-						<h1 className="sr-only">{HERO_COPY.heading}</h1>
+						<h1 className="hero-composition__heading">{HERO_COPY.heading}</h1>
 
 						<div className="hero-stack" data-hero="slogan-stack">
 							<div
@@ -156,6 +157,16 @@ function HeroSection() {
 							</div>
 						</div>
 					</main>
+					<div
+						className={`hero-scroll-hint${isHeroReady ? " hero-scroll-hint--ready" : ""}`}
+						data-hero="scroll-hint"
+						aria-hidden="true"
+					>
+						<span className="hero-scroll-hint__label">LET'S EXPLORE</span>
+						<span className="hero-scroll-hint__icon">
+							<ArrowDown size={20} strokeWidth={3} />
+						</span>
+					</div>
 				</div>
 			</div>
 

@@ -4,37 +4,48 @@ import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { tmpdir } from "node:os";
+import { CHARM_CATALOG } from "../src/pages/Customize/config/customizerConfig.js";
 
 const root = process.cwd();
 const outputDir = path.join(root, "public", "model", "charms", "previews");
 const chromePath =
 	process.env.CHROME_PATH ??
 	"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-const viteUrl = "http://127.0.0.1:0871/script/charm-preview-generator.html";
+const viteUrl = "http://127.0.0.1:0871/scripts/charm-preview-generator.html";
 const useExternalBrowser = process.env.PREVIEW_BROWSER === "external";
+const force = process.argv.includes("--force");
+const requestedId = process.argv
+	.find((argument) => argument.startsWith("--id="))
+	?.slice(5);
+if (requestedId && !CHARM_CATALOG.some(({ id }) => id === requestedId)) {
+	throw new Error(`Unknown charm: ${requestedId}`);
+}
+const selectedCharms = requestedId
+	? CHARM_CATALOG.filter(({ id }) => id === requestedId)
+	: CHARM_CATALOG;
+const charmIds = (
+	await Promise.all(
+		selectedCharms.map(async ({ id }) => {
+			if (force) return id;
+			try {
+				return (await stat(path.join(outputDir, `${id}.png`))).size > 100
+					? null
+					: id;
+			} catch {
+				return id;
+			}
+		}),
+	)
+).filter(Boolean);
+
+if (charmIds.length === 0) {
+	console.log("All charm previews already exist.");
+	process.exit(0);
+}
+
 const chromeProfileDir = await mkdtemp(
 	path.join(tmpdir(), "moimode-charm-preview-"),
 );
-
-const charmIds = [
-	"an-gi-chua",
-	"banh-mi",
-	"bubble-tea",
-	"chill-phet",
-	"cloud",
-	"conical-hat",
-	"di-dau-day",
-	"dragon-fruit",
-	"helmet",
-	"het-nuoc-cham",
-	"lightning",
-	"lotus",
-	"lucky-cat",
-	"red-stool",
-	"retro-phone",
-	"smiley-vietnam",
-	"flower",
-];
 
 await mkdir(outputDir, { recursive: true });
 
@@ -50,7 +61,7 @@ const saveServer = createServer(async (request, response) => {
 	const id = new URL(request.url, "http://127.0.0.1:4174").searchParams.get(
 		"id",
 	);
-	if (!id || !/^[a-z0-9-]+$/.test(id)) {
+	if (!id || !charmIds.includes(id)) {
 		response.writeHead(400);
 		response.end("Invalid charm id");
 		return;
@@ -60,12 +71,18 @@ const saveServer = createServer(async (request, response) => {
 	for await (const chunk of request) chunks.push(chunk);
 	const payload = Buffer.concat(chunks).toString("utf8");
 	const base64 = payload.replace(/^data:image\/png;base64,/, "");
-	await writeFile(
-		path.join(outputDir, `${id}.png`),
-		Buffer.from(base64, "base64"),
-	);
-	response.writeHead(204);
-	response.end();
+	try {
+		await writeFile(
+			path.join(outputDir, `${id}.png`),
+			Buffer.from(base64, "base64"),
+		);
+		response.writeHead(204);
+		response.end();
+	} catch (error) {
+		console.error(`Could not save ${id}.png:`, error);
+		response.writeHead(500);
+		response.end("Could not save preview");
+	}
 });
 
 await new Promise((resolve) => saveServer.listen(4174, "127.0.0.1", resolve));
@@ -78,6 +95,7 @@ const vite = spawn(
 		"127.0.0.1",
 		"--port",
 		"0871",
+		"--strictPort",
 	],
 	{ cwd: root, stdio: "ignore" },
 );
@@ -88,7 +106,9 @@ try {
 		for (const charmId of charmIds) {
 			await rm(path.join(outputDir, `${charmId}.png`), { force: true });
 		}
-		console.log(`Open ${viteUrl}?id=all in a WebGL-enabled browser.`);
+		console.log(
+			`Open ${viteUrl}?id=${encodeURIComponent(charmIds.join(","))} in a WebGL-enabled browser.`,
+		);
 		await waitForAllFiles();
 	} else {
 		for (const charmId of charmIds) {
@@ -152,23 +172,39 @@ function renderCharm(charmId) {
 			chromePath,
 			[
 				"--headless=new",
+				"--no-sandbox",
 				"--no-first-run",
 				"--no-default-browser-check",
 				"--disable-gpu",
 				"--use-gl=swiftshader",
 				"--enable-unsafe-swiftshader",
 				`--user-data-dir=${chromeProfileDir}`,
-				"--virtual-time-budget=8000",
+				"--virtual-time-budget=30000",
 				"--dump-dom",
 				`${viteUrl}?id=${encodeURIComponent(charmId)}`,
 			],
-			{ stdio: "ignore" },
+			{ stdio: ["ignore", "pipe", "pipe"] },
 		);
+		let output = "";
+		let errors = "";
+		chrome.stdout.on("data", (chunk) => {
+			output += chunk;
+		});
+		chrome.stderr.on("data", (chunk) => {
+			errors += chunk;
+		});
 
 		chrome.once("error", reject);
 		chrome.once("exit", (code) => {
-			if (code === 0) resolve();
-			else reject(new Error(`Chrome failed for ${charmId} with code ${code}`));
+			if (code === 0 && !output.includes(`error:${charmId}`)) {
+				resolve();
+			} else {
+				reject(
+					new Error(
+						`Chrome failed for ${charmId} with code ${code}: ${output.slice(-500)} ${errors.slice(-500)}`,
+					),
+				);
+			}
 		});
 	});
 }

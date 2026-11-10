@@ -1,16 +1,16 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
-import { CHARM_BY_ID } from "../src/features/customizer/config/customizerConfig.js";
+import { CHARM_BY_ID } from "../src/pages/Customize/config/customizerConfig.js";
 import {
 	getCharmOrientationQuaternion,
 	normalizeCharmScene,
-} from "../src/features/customizer/utils/charmModel.js";
+} from "../src/pages/Customize/utils/charmModel.js";
 
 const size = 160;
 const requestedId = new URLSearchParams(window.location.search).get("id");
 const charmIds =
-	requestedId === "all" ? Object.keys(CHARM_BY_ID) : [requestedId];
+	requestedId === "all" ? Object.keys(CHARM_BY_ID) : requestedId?.split(",") ?? [];
 
 if (!requestedId || charmIds.some((charmId) => !CHARM_BY_ID[charmId])) {
 	document.title = "error:unknown-charm";
@@ -69,10 +69,11 @@ async function renderCharm(charmId) {
 	scene.add(group);
 	renderer.render(scene, camera);
 
-	await fetch(`http://127.0.0.1:4174/save?id=${encodeURIComponent(charmId)}`, {
+	const response = await fetch(`http://127.0.0.1:4174/save?id=${encodeURIComponent(charmId)}`, {
 		method: "POST",
 		body: renderer.domElement.toDataURL("image/png"),
 	});
+	if (!response.ok) throw new Error(`Could not save preview for ${charmId}`);
 	scene.remove(group);
 }
 

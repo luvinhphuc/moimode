@@ -6,6 +6,7 @@ import { MODEL_ASSETS } from "../../../config/modelAssets.js";
 import { ACESFilmicToneMapping, SRGBColorSpace } from "../../../utils/three.js";
 import CustomizableCrocs from "./CustomizableCrocs.jsx";
 import CustomizerCameraRig from "./CustomizerCameraRig.jsx";
+import { INITIAL_CAMERA_POSITION } from "./customizerCameraConfig.js";
 import {
 	SceneErrorBoundary,
 	SceneLoadingStatus,
@@ -47,7 +48,7 @@ function CustomizerScene({
 	onViewChange,
 }) {
 	const controlsRef = useRef(null);
-	const [modelSize, setModelSize] = useState(4);
+	const [modelSize, setModelSize] = useState(1);
 	const [isContextLost, setIsContextLost] = useState(false);
 	const handleContextLost = useCallback(() => {
 		setIsContextLost(true);
@@ -63,7 +64,7 @@ function CustomizerScene({
 		>
 			<SceneErrorBoundary>
 				<Canvas
-					camera={{ fov: 36, near: 0.01, far: 200, position: [4, 2.2, 7] }}
+					camera={{ fov: 36, near: 0.01, far: 200, position: INITIAL_CAMERA_POSITION }}
 					dpr={[1, 2]}
 					gl={{
 						alpha: true,

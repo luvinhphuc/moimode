@@ -17,6 +17,7 @@ const SELECTORS = Object.freeze({
 	makeText: '[data-hero="make-text"]',
 	quote: '[data-hero="quote"]',
 	quoteExit: '[data-hero="quote-exit"]',
+	scrollHint: '[data-hero="scroll-hint"]',
 	sloganStack: '[data-hero="slogan-stack"]',
 	topSlogan: '[data-hero="top-slogan"]',
 	yoursText: '[data-hero="yours-text"]',
@@ -214,6 +215,34 @@ function HeroAnimation({
 		},
 		{
 			dependencies: [isIntroDone, onHeroReady],
+			revertOnUpdate: true,
+			scope: rootRef,
+		},
+	);
+
+	useGSAP(
+		() => {
+			if (!isHeroReady) return undefined;
+
+			const root = rootRef.current;
+			const hint = query(root, SELECTORS.scrollHint);
+			if (!root || !hint) return undefined;
+
+			ScrollTrigger.create({
+				trigger: root,
+				start: "top+=80 top",
+				end: "bottom top",
+				onEnter: () => hint.classList.add("is-dismissed"),
+				onLeaveBack: () => hint.classList.remove("is-dismissed"),
+				onRefresh: (self) => {
+					hint.classList.toggle("is-dismissed", self.scroll() >= self.start);
+				},
+			});
+
+			return () => hint.classList.remove("is-dismissed");
+		},
+		{
+			dependencies: [isHeroReady],
 			revertOnUpdate: true,
 			scope: rootRef,
 		},

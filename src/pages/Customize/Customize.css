@@ -17,6 +17,10 @@
 		overflow-y: visible;
 	}
 
+	.customizer-shell__status {
+		@apply sr-only;
+	}
+
 	.customizer-main {
 		@apply relative mx-auto flex flex-col;
 		z-index: 2;
@@ -677,6 +681,10 @@
 		border: 1px solid var(--line);
 		border-radius: 0.65rem;
 		background: color-mix(in srgb, var(--color-moi-bg) 48%, transparent);
+	}
+
+	.charm-search__label {
+		@apply sr-only;
 	}
 
 	.charm-search input {

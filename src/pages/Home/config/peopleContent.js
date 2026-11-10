@@ -1,10 +1,20 @@
 export const PEOPLE_COPY = Object.freeze({
 	title: "OUR PEOPLE",
-	photo: "/images/our-people.jpg",
+	photo: "/images/our_people.jpg",
 	photoAlt: "Two MOIMODE creators posing together in Crocs",
 	callouts: [
-		{ name: "Nguyễn Lê Vân Anh", side: "left", labelTop: "0%", target: [0.3, 0.19] },
-		{ name: "Lê Nguyễn Quỳnh Lam", side: "right", labelTop: "20%", target: [0.79, 0.38] },
+		{
+			name: "Nguyễn Lê Vân Anh",
+			side: "left",
+			labelTop: "0%",
+			target: [0.3, 0.19],
+		},
+		{
+			name: "Lê Nguyễn Quỳnh Lam",
+			side: "right",
+			labelTop: "20%",
+			target: [0.79, 0.38],
+		},
 	],
 	paragraphs: [
 		"We are the creators behind MOIMODE.",

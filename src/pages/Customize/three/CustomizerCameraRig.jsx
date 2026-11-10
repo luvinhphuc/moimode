@@ -1,13 +1,7 @@
 import { useFrame, useThree } from "@react-three/fiber";
 
 import { Vector3 } from "../../../utils/three.js";
-
-const VIEW_POSITIONS = Object.freeze({
-	side: new Vector3(0.16, 0.34, 1.3),
-	top: new Vector3(0.1, 1.38, 0.26),
-	back: new Vector3(1.3, 0.32, 0.07),
-	mini: new Vector3(1.2, 0.9, 0.25),
-});
+import { VIEW_FIT, VIEW_POSITIONS } from "./customizerCameraConfig.js";
 
 function CustomizerCameraRig({ compactPreview = false, controlsRef, modelSize, view }) {
 	const { camera, size } = useThree();
@@ -18,7 +12,7 @@ function CustomizerCameraRig({ compactPreview = false, controlsRef, modelSize, v
 		const aspect = size.width / Math.max(size.height, 1);
 		const mobileFit = size.width < 768 ? Math.max(1.3, 1.35 / Math.max(aspect, 0.75)) : 1;
 		const previewFit = compactPreview ? 1.05 : 1;
-		const multiplier = Math.max(modelSize, 1) * mobileFit * previewFit;
+		const multiplier = Math.max(modelSize, 1) * mobileFit * previewFit * VIEW_FIT[view];
 		const targetPosition = VIEW_POSITIONS[view]
 			.clone()
 			.multiplyScalar(multiplier);

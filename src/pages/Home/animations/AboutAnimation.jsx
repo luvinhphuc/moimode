@@ -1,4 +1,4 @@
-import { gsap, useGSAP } from "../../../utils/gsap.js";
+import { gsap, ScrollTrigger, useGSAP } from "../../../utils/gsap.js";
 import {
 	ABOUT_DECK_MOTION,
 	ABOUT_FLOW_MOTION,
@@ -20,7 +20,44 @@ function addTitleShrink(timeline, title) {
 	);
 }
 
-function setupPinnedAbout(section, frame, editorial, title) {
+function getPanelTheme(panel) {
+	const styles = getComputedStyle(panel);
+	return { backgroundColor: styles.backgroundColor, color: styles.color };
+}
+
+function syncHeaderContrast(header, backgroundColor) {
+	if (!header) return;
+	const [red, green, blue] = gsap.utils.splitColor(backgroundColor);
+	const brightness = (red * 299 + green * 587 + blue * 114) / 1000;
+	header.classList.toggle("site-header--on-dark", brightness < 128);
+}
+
+function setupScrollingStageTheme(stage, panels, header) {
+	const setTheme = (panel) => {
+		const { backgroundColor, color } = getPanelTheme(panel);
+		stage.style.backgroundColor = backgroundColor;
+		stage.style.color = color;
+		syncHeaderContrast(header, backgroundColor);
+	};
+	const triggers = panels.slice(1).map((panel, index) =>
+		ScrollTrigger.create({
+			trigger: panel,
+			start: () => `top ${stage.offsetHeight}px`,
+			invalidateOnRefresh: true,
+			onEnter: () => setTheme(panel),
+			onLeaveBack: () => setTheme(panels[index]),
+		}),
+	);
+
+	return () => {
+		triggers.forEach((trigger) => trigger.kill());
+		stage.style.removeProperty("background-color");
+		stage.style.removeProperty("color");
+		header?.classList.remove("site-header--on-dark");
+	};
+}
+
+function setupPinnedAbout(section, frame, stage, editorial, title, header) {
 	const panels = Array.from(editorial.children);
 	const [firstPanel, ...remainingPanels] = panels;
 	const {
@@ -63,7 +100,9 @@ function setupPinnedAbout(section, frame, editorial, title) {
 
 	remainingPanels.forEach((panel, index) => {
 		const start = firstHandoffStart + index;
+		const theme = getPanelTheme(panel);
 		timeline
+			.to(stage, { ...theme, duration: wipe.duration, ease: wipe.ease }, start)
 			.set(panel, { visibility: "visible" }, start)
 			.fromTo(
 				panel,
@@ -104,8 +143,14 @@ function setupPinnedAbout(section, frame, editorial, title) {
 		)
 		// Give the last panel the same amount of scroll as the others.
 		.to({}, { duration: 1 }, firstHandoffStart + remainingPanels.length - 1);
+	timeline.eventCallback("onUpdate", () => {
+		syncHeaderContrast(header, getComputedStyle(stage).backgroundColor);
+	});
 
-	return () => section.classList.remove("about-section--deck");
+	return () => {
+		section.classList.remove("about-section--deck");
+		header?.classList.remove("site-header--on-dark");
+	};
 }
 
 function AboutAnimation({ rootRef }) {
@@ -113,19 +158,29 @@ function AboutAnimation({ rootRef }) {
 		() => {
 			const section = rootRef.current;
 			const frame = section?.querySelector(".about-frame");
+			const stage = section?.querySelector(".about-stage");
 			const title = section?.querySelector("#about-title");
 			const editorial = section?.querySelector(".about-editorial");
-			if (!frame || !title || !editorial) return undefined;
+			if (!frame || !stage || !title || !editorial) return undefined;
+			const header = section.parentElement?.querySelector(".site-header");
 
 			const motion = gsap.matchMedia();
 
 			motion.add(
 				ABOUT_MOTION_MEDIA,
 				({ conditions }) => {
-					if (conditions.reduceMotion) return undefined;
 					if (conditions.pinned) {
-						return setupPinnedAbout(section, frame, editorial, title);
+						if (!conditions.reduceMotion) {
+							return setupPinnedAbout(section, frame, stage, editorial, title, header);
+						}
 					}
+
+					const cleanupStageTheme = setupScrollingStageTheme(
+						stage,
+						Array.from(editorial.children),
+						header,
+					);
+					if (conditions.reduceMotion) return cleanupStageTheme;
 
 					const intro = gsap.timeline({
 						defaults: { ease: "none" },
@@ -410,6 +465,7 @@ function AboutAnimation({ rootRef }) {
 							},
 							experience.disclaimer.start,
 						);
+					return cleanupStageTheme;
 				},
 			);
 
