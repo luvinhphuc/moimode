@@ -478,7 +478,7 @@
 		width: clamp(3rem, 6vw, 5rem);
 		aspect-ratio: 1;
 		border-radius: 50%;
-		background: var(--color-moi-bg);
+		background: #fff;
 		/* Keep the first painted frame covered until GSAP sets the viewport-aware scale. */
 		transform: translate(-50%, -50%) scale(60);
 		transform-origin: 50% 50%;
@@ -511,18 +511,7 @@
 
 	.hero-backdrop {
 		@apply pointer-events-none absolute inset-0 z-0 isolate overflow-hidden;
-		background:
-			linear-gradient(
-				180deg,
-				color-mix(in srgb, var(--color-moi-bg) 92%, transparent),
-				transparent 43%
-			),
-			linear-gradient(
-				145deg,
-				var(--color-moi-bg),
-				var(--color-moi-surface) 72%,
-				var(--color-moi-bg)
-			);
+		background: #fff;
 	}
 
 	.hero-backdrop::after {
@@ -541,6 +530,12 @@
 				color-mix(in srgb, var(--color-moi-surface) 24%, transparent) 72%,
 				color-mix(in srgb, var(--color-moi-bg) 32%, transparent)
 			);
+		opacity: 0;
+		transition: opacity 250ms ease;
+	}
+
+	.hero-backdrop--video-playing::after {
+		opacity: 1;
 	}
 
 	.hero-composition {
@@ -862,7 +857,7 @@
 }
 
 .people-section--motion .people-intro-track {
-	@apply h-[240svh];
+	@apply h-[180svh];
 }
 
 .people-section--motion .people-intro-frame {
@@ -908,7 +903,8 @@
 }
 
 .people-section--motion .people-story {
-	@apply relative mt-[40svh];
+	@apply relative mt-[4svh];
+	padding-top: clamp(2.5rem, 6svh, 4rem);
 }
 
 @media (max-width: 767px) {

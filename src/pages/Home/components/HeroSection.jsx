@@ -15,6 +15,7 @@ function HeroSection() {
 	const [isIntroReady, setIsIntroReady] = useState(false);
 	const [isIntroDone, setIsIntroDone] = useState(false);
 	const [isHeroReady, setIsHeroReady] = useState(false);
+	const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 	const [HeroScene, setHeroScene] = useState(null);
 	const [modelStatus, setModelStatus] = useState("loading");
 	const [isModelVisible, setIsModelVisible] = useState(true);
@@ -23,19 +24,24 @@ function HeroSection() {
 		const video = videoRef.current;
 		if (!video) return undefined;
 
-		if (Hls.isSupported()) {
-			const hls = new Hls();
-			hls.loadSource(heroVideoUrl);
-			hls.attachMedia(video);
-
-			return () => hls.destroy();
-		}
-
-		if (video.canPlayType("application/vnd.apple.mpegurl")) {
-			video.src = heroVideoUrl;
-		}
+		let hls;
+		// Skip the disposable StrictMode setup before starting network requests.
+		const setupId = window.setTimeout(() => {
+			// Chrome can report native HLS support but fail on encrypted streams.
+			if (Hls.isSupported()) {
+				hls = new Hls({ startFragPrefetch: true });
+				hls.loadSource(heroVideoUrl);
+				hls.attachMedia(video);
+			} else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+				video.src = heroVideoUrl;
+				video.load();
+			}
+		}, 0);
 
 		return () => {
+			window.clearTimeout(setupId);
+			hls?.destroy();
+			video.pause();
 			video.removeAttribute("src");
 			video.load();
 		};
@@ -83,7 +89,9 @@ function HeroSection() {
 			<div className="hero-sticky-viewport">
 				<div className="hero-shell">
 					<div
-						className="hero-backdrop"
+						className={`hero-backdrop${
+							isVideoPlaying ? " hero-backdrop--video-playing" : ""
+						}`}
 						data-hero="backdrop"
 						aria-hidden="true"
 					>
@@ -94,6 +102,9 @@ function HeroSection() {
 							muted
 							loop
 							playsInline
+							preload="auto"
+							onPlaying={() => setIsVideoPlaying(true)}
+							onError={() => setIsVideoPlaying(false)}
 							aria-hidden="true"
 						/>
 					</div>
