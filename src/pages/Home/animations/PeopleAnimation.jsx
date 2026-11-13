@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { SplitText } from "gsap/SplitText";
 
@@ -7,6 +8,9 @@ import { drawSketchArrow } from "../utils/drawSketchArrow.js";
 gsap.registerPlugin(DrawSVGPlugin, SplitText);
 
 function PeopleAnimation({ rootRef, peopleCallouts }) {
+	const revealedParagraphsRef = useRef(new WeakSet());
+	const titleRevealedRef = useRef(false);
+
 	useGSAP(
 		() => {
 			const section = rootRef.current;
@@ -47,6 +51,87 @@ function PeopleAnimation({ rootRef, peopleCallouts }) {
 			}
 
 			const media = gsap.matchMedia();
+			let titleEntrance = null;
+			const pendingParagraphs = new Set();
+			const releaseParagraphs = () => {
+				pendingParagraphs.forEach((tween) => tween.play());
+				pendingParagraphs.clear();
+			};
+			media.add(
+				{
+					reducedMotion: "(prefers-reduced-motion: reduce)",
+					shortViewport: "(max-height: 619px)",
+				},
+				({ conditions }) => {
+					if (conditions.reducedMotion) {
+						titleRevealedRef.current = true;
+						return;
+					}
+					if (titleRevealedRef.current) return;
+
+					// Taller screens already animate the title in the split-word intro.
+					titleEntrance = gsap.fromTo(title, { autoAlpha: 0, y: 20 }, {
+						autoAlpha: 1,
+						y: 0,
+						duration: 0.6,
+						ease: "power2.out",
+						clearProps: "opacity,visibility,transform",
+						onStart: () => { titleRevealedRef.current = true; },
+						onComplete: releaseParagraphs,
+						scrollTrigger: {
+							trigger: track,
+							start: "clamp(top 88%)",
+							once: true,
+						},
+					});
+					return () => {
+						titleEntrance = null;
+						releaseParagraphs();
+					};
+				},
+			);
+			media.add(
+				{
+					standardMotion: "(prefers-reduced-motion: no-preference)",
+					reducedMotion: "(prefers-reduced-motion: reduce)",
+				},
+				({ conditions }) => {
+					const paragraphTweens = [];
+					for (const paragraph of section.querySelectorAll("[data-people-copy]")) {
+						if (conditions.reducedMotion) {
+							revealedParagraphsRef.current.add(paragraph);
+							continue;
+						}
+						if (revealedParagraphsRef.current.has(paragraph)) continue;
+
+						// Animate the paragraph wrapper independently of its line colour reveal.
+						const tween = gsap.fromTo(
+							paragraph,
+							{ autoAlpha: 0, y: 20 },
+							{
+								autoAlpha: 1,
+								y: 0,
+								duration: 0.6,
+								ease: "power2.out",
+								paused: true,
+								clearProps: "opacity,visibility,transform",
+								onStart: () => revealedParagraphsRef.current.add(paragraph),
+							},
+						);
+						paragraphTweens.push(tween);
+						ScrollTrigger.create({
+							trigger: paragraph,
+							start: "clamp(top 88%)",
+							once: true,
+							onEnter: () => {
+								if (titleEntrance && titleEntrance.progress() < 1) pendingParagraphs.add(tween);
+								else tween.play();
+							},
+						});
+					}
+					return () => paragraphTweens.forEach((tween) => pendingParagraphs.delete(tween));
+				},
+			);
 			media.add(
 				"(prefers-reduced-motion: no-preference) and (min-height: 620px)",
 				() => {

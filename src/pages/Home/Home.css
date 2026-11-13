@@ -202,7 +202,7 @@
 	}
 
 	.about-editorial__section--mission {
-		background: var(--color-moi-surface);
+		background: var(--color-moi-sky);
 	}
 
 	.about-editorial__headline--mission {
@@ -744,13 +744,17 @@
 }
 
 .people-section {
-	@apply relative overflow-clip border-t border-moi-line bg-white text-moi-ink;
-	z-index: 21;
+	@apply relative overflow-clip border-t border-moi-line bg-white text-moi-ink z-21;
 	--people-portrait-width: clamp(13rem, 19vw, 17rem);
 	--people-portrait-height: calc(var(--people-portrait-width) * 4 / 3);
 	--people-portrait-center: calc((100svh - var(--people-portrait-height)) / 2);
 	--people-portrait-top: 6svh;
 	--people-callout-gap: clamp(0.5rem, 3vw, 3rem);
+}
+
+.people-section--stories-handoff {
+	position: sticky;
+	top: var(--people-handoff-top);
 }
 
 .people-intro-frame {
@@ -784,18 +788,18 @@
 	@apply mx-auto grid text-center;
 	width: min(100% - 2.5rem, 56rem);
 	gap: clamp(2rem, 5svh, 3.5rem);
-	padding-block: clamp(5rem, 12svh, 9rem) clamp(14rem, 40svh, 30rem);
+	padding-block: clamp(5rem, 12svh, 9rem) clamp(2rem, 5svh, 3.5rem);
 }
 
 .people-story__paragraph {
-	@apply m-0 font-body font-semibold;
+	@apply m-0 font-body font-normal;
 	font-size: clamp(1.25rem, 1.1rem + 0.8vw, 2rem);
 	letter-spacing: -0.025em;
 	line-height: 1.42;
 }
 
 .people-story__paragraph:first-child {
-	@apply font-extrabold;
+	@apply font-medium;
 }
 
 .people-portrait-stage {
@@ -817,8 +821,8 @@
 	overflow: visible;
 }
 
-.sketch-arrow__outline {
-	--sketch-arrow-stroke: var(--color-moi-bg);
+.people-callout__arrow .sketch-arrow__outline {
+	--sketch-arrow-stroke: var(--color-white);
 	--sketch-arrow-stroke-width: 4.2;
 }
 
@@ -904,13 +908,7 @@
 }
 
 .people-section--motion .people-story {
-	@apply relative -mt-[40svh];
-	padding-bottom: max(
-		2rem,
-		calc(
-			(100svh - var(--people-portrait-top) - var(--people-portrait-height)) / 3
-		)
-	);
+	@apply relative mt-[40svh];
 }
 
 @media (max-width: 767px) {
@@ -1118,7 +1116,7 @@
 	}
 
 	.about-section--deck .about-editorial__section--mission {
-		background: var(--color-moi-surface);
+		background: var(--color-moi-sky);
 	}
 
 	.about-section--deck .about-editorial__challenge-title {

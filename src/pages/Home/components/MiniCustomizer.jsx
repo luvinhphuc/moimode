@@ -6,6 +6,7 @@ import {
 	COLOUR_BY_ID,
 } from "../../Customize/config/customizerConfig.js";
 import { gsap } from "../../../utils/gsap.js";
+import useMiniCustomizerIntro from "../animations/useMiniCustomizerIntro.js";
 import { drawSketchArrow } from "../utils/drawSketchArrow.js";
 import SketchArrow from "./SketchArrow.jsx";
 
@@ -25,6 +26,7 @@ function MiniCustomizer() {
 	const [colourId, setColourId] = useState("white");
 	const [selectedCharmId, setSelectedCharmId] = useState(null);
 	const [hasTriedColour, setHasTriedColour] = useState(false);
+	const [modelRig, setModelRig] = useState(null);
 	const rootRef = useRef(null);
 	const previewRef = useRef(null);
 	const colourLegendRef = useRef(null);
@@ -38,6 +40,15 @@ function MiniCustomizer() {
 			? "done"
 			: "charm";
 	const placements = selectedCharmId ? { [PREVIEW_SLOT]: selectedCharmId } : {};
+	const completeIntro = useMiniCustomizerIntro({
+		rootRef,
+		colourLegendRef,
+		charmLegendRef,
+		hintRef,
+		arrowSvgRef,
+		modelRig,
+		hintStep,
+	});
 
 	useLayoutEffect(() => {
 		const root = rootRef.current;
@@ -56,9 +67,25 @@ function MiniCustomizer() {
 		const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 		let timeline;
 		let frame;
+		// Measure layout coordinates, independent of the assembly transforms.
+		const layoutBox = (element) => {
+			let left = 0;
+			let top = 0;
+			for (let node = element; node && node !== root; node = node.offsetParent) {
+				left += node.offsetLeft;
+				top += node.offsetTop;
+			}
+			return {
+				left,
+				top,
+				right: left + element.offsetWidth,
+				bottom: top + element.offsetHeight,
+				width: element.offsetWidth,
+				height: element.offsetHeight,
+			};
+		};
 		const draw = () => {
-			const rootBox = root.getBoundingClientRect();
-			const targetBox = target.getBoundingClientRect();
+			const targetBox = layoutBox(target);
 			const width = root.clientWidth;
 			const height = root.clientHeight;
 			if (!width || !height) return 0;
@@ -73,15 +100,15 @@ function MiniCustomizer() {
 				? card.offsetTop + card.offsetHeight * 0.7
 				: card.offsetTop + card.offsetHeight - 3;
 			const endX = done
-				? targetBox.left - rootBox.left + targetBox.width * 0.6
+				? targetBox.left + targetBox.width * 0.6
 				: charmHint
-					? targetBox.left - rootBox.left + targetBox.width / 2
-					: targetBox.right - rootBox.left + 6;
+					? targetBox.left + targetBox.width / 2
+					: targetBox.right + 6;
 			const endY = done
-				? targetBox.top - rootBox.top + targetBox.height * 0.58
+				? targetBox.top + targetBox.height * 0.58
 				: charmHint
-					? targetBox.top - rootBox.top - 8
-					: targetBox.bottom - rootBox.top + 1;
+					? targetBox.top - 8
+					: targetBox.bottom + 1;
 
 			svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
 			drawSketchArrow(path, head, startX, startY, endX, endY);
@@ -89,6 +116,12 @@ function MiniCustomizer() {
 		};
 
 		const animate = () => {
+			path.setAttribute("pathLength", "1");
+			// The initial hint is part of the single assembly timeline.
+			if (hintStep === "colour") {
+				draw();
+				return;
+			}
 			timeline?.kill();
 			gsap.killTweensOf([card, path, head]);
 			gsap.set(card, { clearProps: "transform" });
@@ -96,8 +129,8 @@ function MiniCustomizer() {
 			if (!length) return;
 			gsap.set(path, {
 				autoAlpha: 1,
-				strokeDasharray: length,
-				strokeDashoffset: length,
+				strokeDasharray: 1,
+				strokeDashoffset: 1,
 			});
 			gsap.set(head, { autoAlpha: 0 });
 			if (reduceMotion.matches) {
@@ -126,7 +159,7 @@ function MiniCustomizer() {
 				)
 				.to(
 					path,
-					{ strokeDashoffset: 0, duration: 0.58, ease: "power2.inOut" },
+					{ strokeDashoffset: 0, autoRound: false, duration: 0.58, ease: "power2.inOut" },
 					"-=0.05",
 				)
 				.to(head, { autoAlpha: 1, duration: 0.2, ease: "power2.out" }, "-=0.1");
@@ -134,7 +167,8 @@ function MiniCustomizer() {
 				timeline
 					.to(head, { autoAlpha: 0, duration: 0.1 }, "+=4.2")
 					.to(path, {
-						strokeDashoffset: length,
+						strokeDashoffset: 1,
+						autoRound: false,
 						duration: 0.52,
 						ease: "power2.inOut",
 					})
@@ -154,8 +188,8 @@ function MiniCustomizer() {
 			window.cancelAnimationFrame(frame);
 			frame = window.requestAnimationFrame(() => {
 				const length = draw();
-				if (length && !timeline?.isActive()) {
-					gsap.set(path, { strokeDasharray: length, strokeDashoffset: 0 });
+				if (length && hintStep !== "colour" && !timeline?.isActive()) {
+					gsap.set(path, { strokeDasharray: 1, strokeDashoffset: 0 });
 				}
 			});
 		});
@@ -167,7 +201,7 @@ function MiniCustomizer() {
 			reduceMotion.removeEventListener("change", onMotionChange);
 			window.cancelAnimationFrame(frame);
 			timeline?.kill();
-			gsap.killTweensOf([card, path, head]);
+			if (hintStep !== "colour") gsap.killTweensOf([card, path, head]);
 		};
 	}, [hintStep]);
 
@@ -181,12 +215,17 @@ function MiniCustomizer() {
 			className="about-mini"
 			data-about-mini-customizer
 			aria-label="Try the mini customizer"
+			onPointerDownCapture={completeIntro}
+			onFocusCapture={completeIntro}
+			onKeyDownCapture={completeIntro}
+			onClickCapture={completeIntro}
 		>
 			<div ref={previewRef} className="about-mini__preview">
 				<CustomizerScene
 					bodyColour={COLOUR_BY_ID[colourId].value}
 					compactPreview
 					controlsEnabled={false}
+					onModelReady={setModelRig}
 					placements={placements}
 					rotations={{}}
 					view="mini"

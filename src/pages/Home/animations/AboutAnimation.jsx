@@ -57,6 +57,41 @@ function setupScrollingStageTheme(stage, panels, header) {
 	};
 }
 
+function addPanelTextReveal(timeline, panel, start) {
+	// Pinned panels overlap, so titles and paragraphs follow the deck timeline.
+	const titles = panel.querySelectorAll("h2");
+	const paragraphs = panel.querySelectorAll(".about-editorial__body, .about-editorial__disclaimer");
+	const { titleDuration, copyDuration, stagger } = ABOUT_DECK_MOTION.textReveal;
+	const copyStart = start + titleDuration + Math.max(0, titles.length - 1) * stagger;
+	gsap.set([...titles, ...paragraphs], { autoAlpha: 0, y: 20 });
+	timeline.fromTo(
+		titles,
+		{ autoAlpha: 0, y: 20 },
+		{
+			autoAlpha: 1,
+			y: 0,
+			duration: titleDuration,
+			ease: "power2.out",
+			stagger,
+			immediateRender: false,
+		},
+		start,
+	);
+	timeline.fromTo(
+		paragraphs,
+		{ autoAlpha: 0, y: 20 },
+		{
+			autoAlpha: 1,
+			y: 0,
+			duration: copyDuration,
+			ease: "power2.out",
+			stagger,
+			immediateRender: false,
+		},
+		copyStart,
+	);
+}
+
 function setupPinnedAbout(section, frame, stage, editorial, title, header) {
 	const panels = Array.from(editorial.children);
 	const [firstPanel, ...remainingPanels] = panels;
@@ -97,12 +132,26 @@ function setupPinnedAbout(section, frame, stage, editorial, title, header) {
 			{ y: 0, duration: firstReveal.duration, immediateRender: false },
 			firstReveal.start,
 		);
+	addPanelTextReveal(timeline, firstPanel, firstReveal.start + 0.08);
 
 	remainingPanels.forEach((panel, index) => {
 		const start = firstHandoffStart + index;
-		const theme = getPanelTheme(panel);
 		timeline
-			.to(stage, { ...theme, duration: wipe.duration, ease: wipe.ease }, start)
+			.fromTo(
+				stage,
+				{
+					backgroundColor: () => getPanelTheme(panels[index]).backgroundColor,
+					color: () => getPanelTheme(panels[index]).color,
+				},
+				{
+					backgroundColor: () => getPanelTheme(panel).backgroundColor,
+					color: () => getPanelTheme(panel).color,
+					duration: wipe.duration,
+					ease: wipe.ease,
+					immediateRender: false,
+				},
+				start,
+			)
 			.set(panel, { visibility: "visible" }, start)
 			.fromTo(
 				panel,
@@ -116,7 +165,7 @@ function setupPinnedAbout(section, frame, stage, editorial, title, header) {
 				start,
 			)
 			.fromTo(
-				panel.children,
+				Array.from(panel.children).filter((child) => !child.matches("h2")),
 				{ y: panelReveal.y },
 				{
 					y: 0,
@@ -127,6 +176,7 @@ function setupPinnedAbout(section, frame, stage, editorial, title, header) {
 				start,
 			)
 			.set(panels[index], { visibility: "hidden" }, start + wipe.duration);
+		addPanelTextReveal(timeline, panel, start + wipe.duration / 2);
 	});
 
 	const challenge = editorial.querySelector("[data-about-challenge]");
@@ -147,7 +197,15 @@ function setupPinnedAbout(section, frame, stage, editorial, title, header) {
 		syncHeaderContrast(header, getComputedStyle(stage).backgroundColor);
 	});
 
+	// CSS hot updates must also refresh the colors cached by the sticky title bar.
+	const refreshTheme = () => {
+		const time = timeline.totalTime();
+		timeline.invalidate().totalTime(0, true).totalTime(time);
+	};
+	import.meta.hot?.on("vite:afterUpdate", refreshTheme);
+
 	return () => {
+		import.meta.hot?.off("vite:afterUpdate", refreshTheme);
 		section.classList.remove("about-section--deck");
 		header?.classList.remove("site-header--on-dark");
 	};
@@ -231,7 +289,6 @@ function AboutAnimation({ rootRef }) {
 					const experienceTitle = section.querySelector(
 						"[data-about-experience-title]",
 					);
-					const miniCustomizer = section.querySelector("[data-about-mini-customizer]");
 					const experienceCopy = section.querySelectorAll(
 						"[data-about-experience-copy]",
 					);
@@ -429,18 +486,6 @@ function AboutAnimation({ rootRef }) {
 								yPercent: 0,
 							},
 							experience.title.start,
-						)
-						.fromTo(
-							miniCustomizer,
-							{ autoAlpha: 0, scale: 0.97, y: 22 },
-							{
-								autoAlpha: 1,
-								duration: experience.mini.duration,
-								ease: "power2.out",
-								scale: 1,
-								y: 0,
-							},
-							experience.mini.start,
 						)
 						.fromTo(
 							experienceCopy,

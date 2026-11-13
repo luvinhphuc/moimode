@@ -18,6 +18,7 @@ export const ABOUT_DECK_MOTION = Object.freeze({
 	firstHandoffStart: 1.8,
 	wipe: { duration: 0.26, ease: "power2.inOut" },
 	panelReveal: { duration: 0.33, ease: "power2.out", y: 18 },
+	textReveal: { titleDuration: 0.28, copyDuration: 0.42, stagger: 0.08 },
 	challengeTravel: 0.035,
 });
 
@@ -28,12 +29,12 @@ export const ABOUT_FLOW_MOTION = Object.freeze({
 		scrollEnd: "top 46%",
 		label: { start: 0, duration: 0.42 },
 		title: { start: 0.08, duration: 0.62 },
-		copy: { start: 0.32, duration: 0.56 },
+		copy: { start: 0.7, duration: 0.56 },
 	},
 	challenge: {
 		label: { start: 0, duration: 0.38 },
 		title: { start: 0.08, duration: 0.6, stagger: 0.12 },
-		copy: { start: 0.36, duration: 0.5 },
+		copy: { start: 0.8, duration: 0.5 },
 		scrollStart: "top bottom",
 		scrollEnd: "bottom top",
 		scrub: 0.6,
@@ -43,13 +44,13 @@ export const ABOUT_FLOW_MOTION = Object.freeze({
 		label: { start: 0, duration: 0.4 },
 		firstLine: { start: 0.08, duration: 0.58 },
 		secondLine: { start: 0.2, duration: 0.58 },
-		copy: { start: 0.48, duration: 0.56 },
+		copy: { start: 0.78, duration: 0.56 },
 	},
 	experience: {
 		label: { start: 0, duration: 0.38 },
 		title: { start: 0.08, duration: 0.62 },
-		mini: { start: 0.16, duration: 0.62 },
-		copy: { start: 0.28, duration: 0.52, stagger: 0.12 },
-		disclaimer: { start: 0.66, duration: 0.35 },
+		mini: { start: 0.7, duration: 0.62 },
+		copy: { start: 0.7, duration: 0.52, stagger: 0.12 },
+		disclaimer: { start: 1.34, duration: 0.35 },
 	},
 });

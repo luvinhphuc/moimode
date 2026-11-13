@@ -6,6 +6,7 @@ import AboutSection from "./components/AboutSection.jsx";
 import HeroSection from "./components/HeroSection.jsx";
 import PeopleSection from "./components/PeopleSection.jsx";
 import SmoothScroll from "./components/SmoothScroll.jsx";
+import StorySection from "./features/stories/components/StorySection.jsx";
 import "./Home.css";
 
 function Home() {
@@ -21,6 +22,7 @@ function Home() {
 				<HeroSection />
 				<AboutSection />
 				<PeopleSection />
+				<StorySection />
 				<p className="home-shell__status" role="status" aria-live="polite">
 					{ctaStatus}
 				</p>

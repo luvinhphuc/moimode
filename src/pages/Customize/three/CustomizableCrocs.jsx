@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo } from "react";
+import { Suspense, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 
 import { MODEL_ASSETS } from "../../../config/modelAssets.js";
@@ -50,11 +50,13 @@ function CustomizableCrocs({
 	bodyColour,
 	interactiveSlots,
 	onMetrics,
+	onModelReady,
 	onSlotSelect,
 	placements,
 	rotations,
 	selectedSlot,
 }) {
+	const groupRef = useRef(null);
 	const { scene } = useGLTF(MODEL_ASSETS.classicClog);
 
 	const { model, modelSize, slots } = useMemo(() => {
@@ -104,8 +106,13 @@ function CustomizableCrocs({
 		onMetrics(modelSize);
 	}, [modelSize, onMetrics]);
 
+	useLayoutEffect(() => {
+		onModelReady?.({ group: groupRef.current, modelSize });
+		return () => onModelReady?.(null);
+	}, [model, modelSize, onModelReady]);
+
 	return (
-		<group>
+		<group ref={groupRef}>
 			<primitive object={model} dispose={null} />
 			{slots.map((slot) => {
 				const charmId = placements[slot.name];

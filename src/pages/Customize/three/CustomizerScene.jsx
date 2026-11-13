@@ -41,6 +41,7 @@ function CustomizerScene({
 	interactiveSlots = false,
 	controlsEnabled = true,
 	onSlotSelect,
+	onModelReady,
 	placements,
 	rotations,
 	selectedSlot,
@@ -93,6 +94,7 @@ function CustomizerScene({
 							bodyColour={bodyColour}
 							interactiveSlots={interactiveSlots}
 							onMetrics={setModelSize}
+							onModelReady={onModelReady}
 							onSlotSelect={onSlotSelect}
 							placements={placements}
 							rotations={rotations}
