@@ -1,0 +1,121 @@
+.wrapped {
+	position: relative;
+	isolation: isolate;
+	min-height: calc(100svh - 4.75rem);
+	padding: clamp(1.5rem, 4vw, 4rem);
+	overflow: hidden;
+	color: #032b36;
+	background: #f6f1e8;
+	transition: background-color 0.6s ease;
+}
+
+.wrapped--reveal,
+.wrapped--card { background: var(--wrapped-theme); }
+.wrapped--bold.wrapped--reveal { color: #fff; }
+.wrapped-capture { position: fixed; left: -300vw; top: 0; width: 1200px; height: 900px; pointer-events: none; }
+.wrapped-capture .customizer-scene { width: 1200px; height: 900px; }
+.wrapped-eyebrow { margin: 0; font-size: 0.8rem; font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; }
+.wrapped-cta { display: inline-flex; justify-content: center; align-items: center; gap: 0.7rem; min-height: 3.5rem; padding: 0.85rem 1.25rem; border: 2px solid #032b36; border-radius: 100px; background: #032b36; color: #fff; font: 900 1rem "Karl ST VN", sans-serif; cursor: pointer; transition: transform 0.2s ease, background 0.2s ease; }
+.wrapped-cta:hover:not(:disabled) { transform: translateY(-3px); }
+.wrapped-cta:disabled { opacity: 0.5; cursor: not-allowed; }
+.wrapped-cta--outline { background: #f6f1e8; color: #032b36; }
+.wrapped-cta--quiet { background: transparent; color: #032b36; }
+.wrapped-shoe { display: block; width: 100%; height: 100%; object-fit: contain; }
+.wrapped-shoe-pending { display: grid; place-items: center; color: #696b64; font-size: 0.95rem; text-align: center; }
+
+.wrapped-decode { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 0.85fr); align-content: center; gap: 2rem 4rem; width: min(100%, 1300px); min-height: calc(100svh - 13rem); margin: auto; }
+.wrapped-decode__intro { position: relative; z-index: 2; grid-column: 1; }
+.wrapped-decode__intro h1 { margin: 0.65rem 0 1rem; font: 900 clamp(3.4rem, 7.5vw, 7rem)/0.91 "Karl ST Black VN", sans-serif; letter-spacing: -0.065em; text-transform: uppercase; }
+.wrapped-decode__intro > p:last-child { max-width: 28rem; font-size: clamp(1.05rem, 1.5vw, 1.35rem); }
+.wrapped-decode__grid { position: relative; z-index: 2; display: grid; grid-column: 1; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; }
+.wrapped-decode__fact { display: flex; flex-direction: column; justify-content: space-between; min-height: 9.5rem; padding: 1.2rem; border: 2px solid #032b36; border-radius: 1.1rem; background: rgba(255, 255, 255, 0.62); }
+.wrapped-decode__fact > span { font-size: 0.76rem; font-weight: 900; letter-spacing: 0.1em; }
+.wrapped-decode__fact strong { font: 900 clamp(2rem, 4vw, 4rem)/1 "Karl ST Black VN", sans-serif; }
+.wrapped-decode__fact--colour { position: relative; }
+.wrapped-decode__fact--colour i { position: absolute; right: 1rem; top: 1rem; width: 2.4rem; aspect-ratio: 1; border: 2px solid #032b36; border-radius: 50%; }
+.wrapped-decode__fact .wrapped-decode__top { font-size: clamp(1.3rem, 2.7vw, 2.6rem); }
+.wrapped-decode__shoe { z-index: 1; grid-column: 2; grid-row: 1 / span 2; align-self: center; width: 100%; height: min(55vh, 540px); transform: rotate(-7deg) scale(1.2); }
+.wrapped-decode__charms { position: absolute; z-index: 3; right: 0; bottom: 5rem; display: flex; gap: 0.3rem; transform: rotate(5deg); }
+.wrapped-decode__charms img { width: clamp(2.8rem, 5vw, 5rem); aspect-ratio: 1; object-fit: contain; filter: drop-shadow(0 4px 7px #032b3630); }
+.wrapped-decode__shape { position: absolute; right: 0; top: 0; z-index: -1; }
+.wrapped-decode > .wrapped-cta { grid-column: 1; justify-self: start; }
+.wrapped-bottom-mark { position: absolute; bottom: 1.2rem; right: 2rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; font-weight: 700; }
+
+.wrapped-reveal { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100svh - 12rem); text-align: center; }
+.wrapped-reveal__heading { margin: 0.5rem 0 0; font: 900 clamp(2.7rem, 6vw, 5.5rem)/0.95 "Karl ST Black VN", sans-serif; text-transform: uppercase; letter-spacing: -0.055em; }
+.wrapped-stack { display: grid; place-items: center; width: min(100%, 680px); height: clamp(320px, 46vw, 480px); margin: 0.3rem auto; }
+.wrapped-stack__card { grid-area: 1 / 1; width: clamp(210px, 29vw, 340px); aspect-ratio: 4 / 5; object-fit: cover; border-radius: 0.55rem; box-shadow: 0 1.6rem 3rem #032b3630; }
+.wrapped-reveal__star { position: absolute; top: 12%; right: 5%; width: clamp(80px, 11vw, 150px); opacity: 0.8; transform: rotate(-14deg); }
+.wrapped-reveal__shape { position: absolute; left: 8%; bottom: 15%; opacity: 0.7; }
+.wrapped-reveal__blobs, .wrapped-reveal__creative { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.wrapped-reveal__blob { position: absolute; opacity: 0.9; }
+.wrapped-reveal__blob:first-child { top: 26%; left: 13%; }
+.wrapped-reveal__blob:last-child { right: 13%; bottom: 28%; }
+.wrapped-reveal__scribble { position: absolute; left: 50%; top: 48%; width: min(90vw, 650px); transform: translate(-50%, -50%); fill: none; stroke: #916bc3; stroke-width: 5; stroke-linecap: round; stroke-dasharray: 1300; }
+.wrapped-reveal__sparkle { position: absolute; }
+.wrapped-reveal__sparkle:nth-of-type(2) { left: 17%; top: 32%; }
+.wrapped-reveal__sparkle:nth-of-type(3) { right: 16%; bottom: 29%; }
+.wrapped-reveal__name { margin: 0.4rem 0 0; font: 900 clamp(2.3rem, 5vw, 5rem)/1 "Karl ST Black VN", sans-serif; text-transform: uppercase; }
+.wrapped-reveal__keywords { margin: 0.4rem 0 1.2rem; font-size: clamp(1rem, 1.5vw, 1.25rem); font-weight: 700; }
+.wrapped--bold .wrapped-reveal .wrapped-cta { background: #fff; color: #032b36; }
+
+.wrapped-final { max-width: 1360px; margin: auto; }
+.wrapped-final__content > h1 { max-width: 100%; margin: 0.6rem 0 0; font: 900 clamp(3rem, 6.5vw, 6.8rem)/0.9 "Karl ST Black VN", sans-serif; text-transform: uppercase; letter-spacing: -0.055em; }
+.wrapped-final__keywords { margin: 0.75rem 0 2rem; font-size: 1.3rem; font-weight: 800; }
+.wrapped-final__grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr); align-items: center; gap: clamp(1rem, 4vw, 4rem); }
+.wrapped-final__product { position: relative; min-height: 390px; height: min(45vw, 580px); border: 2px solid #032b36; border-radius: 1.6rem; background: #f6f1e8; }
+.wrapped-final__product .wrapped-shoe { padding: 1rem; }
+.wrapped-final__swatch { position: absolute; left: 1.5rem; bottom: 1.3rem; display: flex; align-items: center; gap: 0.6rem; font-weight: 800; }
+.wrapped-final__swatch i { width: 1.4rem; aspect-ratio: 1; border: 1px solid #032b36; border-radius: 50%; }
+.wrapped-final__card { justify-self: center; width: min(100%, 430px); text-align: center; }
+.wrapped-final__card > p { margin: 0.7rem 0 0; font-size: 0.86rem; font-weight: 700; }
+.wrapped-card { display: block; width: 100%; aspect-ratio: 4 / 5; padding: 0; border: 0; border-radius: 0.6rem; background: transparent; cursor: pointer; perspective: 1000px; }
+.wrapped-card__tilt, .wrapped-card__flip { display: block; position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
+.wrapped-card__tilt { filter: drop-shadow(0 1.3rem 1.3rem #032b3640); }
+.wrapped-card__face { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0.6rem; backface-visibility: hidden; }
+.wrapped-card__face--back { transform: rotateY(180deg); }
+.wrapped-final__dna { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr); gap: 2rem; margin-top: 2rem; padding: clamp(1.5rem, 3vw, 2.5rem); border: 2px solid #032b36; border-radius: 1.4rem; background: #f6f1e8; }
+.wrapped-final__dna h2 { margin: 0.3rem 0 0.7rem; font: 900 clamp(2rem, 3.6vw, 3.7rem)/0.95 "Karl ST Black VN", sans-serif; text-transform: uppercase; }
+.wrapped-final__dna p:last-child { font-size: 1.05rem; }
+.wrapped-final__scores { display: grid; align-content: center; gap: 0.9rem; }
+.wrapped-final__score { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(100px, 1.5fr) 4.5rem; align-items: center; gap: 0.7rem; font-size: 0.9rem; font-weight: 700; }
+.wrapped-final__score > div { height: 0.75rem; overflow: hidden; border-radius: 1rem; background: #d7d5cc; }
+.wrapped-final__score > div i { display: block; height: 100%; border-radius: inherit; }
+.wrapped-final__score strong { text-align: right; }
+.wrapped-final__actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1.6rem; }
+.wrapped-final__notice { margin-top: 1rem; padding: 0.9rem 1.1rem; border-radius: 0.8rem; background: #f6f1e8; }
+.wrapped-final__notice button { display: inline-flex; align-items: center; gap: 0.3rem; margin-left: 0.5rem; font-weight: 900; text-decoration: underline; cursor: pointer; }
+
+@media (max-width: 900px) {
+	.wrapped-decode { grid-template-columns: 1fr; }
+	.wrapped-decode__intro, .wrapped-decode__grid, .wrapped-decode > .wrapped-cta { grid-column: 1; }
+	.wrapped-decode__shoe { grid-column: 1; grid-row: auto; height: 340px; transform: rotate(-6deg); }
+	.wrapped-decode__charms { bottom: 4rem; }
+	.wrapped-final__grid { grid-template-columns: 1fr; }
+	.wrapped-final__product { min-height: 340px; height: 48vw; }
+	.wrapped-final__card { width: min(100%, 390px); }
+}
+
+@media (max-width: 620px) {
+	.wrapped { padding: 1.5rem 1rem 3rem; }
+	.wrapped-decode { gap: 1.2rem; }
+	.wrapped-decode__intro h1 { font-size: clamp(2.7rem, 11vw, 4.2rem); }
+	.wrapped-decode__fact { min-height: 7.6rem; padding: 0.8rem; }
+	.wrapped-decode__fact strong { font-size: 2rem; }
+	.wrapped-decode__fact .wrapped-decode__top { font-size: 1.25rem; }
+	.wrapped-decode__shoe { height: 260px; }
+	.wrapped-decode__charms { position: static; grid-row: 4; justify-content: center; transform: none; }
+	.wrapped-decode > .wrapped-cta { grid-row: 5; }
+	.wrapped-reveal__star { right: 0; top: 7%; }
+	.wrapped-reveal__shape { left: 0; bottom: 10%; }
+	.wrapped-stack { height: 340px; }
+	.wrapped-final__product { height: 330px; }
+	.wrapped-final__dna { grid-template-columns: 1fr; }
+	.wrapped-final__score { grid-template-columns: minmax(105px, 1fr) minmax(60px, 1fr) 3.6rem; gap: 0.35rem; font-size: 0.75rem; }
+	.wrapped-final__actions { flex-direction: column; }
+	.wrapped-final__actions .wrapped-cta { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.wrapped, .wrapped-cta { transition: none; }
+}

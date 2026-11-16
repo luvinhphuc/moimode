@@ -112,7 +112,7 @@
 	}
 
 	.customizer-scene {
-		@apply relative w-full h-full min-h-56 overflow-hidden contain-[paint];
+		@apply relative w-full h-full min-h-0 overflow-hidden contain-[paint];
 	}
 
 	.customizer-scene canvas {
@@ -135,11 +135,11 @@
 	}
 
 	.style-grid {
-		@apply grid flex-1 place-items-center min-h-80;
+		@apply grid flex-1 place-items-center min-h-0;
 	}
 
 	.style-card {
-		@apply relative grid grid-rows-[minmax(15rem,1fr)_auto] w-[min(100%,42rem)] min-h-96 p-4
+		@apply relative grid grid-rows-[auto_auto] w-[min(100%,42rem)] p-4
 			[border:2px_solid_var(--ink)] rounded-[1.25rem]
 			[background:color-mix(in_srgb,var(--color-moi-bg)_64%,transparent)]
 			[box-shadow:0_1.2rem_3rem_var(--paper-shadow)];
@@ -156,7 +156,7 @@
 	}
 
 	.style-card__scene {
-		@apply min-h-64;
+		@apply w-full aspect-[16/9];
 	}
 
 	.style-card__copy {
@@ -172,8 +172,8 @@
 	}
 
 	.colour-layout {
-		@apply grid flex-1 items-stretch grid-cols-[minmax(20rem,0.85fr)_minmax(30rem,1.35fr)]
-			gap-[clamp(1.5rem,4vw,4.5rem)] min-h-100;
+		@apply grid flex-1 items-center content-center grid-cols-[minmax(20rem,0.85fr)_minmax(30rem,1.35fr)]
+			gap-[clamp(1.5rem,4vw,4.5rem)] min-h-0;
 	}
 
 	.colour-palette {
@@ -218,7 +218,6 @@
 	.charms-stage,
 	.preview-stage,
 	.customisation-recap,
-	.design-summary,
 	.charm-catalog {
 		@apply [border:1px_solid_____color-mix(in_srgb,var(--color-moi-bg)_86%,transparent)] rounded-[1.2rem]
 			[background:color-mix(in_srgb,var(--color-moi-bg)_50%,transparent)]
@@ -226,11 +225,11 @@
 	}
 
 	.product-paper {
-		@apply relative grid grid-rows-[auto_1fr_auto] min-h-100 p-[0.9rem_1rem_1rem];
+		@apply relative grid grid-rows-[auto_auto_auto] p-[0.9rem_1rem_1rem];
 	}
 
 	.product-paper__scene {
-		@apply min-h-72;
+		@apply w-full aspect-[4/3];
 	}
 
 	.view-controls {
@@ -264,40 +263,12 @@
 	}
 
 	.charms-layout {
-		@apply grid flex-1 items-stretch gap-4 grid-cols-[minmax(11rem,0.58fr)_minmax(27rem,1.6fr)_minmax(18rem,0.88fr)]
-			min-h-116;
-	}
-
-	.design-summary {
-		@apply self-center p-4;
-	}
-
-	.design-summary > div {
-		@apply relative p-[0.8rem_1.4rem_1rem_0];
-	}
-
-	.design-summary > div + div {
-		@apply [border-top:1px_solid_var(--line)];
-	}
-
-	.design-summary p {
-		@apply m-[0_0_0.55rem] text-[0.75rem] font-black uppercase;
-	}
-
-	.design-summary strong {
-		@apply flex items-center gap-2 text-[0.75rem];
-	}
-
-	.design-summary strong i {
-		@apply w-[1.8rem] aspect-[1] [border:1px_solid_var(--line)] rounded-[50%];
-	}
-
-	.design-summary > div > span {
-		@apply absolute right-0 bottom-[1.1rem];
+		@apply grid flex-1 items-start content-center gap-4 grid-cols-[minmax(27rem,1.6fr)_minmax(18rem,0.88fr)]
+			min-h-0;
 	}
 
 	.charms-stage {
-		@apply relative grid grid-rows-[auto_1fr_auto_auto] min-h-116 p-3;
+		@apply relative grid grid-rows-[auto_auto_auto_auto] p-3;
 	}
 
 	.charms-stage__topbar {
@@ -314,7 +285,7 @@
 	}
 
 	.charms-stage__scene {
-		@apply min-h-84;
+		@apply w-full aspect-[16/10];
 	}
 
 	.placement-hint {
@@ -384,11 +355,11 @@
 	}
 
 	.charm-catalog {
-		@apply relative min-h-116 overflow-hidden;
+		@apply w-full min-w-0 h-[40rem] min-h-0 overflow-hidden;
 	}
 
 	.charm-catalog__content {
-		@apply relative z-[3] flex min-h-full flex-col h-auto p-[0.85rem];
+		@apply relative z-[3] flex h-full min-w-0 min-h-0 flex-col p-[0.85rem];
 	}
 
 	.charm-catalog__heading p,
@@ -436,7 +407,7 @@
 	}
 
 	.charm-grid {
-		@apply relative grid grid-cols-[repeat(4,1fr)] auto-rows-max [align-content:start] gap-[0.42rem] max-h-[18.2rem]
+		@apply relative grid flex-1 min-h-0 grid-cols-[repeat(4,1fr)] auto-rows-max [align-content:start] gap-[0.42rem]
 			p-[0.18rem] overflow-x-hidden overflow-y-auto [scrollbar-width:thin];
 	}
 
@@ -477,7 +448,7 @@
 	}
 
 	.preview-layout {
-		@apply grid flex-1 items-stretch gap-4 grid-cols-[7.5rem_minmax(30rem,1.65fr)_minmax(18rem,0.75fr)] min-h-112;
+		@apply grid flex-1 items-center content-center gap-4 grid-cols-[7.5rem_minmax(30rem,1.65fr)_minmax(18rem,0.75fr)] min-h-0;
 	}
 
 	.step-rail {
@@ -507,7 +478,7 @@
 	}
 
 	.preview-stage {
-		@apply grid grid-rows-[auto_1fr_auto] min-h-112 p-[0.8rem];
+		@apply grid grid-rows-[auto_auto] p-[0.8rem];
 	}
 
 	.preview-stage__toolbar {
@@ -523,7 +494,7 @@
 	}
 
 	.preview-stage__scene {
-		@apply min-h-80;
+		@apply w-full aspect-[16/10];
 	}
 
 	.customisation-recap {
@@ -593,101 +564,6 @@
 	.preview-footer {
 		@apply grid-cols-[1fr_1fr];
 	}
-
-	.share-skeleton {
-		@apply relative z-[2] mx-auto grid gap-4 grid-cols-[minmax(24rem,1.25fr)_minmax(22rem,0.75fr)]
-			grid-rows-[1fr_auto] w-[min(100%-2.5rem,78rem)] min-h-[calc(100svh-4.75rem)] p-[1rem_0_1.5rem];
-	}
-
-	.share-skeleton__hero {
-		@apply relative min-h-124 p-8 overflow-hidden;
-	}
-
-	.share-skeleton__hero .tape-note {
-		@apply top-0 left-0 right-auto text-[0.85rem];
-	}
-
-	.share-skeleton__eyebrow {
-		@apply m-[5rem_0_0.35rem] text-(--pink) text-[0.75rem] font-black tracking-[0.15em] uppercase;
-	}
-
-	.share-skeleton h1 {
-		@apply relative z-3 max-w-132 m-[0_0_1rem] font-display text-[clamp(3rem,6.5vw,6rem)] leading-[0.84]
-			tracking-[-0.07em] uppercase;
-	}
-
-	.share-skeleton__shoe {
-		@apply absolute right-[-4%] bottom-0 w-[72%] h-[70%];
-	}
-
-	.share-skeleton__panel {
-		@apply self-center min-h-116 p-6 rounded-[1.4rem]
-			[background:color-mix(in_srgb,var(--color-moi-bg)_55%,transparent)] [box-shadow:0_1rem_3rem_var(--paper-shadow)];
-	}
-
-	.skeleton-block {
-		@apply block w-full h-4 rounded-[0.35rem]
-			[background:linear-gradient(90deg,var(--color-moi-powder)_25%,var(--color-moi-surface)_45%,var(--color-moi-powder)_65%)]
-			animate-[skeleton-shimmer_1.5s_ease-in-out_infinite];
-		@apply bg-size-[220%_100%];
-	}
-
-	.skeleton-block.is-title {
-		@apply w-[78%] h-[2.35rem] mb-[1.2rem];
-	}
-
-	.skeleton-block.is-copy {
-		@apply [width:18rem] max-w-[70%] h-[0.7rem] mt-[0.6rem];
-	}
-
-	.skeleton-block.is-short {
-		@apply w-44;
-	}
-
-	.share-skeleton__platforms {
-		@apply grid gap-4 grid-cols-[repeat(4,1fr)] m-[2rem_0];
-	}
-
-	.share-skeleton__platforms > span {
-		@apply flex flex-col items-center gap-2.5;
-	}
-
-	.skeleton-block.is-circle {
-		@apply w-12 aspect-[1] h-auto rounded-[50%];
-	}
-
-	.skeleton-block.is-label {
-		@apply w-12 h-2;
-	}
-
-	.share-skeleton__socials {
-		@apply grid gap-3 grid-cols-[1fr_1fr];
-	}
-
-	.skeleton-block.is-social {
-		@apply h-60 rounded-[0.8rem];
-	}
-
-	.share-skeleton__recap {
-		@apply col-1 p-4 rounded-2xl [background:color-mix(in_srgb,var(--color-moi-bg)_55%,transparent)]
-			[box-shadow:0_0.8rem_2rem_var(--paper-shadow)];
-	}
-
-	.share-skeleton__recap h2 {
-		@apply m-[0_0_0.8rem] font-display text-[0.9rem] uppercase;
-	}
-
-	.share-skeleton__recap > div {
-		@apply grid gap-3 grid-cols-[repeat(3,1fr)];
-	}
-
-	.share-skeleton__recap .skeleton-block {
-		@apply h-[2.8rem];
-	}
-
-	.share-skeleton__back {
-		@apply col-2 self-center;
-	}
 }
 
 @keyframes customizer-spin {
@@ -696,17 +572,7 @@
 	}
 }
 
-@keyframes skeleton-shimmer {
-	to {
-		background-position: -220% 0;
-	}
-}
-
 @media (max-width: 1023px) {
-	.customizer-main {
-		@apply min-h-auto;
-	}
-
 	.tape-note {
 		@apply right-0 min-w-40 text-[0.9rem];
 	}
@@ -716,15 +582,15 @@
 	}
 
 	.charms-layout {
-		@apply grid-cols-[minmax(11rem,0.55fr)_minmax(24rem,1.4fr)];
+		@apply grid-cols-[minmax(0,1fr)];
 	}
 
 	.charm-catalog {
-		@apply col-span-full min-h-72;
+		@apply col-span-full h-80;
 	}
 
 	.charm-grid {
-		@apply grid-cols-[repeat(10,minmax(3.3rem,1fr))] max-h-[8.3rem] overflow-x-hidden overflow-y-auto;
+		@apply grid-cols-[repeat(10,minmax(3.3rem,1fr))];
 	}
 
 	.preview-layout {
@@ -733,10 +599,6 @@
 
 	.customisation-recap {
 		@apply col-span-full w-full;
-	}
-
-	.share-skeleton {
-		@apply grid-cols-[1.15fr_0.85fr];
 	}
 }
 
@@ -805,12 +667,12 @@
 	}
 
 	.style-card {
-		@apply w-[min(100%,29rem)] min-h-0 grid-rows-[clamp(12rem,56vw,17rem)_auto] p-[clamp(0.65rem,2.7vw,0.9rem)]
+		@apply w-[min(100%,29rem)] p-[clamp(0.65rem,2.7vw,0.9rem)]
 			rounded-2xl;
 	}
 
 	.style-card__scene {
-		@apply min-h-0 h-full;
+		@apply aspect-[16/10];
 	}
 
 	.style-card__copy h2 {
@@ -838,15 +700,15 @@
 	}
 
 	.colour-layout {
-		@apply flex flex-col-reverse min-h-0;
+		@apply flex flex-col-reverse items-stretch min-h-0;
 	}
 
 	.product-paper {
-		@apply min-h-92;
+		@apply min-h-0;
 	}
 
 	.product-paper__scene {
-		@apply min-h-68;
+		@apply aspect-[16/10];
 	}
 
 	.colour-swatches {
@@ -863,31 +725,15 @@
 	}
 
 	.charms-layout {
-		@apply flex flex-col min-h-0;
-	}
-
-	.design-summary {
-		@apply grid grid-cols-[1fr_1fr] w-full p-[0.4rem_0.8rem];
-	}
-
-	.design-summary > div {
-		@apply p-[0.65rem];
-	}
-
-	.design-summary > div + div {
-		@apply [border-top:0] [border-left:1px_solid_var(--line)];
-	}
-
-	.design-summary > div > span {
-		@apply hidden;
+		@apply flex flex-col items-stretch min-h-0;
 	}
 
 	.charms-stage {
-		@apply min-h-104;
+		@apply min-h-0;
 	}
 
 	.charms-stage__scene {
-		@apply min-h-76;
+		@apply aspect-[4/3];
 	}
 
 	.slot-editor {
@@ -915,15 +761,15 @@
 	}
 
 	.charm-catalog {
-		@apply min-h-84;
+		@apply h-96;
 	}
 
 	.charm-grid {
-		@apply grid-cols-[repeat(5,1fr)] max-h-50 overflow-x-hidden overflow-y-auto;
+		@apply grid-cols-[repeat(5,1fr)];
 	}
 
 	.preview-layout {
-		@apply flex flex-col min-h-0;
+		@apply flex flex-col items-stretch min-h-0;
 	}
 
 	.step-rail {
@@ -943,7 +789,7 @@
 	}
 
 	.preview-stage {
-		@apply min-h-100;
+		@apply min-h-0;
 	}
 
 	.preview-stage__toolbar {
@@ -951,40 +797,12 @@
 	}
 
 	.preview-stage__scene {
-		@apply min-h-72;
+		@apply aspect-[4/3];
 	}
 
 	.preview-footer {
 		@apply sticky bottom-0 z-40 grid-cols-[auto_1fr] p-[0.8rem_0_max(0.8rem,env(safe-area-inset-bottom))]
 			[background:linear-gradient(transparent,var(--paper)_28%)];
-	}
-
-	.share-skeleton {
-		@apply flex flex-col w-[min(100%-1.25rem,40rem)] min-h-[calc(100svh-4rem)] pt-2;
-	}
-
-	.share-skeleton__hero {
-		@apply min-h-120 p-4;
-	}
-
-	.share-skeleton__eyebrow {
-		@apply mt-18;
-	}
-
-	.share-skeleton h1 {
-		@apply text-[clamp(2.9rem,15vw,4.6rem)];
-	}
-
-	.share-skeleton__shoe {
-		@apply right-[-12%] w-[105%] h-[62%];
-	}
-
-	.share-skeleton__panel {
-		@apply min-h-108;
-	}
-
-	.share-skeleton__back {
-		@apply sticky bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-30 [background:var(--paper)];
 	}
 }
 
@@ -1009,8 +827,7 @@
 		@apply [transition:none];
 	}
 
-	.customizer-scene-status__dot,
-	.skeleton-block {
+	.customizer-scene-status__dot {
 		@apply animate-none;
 	}
 }

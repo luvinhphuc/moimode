@@ -55,6 +55,8 @@ function CustomizableCrocs({
 	onMetrics,
 	onModelReady,
 	onSlotSelect,
+	onCharmReady,
+	animateCharms = true,
 	placements,
 	rotations,
 	selectedSlot,
@@ -126,6 +128,8 @@ function CustomizableCrocs({
 								charmId={charmId}
 								interactive={interactiveSlots}
 								modelSize={modelSize}
+								animateIn={animateCharms}
+								onReady={onCharmReady}
 								onSelect={onSlotSelect}
 								rotation={rotations?.[slot.name] ?? 0}
 								selected={selectedSlot === slot.name}

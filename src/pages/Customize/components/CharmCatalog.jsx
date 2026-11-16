@@ -34,7 +34,7 @@ function CharmCatalog({ onSelect, selectedCharmId }) {
 		const normalizedQuery = query.trim().toLocaleLowerCase("vi");
 		return CHARM_CATALOG.filter((item) => {
 			const matchesCategory =
-				activeCategory === "all" || item.categories.includes(activeCategory);
+				activeCategory === "all" || item.categoryId === activeCategory;
 			const matchesQuery =
 				!normalizedQuery ||
 				item.label.toLocaleLowerCase("vi").includes(normalizedQuery) ||

@@ -1,5 +1,5 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 
 import { ACESFilmicToneMapping, SRGBColorSpace } from "../../../utils/three.js";
@@ -39,6 +39,20 @@ function WebGLContextMonitor({ onLost, onRestored }) {
 	return null;
 }
 
+function CaptureObserver({ ready, onCapture, onCaptureError }) {
+	const captured = useRef(false);
+	useFrame(({ gl, scene, camera }) => {
+		gl.render(scene, camera);
+		if (!ready || captured.current) return;
+		captured.current = true;
+		gl.domElement.toBlob((blob) => {
+			if (blob) onCapture?.(blob);
+			else onCaptureError?.(new Error("Could not capture the Crocs image."));
+		}, "image/png");
+	}, 1);
+	return null;
+}
+
 function CustomizerScene({
 	bodyColour,
 	compactPreview = false,
@@ -54,13 +68,24 @@ function CustomizerScene({
 	selectedSlot,
 	view,
 	onViewChange,
+	captureMode = false,
+	onCapture,
+	onCaptureError,
 }) {
 	const controlsRef = useRef(null);
 	const [modelSize, setModelSize] = useState(1);
 	const [isContextLost, setIsContextLost] = useState(false);
+	const [modelReady, setModelReady] = useState(false);
+	const [readySlots, setReadySlots] = useState(() => new Set());
+	const handleCharmReady = useCallback((slotName) => {
+		setReadySlots((current) => current.has(slotName) ? current : new Set([...current, slotName]));
+	}, []);
+	const handleModelReady = useCallback(() => { setModelReady(true); }, []);
+	const captureReady = modelReady && readySlots.size >= Object.keys(placements).length;
 	const handleContextLost = useCallback(() => {
 		setIsContextLost(true);
-	}, []);
+		if (captureMode) onCaptureError?.(new Error("The 3D renderer was interrupted. Please retry the capture."));
+	}, [captureMode, onCaptureError]);
 	const handleContextRestored = useCallback(() => {
 		setIsContextLost(false);
 	}, []);
@@ -73,11 +98,12 @@ function CustomizerScene({
 		>
 			<SceneErrorBoundary onError={onError}>
 				<Canvas
-					frameloop="demand"
+					frameloop={captureMode ? "always" : "demand"}
 					camera={{ fov: 36, near: 0.01, far: 200, position: INITIAL_CAMERA_POSITION }}
-					dpr={[1, 2]}
+					dpr={captureMode ? 1 : [1, 2]}
 					gl={{
 						alpha: true,
+						preserveDrawingBuffer: captureMode,
 						antialias: true,
 						powerPreference: "high-performance",
 					}}
@@ -91,6 +117,7 @@ function CustomizerScene({
 						onLost={handleContextLost}
 						onRestored={handleContextRestored}
 					/>
+					{captureMode ? <CaptureObserver ready={captureReady} onCapture={onCapture} onCaptureError={onCaptureError} /> : null}
 					<CustomizerStudioLights />
 					<CustomizerCameraRig
 						compactPreview={compactPreview}
@@ -101,10 +128,12 @@ function CustomizerScene({
 					<Suspense fallback={null}>
 						<CustomizableCrocs
 							bodyColour={bodyColour}
+							animateCharms={!captureMode}
+							onCharmReady={captureMode ? handleCharmReady : undefined}
 							interactiveSlots={interactiveSlots}
 							onLoadProgress={onLoadProgress}
 							onMetrics={setModelSize}
-							onModelReady={onModelReady}
+							onModelReady={captureMode ? handleModelReady : onModelReady}
 							onSlotSelect={onSlotSelect}
 							placements={placements}
 							rotations={rotations}

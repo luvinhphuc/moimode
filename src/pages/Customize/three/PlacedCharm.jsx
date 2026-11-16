@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 
@@ -24,6 +24,7 @@ function PlacedCharm({
 	interactive,
 	modelSize,
 	onSelect,
+	onReady,
 	rotation = 0,
 	selected = false,
 	slot,
@@ -31,6 +32,7 @@ function PlacedCharm({
 }) {
 	const charm = CHARM_BY_ID[charmId];
 	const { scene } = useGLTF(charm.url);
+	useEffect(() => { onReady?.(slot.name); }, [onReady, slot.name]);
 	const normalized = useMemo(
 		() => normalizeCharmScene(scene, charm.orientation),
 		[charm, scene],
