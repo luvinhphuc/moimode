@@ -1,8 +1,6 @@
-import { Component, Suspense, useEffect } from "react";
+import { Component, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
-import { useGLTF, useProgress } from "@react-three/drei";
 
-import { MODEL_ASSETS } from "../../../config/modelAssets.js";
 import {
 	ACESFilmicToneMapping,
 	SRGBColorSpace,
@@ -10,20 +8,6 @@ import {
 import { CAMERA, CROCS_POSE } from "../config/sceneConfig.js";
 import CrocsModel from "./CrocsModel.jsx";
 import HeroStudioLights from "./HeroStudioLights.jsx";
-
-function LoadingProgress({ onLoadProgress }) {
-	const { progress } = useProgress();
-
-	useEffect(() => {
-		const frame = window.requestAnimationFrame(() => {
-			onLoadProgress?.(Math.min(99, Math.round(progress)));
-		});
-
-		return () => window.cancelAnimationFrame(frame);
-	}, [onLoadProgress, progress]);
-
-	return null;
-}
 
 class SceneErrorBoundary extends Component {
 	state = { hasError: false };
@@ -52,11 +36,10 @@ function HeroScene({
 }) {
 	return (
 		<div className="hero-canvas" role="img" aria-label={ariaLabel}>
-			<LoadingProgress onLoadProgress={onLoadProgress} />
 			<SceneErrorBoundary onError={onError}>
 				<Canvas
 					className="hero-canvas-output"
-					frameloop={isRenderActive ? "always" : "never"}
+					frameloop={isRenderActive ? "demand" : "never"}
 					camera={{
 						fov: CAMERA.fov,
 						near: CAMERA.near,
@@ -79,6 +62,7 @@ function HeroScene({
 					<Suspense fallback={null}>
 						<CrocsModel
 							enablePointerMotion={enablePointerMotion}
+							onLoadProgress={onLoadProgress}
 							onReady={onReady}
 							pose={CROCS_POSE}
 							transitionControlRef={transitionControlRef}
@@ -89,7 +73,5 @@ function HeroScene({
 		</div>
 	);
 }
-
-useGLTF.preload(MODEL_ASSETS.classicClog);
 
 export default HeroScene;

@@ -1,8 +1,10 @@
-import { Suspense, useEffect, useLayoutEffect, useMemo, useRef } from "react";
-import { useGLTF } from "@react-three/drei";
+import { Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { useLoader, useThree } from "@react-three/fiber";
+import { GLTFLoader } from "three-stdlib";
 
 import { MODEL_ASSETS } from "../../../config/modelAssets.js";
 import { Box3, Quaternion, Vector3 } from "../../../utils/three.js";
+import useFirstModelFrame from "../../../utils/useFirstModelFrame.js";
 import PlacedCharm from "./PlacedCharm.jsx";
 
 function cloneMaterials(root) {
@@ -49,6 +51,7 @@ function SlotMarker({ modelSize, onSelect, slot }) {
 function CustomizableCrocs({
 	bodyColour,
 	interactiveSlots,
+	onLoadProgress,
 	onMetrics,
 	onModelReady,
 	onSlotSelect,
@@ -57,18 +60,18 @@ function CustomizableCrocs({
 	selectedSlot,
 }) {
 	const groupRef = useRef(null);
-	const { scene } = useGLTF(MODEL_ASSETS.classicClog);
+	const invalidate = useThree((state) => state.invalidate);
+	const { scene } = useLoader(GLTFLoader, MODEL_ASSETS.classicClog, undefined, onLoadProgress);
 
 	const { model, modelSize, slots } = useMemo(() => {
 		const clone = scene.clone(true);
 		cloneMaterials(clone);
 		clone.updateMatrixWorld(true);
 
-		const initialBounds = new Box3().setFromObject(clone);
-		clone.position.sub(initialBounds.getCenter(new Vector3()));
+		const bounds = new Box3().setFromObject(clone);
+		clone.position.sub(bounds.getCenter(new Vector3()));
 		clone.updateMatrixWorld(true);
 
-		const bounds = new Box3().setFromObject(clone);
 		const size = bounds.getSize(new Vector3());
 		const nextModelSize = Math.max(size.x, size.y, size.z) || 1;
 		const nextSlots = [];
@@ -88,7 +91,7 @@ function CustomizableCrocs({
 		return { model: clone, modelSize: nextModelSize, slots: nextSlots };
 	}, [scene]);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		model.traverse((object) => {
 			if (!object.isMesh || !object.material) return;
 			const materials = Array.isArray(object.material)
@@ -97,19 +100,19 @@ function CustomizableCrocs({
 			for (const material of materials) {
 				if (material.name !== "Body_Crocs" || !material.color) continue;
 				material.color.set(bodyColour);
-				material.needsUpdate = true;
 			}
 		});
-	}, [bodyColour, model]);
+		invalidate();
+	}, [bodyColour, invalidate, model]);
 
 	useEffect(() => {
 		onMetrics(modelSize);
 	}, [modelSize, onMetrics]);
 
-	useLayoutEffect(() => {
-		onModelReady?.({ group: groupRef.current, modelSize });
-		return () => onModelReady?.(null);
-	}, [model, modelSize, onModelReady]);
+	const reportFirstFrame = useCallback(() => {
+		onModelReady?.({ group: groupRef.current, invalidate, modelSize });
+	}, [invalidate, modelSize, onModelReady]);
+	useFirstModelFrame(model, onModelReady ? reportFirstFrame : undefined);
 
 	return (
 		<group ref={groupRef}>
@@ -123,10 +126,10 @@ function CustomizableCrocs({
 								charmId={charmId}
 								interactive={interactiveSlots}
 								modelSize={modelSize}
-							onSelect={onSlotSelect}
-							rotation={rotations?.[slot.name] ?? 0}
-							selected={selectedSlot === slot.name}
-							slot={slot}
+								onSelect={onSlotSelect}
+								rotation={rotations?.[slot.name] ?? 0}
+								selected={selectedSlot === slot.name}
+								slot={slot}
 							/>
 						</Suspense>
 					);

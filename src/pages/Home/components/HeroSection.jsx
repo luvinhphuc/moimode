@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import Hls from "hls.js";
 import { ArrowDown } from "lucide-react";
 
 import HeroAnimation from "../animations/HeroAnimation.jsx";
@@ -8,48 +7,161 @@ import heroVideoUrl from "../../../assets/videos/hero.m3u8?url";
 import Preloader from "./Preloader.jsx";
 import { SoftStar } from "../../../components/Shapes.jsx";
 
-function HeroSection() {
+function HeroSection({ downloadProgress, isIntroDone, onIntroComplete, onLoadProgress }) {
 	const rootRef = useRef(null);
 	const videoRef = useRef(null);
 	const transitionControlRef = useRef(null);
-	const [isIntroReady, setIsIntroReady] = useState(false);
-	const [isIntroDone, setIsIntroDone] = useState(false);
 	const [isHeroReady, setIsHeroReady] = useState(false);
 	const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 	const [HeroScene, setHeroScene] = useState(null);
 	const [modelStatus, setModelStatus] = useState("loading");
 	const [isModelVisible, setIsModelVisible] = useState(true);
+	const [isHeroInView, setIsHeroInView] = useState(true);
+	const isIntroReady = modelStatus !== "loading";
+	const progress = isIntroReady ? 100 : Math.min(99, downloadProgress ?? 0);
 
 	useEffect(() => {
 		const video = videoRef.current;
 		if (!video) return undefined;
 
+		let inView = false;
+		let active = true;
 		let hls;
+		let playPromise;
+		let playRetryId;
+		let recoveryId;
+		let stallCheckId;
+		let playFailures = 0;
+		let hlsRecoveries = 0;
+		let stallRecoveries = 0;
+		let lastPlaybackTime = 0;
+		let lastProgressAt = performance.now();
+		const shouldPlay = () => inView && !document.hidden;
+		const requestPlayback = () => {
+			if (!shouldPlay() || !video.paused || playPromise ||
+				video.readyState < HTMLMediaElement.HAVE_METADATA) return;
+			playPromise = video.play();
+			playPromise?.catch(() => {
+				// Metadata may arrive before the first HLS fragment can be played.
+				if (active && shouldPlay() && playFailures < 3) {
+					playFailures += 1;
+					window.clearTimeout(playRetryId);
+					playRetryId = window.setTimeout(requestPlayback, playFailures * 800);
+				}
+			}).finally(() => {
+				playPromise = null;
+			});
+		};
+		const syncPlayback = () => {
+			if (!shouldPlay()) {
+				window.clearTimeout(playRetryId);
+				video.pause();
+			} else {
+				requestPlayback();
+			}
+		};
+		const handleCanPlay = () => {
+			playFailures = 0;
+			syncPlayback();
+		};
+		const handlePlaying = () => {
+			playFailures = 0;
+			lastProgressAt = performance.now();
+			setIsVideoPlaying(true);
+		};
+		const handlePause = () => {
+			setIsVideoPlaying(false);
+			if (shouldPlay() && playFailures < 3) {
+				window.clearTimeout(playRetryId);
+				playRetryId = window.setTimeout(requestPlayback, 600);
+			}
+		};
+		const checkForStall = () => {
+			if (!shouldPlay() || video.paused || video.seeking ||
+				video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
+			const now = performance.now();
+			if (Math.abs(video.currentTime - lastPlaybackTime) > 0.1) {
+				lastPlaybackTime = video.currentTime;
+				lastProgressAt = now;
+				stallRecoveries = 0;
+			hlsRecoveries = 0;
+			} else if (now - lastProgressAt > 6000 && stallRecoveries < 2) {
+				stallRecoveries += 1;
+				lastProgressAt = now;
+				if (hls) {
+					if (stallRecoveries === 1) hls.startLoad();
+					else hls.recoverMediaError();
+				} else {
+					video.load();
+				}
+			}
+		};
+		const syncVisibility = () => {
+			setIsHeroInView(inView && !document.hidden);
+			syncPlayback();
+		};
+		const observer = new IntersectionObserver(([entry]) => {
+			inView = entry.isIntersecting;
+			syncVisibility();
+		});
+		observer.observe(rootRef.current);
+		video.addEventListener("loadedmetadata", syncPlayback);
+		video.addEventListener("canplay", handleCanPlay);
+		video.addEventListener("playing", handlePlaying);
+		video.addEventListener("pause", handlePause);
+		document.addEventListener("visibilitychange", syncVisibility);
+		stallCheckId = window.setInterval(checkForStall, 1500);
+
+		const attachNativeStream = () => {
+			if (!video.canPlayType("application/vnd.apple.mpegurl")) return;
+			video.src = heroVideoUrl;
+			video.load();
+		};
 		// Skip the disposable StrictMode setup before starting network requests.
-		const setupId = window.setTimeout(() => {
-			// Chrome can report native HLS support but fail on encrypted streams.
-			if (Hls.isSupported()) {
-				hls = new Hls({ startFragPrefetch: true });
-				hls.loadSource(heroVideoUrl);
-				hls.attachMedia(video);
-			} else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-				video.src = heroVideoUrl;
-				video.load();
+		const setupId = window.setTimeout(async () => {
+			try {
+				const { default: Hls } = await import("hls.js");
+				if (!active) return;
+				// Chrome can report native HLS support but fail on encrypted streams.
+				if (Hls.isSupported()) {
+					hls = new Hls({ startFragPrefetch: true });
+					hls.on(Hls.Events.ERROR, (_, error) => {
+						if (!error.fatal || !active || hlsRecoveries >= 2) return;
+						hlsRecoveries += 1;
+						window.clearTimeout(recoveryId);
+						recoveryId = window.setTimeout(() => {
+							if (!active) return;
+							if (error.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+							else if (error.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+						}, hlsRecoveries * 1000);
+					});
+					hls.loadSource(heroVideoUrl);
+					hls.attachMedia(video);
+				} else {
+					attachNativeStream();
+				}
+			} catch {
+				if (active) attachNativeStream();
 			}
 		}, 0);
 
 		return () => {
+			active = false;
+			observer.disconnect();
+			video.removeEventListener("loadedmetadata", syncPlayback);
+			video.removeEventListener("canplay", handleCanPlay);
+			video.removeEventListener("playing", handlePlaying);
+			video.removeEventListener("pause", handlePause);
+			document.removeEventListener("visibilitychange", syncVisibility);
 			window.clearTimeout(setupId);
+			window.clearTimeout(playRetryId);
+			window.clearTimeout(recoveryId);
+			window.clearInterval(stallCheckId);
 			hls?.destroy();
 			video.pause();
 			video.removeAttribute("src");
 			video.load();
 		};
-	}, []);
-
-	useEffect(() => {
-		const frame = window.requestAnimationFrame(() => setIsIntroReady(true));
-		return () => window.cancelAnimationFrame(frame);
 	}, []);
 
 	useEffect(() => {
@@ -67,10 +179,6 @@ function HeroSection() {
 		};
 	}, []);
 
-	const handleIntroComplete = useCallback(() => {
-		setIsIntroDone(true);
-	}, []);
-
 	const handleHeroReady = useCallback(() => {
 		setIsHeroReady(true);
 	}, []);
@@ -84,7 +192,10 @@ function HeroSection() {
 			className="hero-transition-track"
 			aria-label="MOIMODE hero"
 		>
-			<Preloader isDone={isIntroDone} progress={100} />
+			<Preloader
+				isDone={isIntroDone}
+				progress={progress}
+			/>
 
 			<div className="hero-sticky-viewport">
 				<div className="hero-shell">
@@ -98,12 +209,11 @@ function HeroSection() {
 						<video
 							ref={videoRef}
 							className="hero-section__video"
-							autoPlay
 							muted
+							autoPlay
 							loop
 							playsInline
 							preload="auto"
-							onPlaying={() => setIsVideoPlaying(true)}
 							onError={() => setIsVideoPlaying(false)}
 							aria-hidden="true"
 						/>
@@ -137,8 +247,9 @@ function HeroSection() {
 												<HeroScene
 													ariaLabel={HERO_COPY.modelAlt}
 													enablePointerMotion={false}
-													isRenderActive={isModelVisible}
+													isRenderActive={!isIntroDone || (isModelVisible && isHeroInView)}
 													onError={handleModelError}
+													onLoadProgress={onLoadProgress}
 													onReady={handleModelReady}
 													transitionControlRef={transitionControlRef}
 												/>
@@ -168,16 +279,16 @@ function HeroSection() {
 							</div>
 						</div>
 					</main>
-					<div
+					<a
+						href="#about"
 						className={`hero-scroll-hint${isHeroReady ? " hero-scroll-hint--ready" : ""}`}
 						data-hero="scroll-hint"
-						aria-hidden="true"
 					>
 						<span className="hero-scroll-hint__label">LET'S EXPLORE</span>
-						<span className="hero-scroll-hint__icon">
+						<span className="hero-scroll-hint__icon" aria-hidden="true">
 							<ArrowDown size={20} strokeWidth={3} />
 						</span>
-					</div>
+					</a>
 				</div>
 			</div>
 
@@ -187,7 +298,7 @@ function HeroSection() {
 				isIntroReady={isIntroReady}
 				modelStatus={modelStatus}
 				onHeroReady={handleHeroReady}
-				onIntroComplete={handleIntroComplete}
+				onIntroComplete={onIntroComplete}
 				onModelVisibilityChange={setIsModelVisible}
 				rootRef={rootRef}
 				transitionControlRef={transitionControlRef}

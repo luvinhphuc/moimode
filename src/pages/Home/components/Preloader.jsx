@@ -1,13 +1,10 @@
-function Preloader({ isDone = false, progress = 0 }) {
-	const safeProgress = Number.isFinite(Number(progress))
-		? Math.min(100, Math.max(0, Math.round(Number(progress))))
-		: 0;
+import { createPortal } from "react-dom";
 
-	return (
+function Preloader({ isDone = false, progress = 0 }) {
+	return createPortal(
 		<div
 			className={`model-intro ${isDone ? "is-done" : ""}`}
 			data-hero="intro"
-			aria-hidden="true"
 		>
 			<span
 				className="model-intro__mark"
@@ -16,10 +13,13 @@ function Preloader({ isDone = false, progress = 0 }) {
 			/>
 
 			<div className="model-intro__progress" data-hero="intro-progress">
-				<span>{safeProgress}</span>
-				<i>%</i>
+				<div className="model-intro__percent" role="progressbar" aria-label="Loading" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
+					<span>{progress}</span>
+					<i aria-hidden="true">%</i>
+				</div>
 			</div>
-		</div>
+		</div>,
+		document.body,
 	);
 }
 

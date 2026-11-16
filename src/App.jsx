@@ -5,7 +5,9 @@ import AppRoutes from "./routes/AppRoutes.jsx";
 function App() {
 	return (
 		<BrowserRouter>
-			<AppRoutes />
+			<div id="site-page-content">
+				<AppRoutes />
+			</div>
 		</BrowserRouter>
 	);
 }

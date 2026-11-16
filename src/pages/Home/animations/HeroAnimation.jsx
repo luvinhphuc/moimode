@@ -57,7 +57,7 @@ function HeroAnimation({
 	useGSAP(
 		() => {
 			const root = rootRef.current;
-			const mark = query(root, SELECTORS.introMark);
+			const mark = document.querySelector(SELECTORS.introMark);
 			if (!root || !mark) return undefined;
 
 			const setStartScale = () => {
@@ -85,9 +85,8 @@ function HeroAnimation({
 		() => {
 			if (!isIntroReady || isIntroDone) return undefined;
 
-			const root = rootRef.current;
-			const mark = query(root, SELECTORS.introMark);
-			const progress = query(root, SELECTORS.introProgress);
+			const mark = document.querySelector(SELECTORS.introMark);
+			const progress = document.querySelector(SELECTORS.introProgress);
 			if (!mark || !progress) return undefined;
 
 			const media = gsap.matchMedia();
@@ -111,15 +110,15 @@ function HeroAnimation({
 
 					timeline
 						.addLabel("handover")
-						.to(progress, { autoAlpha: 0, duration: 0.3 }, "handover")
-						.to(mark, { scale: 1, duration: 1.35 }, "handover+=0.08")
+						.to(progress, { autoAlpha: 0, duration: 0.18 }, "handover")
+						.to(mark, { scale: 1, duration: 0.62 }, "handover+=0.04")
 						.to(
 							mark,
 							{
-								duration: 0.62,
+								duration: 0.32,
 								y: getIntroExitOffset(),
 							},
-							">+0.08",
+							">+0.03",
 						);
 
 					return () => {
@@ -360,6 +359,7 @@ function HeroAnimation({
 				{
 					reduceMotion: "(prefers-reduced-motion: reduce)",
 					standardMotion: "(prefers-reduced-motion: no-preference)",
+					mobile: "(max-width: 767px)",
 				},
 				({ conditions }) => {
 					gsap.set(model, {
@@ -371,8 +371,7 @@ function HeroAnimation({
 						scale: 1.45,
 						spinActive: 0,
 					});
-					gsap.set(star, { autoAlpha: 0 });
-
+					model.invalidate();
 					if (conditions.reduceMotion) {
 						gsap.set(slide, { autoAlpha: 1, xPercent: 100 });
 						gsap.set(star, { autoAlpha: 1 });
@@ -380,16 +379,24 @@ function HeroAnimation({
 						return undefined;
 					}
 
+					gsap.set(star, { autoAlpha: 0, "--hero-crocs-star-scale": 0 });
+
 					const hatch = gsap.timeline({
 						paused: true,
 						defaults: { ease: "power2.inOut" },
 					});
 					hatch
-						.to(hinge, { rotation: -15, duration: 0.55 })
+					.to(hinge, { rotation: conditions.mobile ? -25 : -15, duration: 0.55 })
 						.addLabel("slide")
 						.set(slide, { autoAlpha: 1 }, "slide")
 						.to(slide, { xPercent: 100, duration: 0.8 }, "slide")
-						.set(star, { autoAlpha: 1 });
+						.addLabel("arrived")
+						.to(star, {
+							autoAlpha: 1,
+							"--hero-crocs-star-scale": 1,
+							duration: 0.38,
+							ease: "power2.out",
+						});
 
 					const entry = { progress: 0 };
 					const opening = gsap.timeline({ paused: true }).to(
@@ -405,7 +412,11 @@ function HeroAnimation({
 						opening.paused(rewind > 0);
 						const pose = entry.progress * (1 - rewind);
 						hatch.progress(pose, true);
-						model.spinActive = Number(pose === 1);
+						const spinActive = Number(hatch.time() >= hatch.labels.arrived);
+						if (spinActive !== model.spinActive) {
+							model.spinActive = spinActive;
+							model.invalidate();
+						}
 
 						const isVisible = hatch.time() >= hatch.labels.slide;
 						if (isVisible !== isModelVisible) {

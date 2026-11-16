@@ -2,15 +2,33 @@ import { useCallback, useLayoutEffect, useRef } from "react";
 
 import { gsap, ScrollTrigger } from "../../../utils/gsap.js";
 
-// The group belongs to CustomizableCrocs; neither its camera rig nor a useFrame
-// callback writes these transforms, so the entrance has a single owner.
+function isPreviewInView(preview, panel, section) {
+	const rect = preview.getBoundingClientRect();
+	const viewportHeight = window.innerHeight;
+	if (!rect.height || rect.bottom <= 0 || rect.top >= viewportHeight) return false;
+	let visibleTop = Math.max(0, rect.top);
+	if (panel && section?.classList.contains("about-section--deck")) {
+		const { visibility, clipPath } = getComputedStyle(panel);
+		if (visibility === "hidden") return false;
+		const topInset = clipPath.match(/^inset\(([\d.]+)(%|px)/);
+		if (topInset) {
+			const panelRect = panel.getBoundingClientRect();
+			const inset = Number(topInset[1]) * (topInset[2] === "%" ? panelRect.height / 100 : 1);
+			visibleTop = Math.max(visibleTop, panelRect.top + inset);
+		}
+	}
+	return Math.min(rect.bottom, viewportHeight) - visibleTop >= Math.min(48, rect.height * 0.25, viewportHeight * 0.14);
+}
+
 export default function useMiniCustomizerIntro({
 	rootRef,
+	previewRef,
 	colourLegendRef,
 	charmLegendRef,
 	hintRef,
 	arrowSvgRef,
-	modelRig,
+	modelRigRef,
+	isIntroDone,
 	hintStep,
 }) {
 	const completedRef = useRef(false);
@@ -21,10 +39,11 @@ export default function useMiniCustomizerIntro({
 		// Release tooltip ownership before React starts its next guidance step.
 		if (hintStep !== "colour") return undefined;
 		const root = rootRef.current;
+		const preview = previewRef.current;
 		const card = hintRef.current;
 		const path = arrowSvgRef.current?.querySelector(".sketch-arrow__line");
 		const head = arrowSvgRef.current?.querySelector(".sketch-arrow__head");
-		if (!root || !card || !path || !head) return undefined;
+		if (!root || !preview || !card || !path || !head) return undefined;
 		const labels = [colourLegendRef.current, charmLegendRef.current];
 		const swatches = Array.from(root.querySelectorAll(".about-mini__colour"));
 		// Animate the images so the existing disabled-button opacity is preserved.
@@ -41,7 +60,7 @@ export default function useMiniCustomizerIntro({
 			},
 			({ conditions }) => {
 				const clearControls = () => {
-					gsap.set(root, { clearProps: "clipPath" });
+					gsap.set(preview, { clearProps: "clipPath" });
 					gsap.set([...labels, ...swatches, ...charms], {
 						clearProps: "opacity,transform",
 					});
@@ -57,22 +76,7 @@ export default function useMiniCustomizerIntro({
 				const mobile = conditions.mobile;
 				const speed = mobile ? 0.78 : 1;
 				const at = (seconds) => seconds * speed;
-				let entered = false;
-				let trigger;
-				let observer;
-				const group = modelRig?.group;
-				const original = group && {
-					scale: group.scale.clone(),
-					rotation: group.rotation.clone(),
-					position: group.position.clone(),
-				};
-				const restoreModel = () => {
-					if (!original) return;
-					group.scale.copy(original.scale);
-					group.rotation.copy(original.rotation);
-					group.position.copy(original.position);
-				};
-				gsap.set(root, { clipPath: "inset(100% 0 0 0)" });
+				gsap.set(preview, { clipPath: "inset(100% 0 0 0)" });
 				gsap.set(labels, { opacity: 0, y: mobile ? 4 : 7 });
 				gsap.set(swatches, { opacity: 0, scale: 0 });
 				gsap.set(charms, {
@@ -85,7 +89,12 @@ export default function useMiniCustomizerIntro({
 				path.setAttribute("pathLength", "1");
 				gsap.set(path, { autoAlpha: 1, strokeDasharray: 1, strokeDashoffset: 1 });
 				gsap.set(head, { autoAlpha: 0 });
+				if (!isIntroDone) return undefined;
 
+				let playing = false;
+				let trigger;
+				let observer;
+				let invalidateModel;
 				const timeline = gsap.timeline({
 					paused: true,
 					defaults: { ease: "power3.out" },
@@ -94,83 +103,59 @@ export default function useMiniCustomizerIntro({
 						finishRef.current = null;
 						trigger?.kill();
 						observer?.disconnect();
-						restoreModel();
 						clearControls();
 					},
 				});
 				timeline
-					.to(root, {
-						clipPath: "inset(0% 0 0 0)",
-						duration: at(0.6),
-						ease: "power3.inOut",
-					}, 0)
-					.to(labels[0], { opacity: 1, y: 0, duration: at(0.22) }, at(0.65))
+					.to(preview, { clipPath: "inset(0% 0 0 0)", duration: at(0.48), ease: "power2.inOut" }, 0)
+					.to(labels[0], { opacity: 1, y: 0, duration: at(0.22) }, at(0.14))
 					.to(swatches, {
 						opacity: 1,
 						scale: 1,
 						duration: at(0.24),
 						stagger: at(0.07),
-					}, at(0.7))
-					.to(labels[1], { opacity: 1, y: 0, duration: at(0.2) }, at(0.85))
+					}, at(0.18))
+					.to(labels[1], { opacity: 1, y: 0, duration: at(0.2) }, at(0.29))
 					.to(charms, {
 						opacity: 1,
 						y: 0,
 						rotation: 0,
 						duration: at(0.16),
 						stagger: at(0.08),
-					}, at(0.9))
-					.to(card, { autoAlpha: 1, scale: 1, duration: at(0.25) }, at(1.2))
+					}, at(0.34))
+					.to(card, { autoAlpha: 1, scale: 1, duration: at(0.25) }, at(0.55))
 					.to(path, {
 						strokeDashoffset: 0,
 						autoRound: false,
 						duration: at(0.4),
 						ease: "power2.inOut",
-					}, at(1.32))
-					.to(head, { autoAlpha: 1, duration: at(0.06) }, at(1.72))
+					}, at(0.67))
+					.to(head, { autoAlpha: 1, duration: at(0.06) }, at(1.07))
 					.to(swatches[0], {
 						scale: mobile ? 1.06 : 1.1,
 						duration: at(0.085),
 						ease: "sine.inOut",
-					}, at(1.78))
+					}, at(1.13))
 					.to(swatches[0], {
 						scale: 1,
 						duration: at(0.085),
 						ease: "sine.inOut",
-					}, at(1.865));
-
-				if (original) {
-					gsap.set(group.scale, {
-						x: original.scale.x * 0.75,
-						y: original.scale.y * 0.75,
-						z: original.scale.z * 0.75,
-					});
-					gsap.set(group.rotation, { y: original.rotation.y - Math.PI / 5 });
-					gsap.set(group.position, {
-						y: original.position.y - modelRig.modelSize * (mobile ? 0.035 : 0.065),
-					});
-					timeline
-						.to(group.scale, {
-							x: original.scale.x,
-							y: original.scale.y,
-							z: original.scale.z,
-							duration: at(0.9),
-						}, at(0.2))
-						.to(group.rotation, { y: original.rotation.y, duration: at(0.9) }, at(0.2))
-						.to(group.position, { y: original.position.y, duration: at(0.9) }, at(0.2));
-				}
+					}, at(1.215));
 
 				const tryPlay = () => {
-					if (!entered || !group || completedRef.current) return;
-					// The desktop deck stacks panels at the same coordinates. Wait for
-					// its existing wipe to uncover this panel before starting the intro.
-					if (section?.classList.contains("about-section--deck") && panel) {
-						const style = getComputedStyle(panel);
-						if (style.visibility === "hidden") return;
-						if (style.clipPath !== "none" && parseFloat(style.clipPath.slice(6)) > 0) {
-							return;
-						}
-					}
+					if (playing || completedRef.current || !isPreviewInView(preview, panel, section)) return;
+					playing = true;
 					observer?.disconnect();
+					const rig = modelRigRef.current;
+					if (rig?.group) {
+						const { group, invalidate, modelSize } = rig;
+						invalidateModel = invalidate;
+						const duration = at(0.72);
+						timeline
+							.from(group.scale, { x: group.scale.x * 0.75, y: group.scale.y * 0.75, z: group.scale.z * 0.75, duration }, 0)
+							.from(group.rotation, { y: group.rotation.y - Math.PI / 5, duration }, 0)
+							.from(group.position, { y: group.position.y - modelSize * 0.05, duration, onUpdate: invalidate }, 0);
+					}
 					timeline.play();
 				};
 				observer = new MutationObserver(tryPlay);
@@ -181,28 +166,27 @@ export default function useMiniCustomizerIntro({
 					observer.observe(section, { attributes: true, attributeFilter: ["class"] });
 				}
 				trigger = ScrollTrigger.create({
-					trigger: root,
-					start: "top 75%",
-					once: true,
-					onEnter: () => {
-						entered = true;
-						tryPlay();
-					},
+					trigger: preview,
+					start: "top 85%",
+					end: "bottom top",
+					onEnter: tryPlay,
+					onEnterBack: tryPlay,
 				});
 				finishRef.current = () => {
 					timeline.progress(1).pause();
 				};
+				tryPlay();
 				return () => {
 					finishRef.current = null;
 					observer.disconnect();
 					trigger.kill();
-					restoreModel();
+					invalidateModel?.();
 				};
 			},
 			root,
 		);
 		return () => media.revert();
-	}, [rootRef, colourLegendRef, charmLegendRef, hintRef, arrowSvgRef, modelRig, hintStep]);
+	}, [rootRef, previewRef, colourLegendRef, charmLegendRef, hintRef, arrowSvgRef, modelRigRef, isIntroDone, hintStep]);
 
 	return completeIntro;
 }

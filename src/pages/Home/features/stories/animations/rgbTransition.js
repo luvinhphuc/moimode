@@ -34,6 +34,8 @@ export function createRgbTransition(canvas, images) {
 	let frame = 0;
 	let progress = 0;
 	let destroyed = false;
+	let textureWidth = 0;
+	let textureHeight = 0;
 
 	function destroy() {
 		if (destroyed) return;
@@ -100,6 +102,9 @@ export function createRgbTransition(canvas, images) {
 			const dpr = Math.min(window.devicePixelRatio || 1, 2);
 			const width = Math.max(1, Math.round(canvas.clientWidth * dpr));
 			const height = Math.max(1, Math.round(canvas.clientHeight * dpr));
+			if (width === textureWidth && height === textureHeight) return;
+			textureWidth = width;
+			textureHeight = height;
 			canvas.width = width;
 			canvas.height = height;
 			gl.viewport(0, 0, width, height);

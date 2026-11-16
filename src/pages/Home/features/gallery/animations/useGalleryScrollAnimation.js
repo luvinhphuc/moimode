@@ -1,15 +1,9 @@
 import { gsap, ScrollTrigger, useGSAP } from "../../../../../utils/gsap.js";
 import {
-	GALLERY_SPLIT_LAYOUTS,
+	GALLERY_CTA_MOTION,
 	GALLERY_SPLIT_MOTION,
 	GALLERY_STACK_MOTION,
-	MOBILE_GALLERY_MOTION,
 } from "../config/galleryMotionConfig.js";
-
-const GALLERY_ANIMATION_LOCK = "gallery-animation-lock";
-const GALLERY_ANIMATION_UNLOCK = "gallery-animation-unlock";
-
-const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
 function getLayoutCenterOffset(element) {
 	const layoutParent = element.parentElement;
@@ -26,7 +20,7 @@ function getLayoutCenterOffset(element) {
 }
 
 function getSplitRotation(card, splitLayout) {
-	return splitLayout[card.dataset.galleryCard]?.rotation ?? 0;
+    return splitLayout[Number(card.dataset.galleryIndex)]?.rotation ?? 0;
 }
 
 function placeCard(card, x, y, rotation, opacity) {
@@ -35,7 +29,7 @@ function placeCard(card, x, y, rotation, opacity) {
 	card.style.visibility = opacity > 0 ? "visible" : "hidden";
 }
 
-function createCardStackAnimation(cards, splitLayout, onComplete) {
+function createCardStackAnimation(cards, splitLayout, onComplete, onSplit) {
 	let animations = [];
 	let splitTimer = 0;
 	let stackOffsets = [];
@@ -58,6 +52,7 @@ function createCardStackAnimation(cards, splitLayout, onComplete) {
 	};
 
 	const playSplit = () => {
+        onSplit?.();
 		animations.forEach((animation) => {
 			animation.onfinish = null;
 			animation.cancel();
@@ -179,282 +174,108 @@ function createCardStackAnimation(cards, splitLayout, onComplete) {
 	};
 }
 
-function useGalleryScrollAnimation(rootRef, fisheyeRef) {
-	useGSAP(
-		() => {
-			const root = rootRef.current;
-			const panel = root?.querySelector(".gallery-panel");
-			const collage = root?.querySelector("[data-gallery-stack]");
-			const title = root?.querySelector("[data-gallery-title]");
-			const cards = gsap.utils.toArray("[data-gallery-card]", root);
-
-			if (!root || !panel || !collage || !title || cards.length === 0) {
-				return undefined;
-			}
-
-			const media = gsap.matchMedia();
-			media.add(
-				{
-					isDesktop: "(min-width: 768px)",
-					isMobile: "(max-width: 767px)",
-					reduceMotion: "(prefers-reduced-motion: reduce)",
-				},
-				(context) => {
-					const { isDesktop, isMobile, reduceMotion } = context.conditions;
-					const fisheye = fisheyeRef.current;
-					const splitLayout = GALLERY_SPLIT_LAYOUTS[isDesktop ? "desktop" : "mobile"];
-
-					if (isMobile) {
-						gsap.set(panel, { autoAlpha: 1 });
-						gsap.set(collage, { autoAlpha: 1 });
-						gsap.set(cards, {
-							autoAlpha: 1,
-							rotation: (_, card) => getSplitRotation(card, splitLayout),
-							scale: 1,
-							x: 0,
-							y: 0,
-							zIndex: (_, card) => cards.indexOf(card) + 1,
-						});
-						gsap.set(title, { autoAlpha: 1, scale: 1, y: 0 });
-						fisheye?.setActive(false);
-						fisheye?.setOpacity(0);
-						fisheye?.reset();
-
-						if (reduceMotion) {
-							gsap.set(title, { autoAlpha: 1, scale: 1, y: 0 });
-							gsap.set(cards, {
-								autoAlpha: 1,
-								scale: 1,
-								x: 0,
-								y: 0,
-							});
-
-							const reducedTrigger = ScrollTrigger.create({
-								end: "bottom bottom",
-								id: "gallery-mobile-static-scroll",
-								onUpdate: (self) => {
-									const galleryProgress = clamp(
-										self.progress /
-											MOBILE_GALLERY_MOTION.galleryScrollEnd,
-										0,
-										1,
-									);
-									gsap.set(collage, { y: -window.innerHeight * galleryProgress });
-									gsap.set(title, {
-										autoAlpha: 1,
-										y: 0,
-									});
-								},
-								start: "top top",
-								trigger: root,
-							});
-
-							return () => reducedTrigger.kill();
-						}
-
-						gsap.set(collage, { autoAlpha: 0, y: 0 });
-
-						let isPreEntryActive = false;
-						let mobileGalleryTrigger;
-
-						const isGalleryActive = () =>
-							Boolean(
-								mobileGalleryTrigger?.isActive ||
-									(mobileGalleryTrigger?.progress > 0 &&
-										mobileGalleryTrigger?.progress < 1),
-							);
-
-						const syncFisheyeVisibility = (galleryActive = isGalleryActive()) => {
-							const isVisible = isPreEntryActive || galleryActive;
-							fisheye?.setActive(isVisible);
-							fisheye?.setOpacity(isVisible ? 1 : 0);
-						};
-
-						const syncPreEntry = (self) => {
-							isPreEntryActive = self.isActive;
-							syncFisheyeVisibility();
-						};
-
-						const syncMobileGallery = (self) => {
-							const progress = clamp(self.progress, 0, 1);
-							const isActive = self.isActive || (progress > 0 && progress < 1);
-
-							gsap.set(title, {
-								autoAlpha: 1,
-								y: 0,
-							});
-							fisheye?.setProgress(progress, self.getVelocity());
-							syncFisheyeVisibility(isActive);
-						};
-
-						const mobilePreEntryTrigger = ScrollTrigger.create({
-							end: "bottom top",
-							id: "gallery-mobile-pre-entry",
-							invalidateOnRefresh: true,
-							onRefresh: syncPreEntry,
-							onToggle: syncPreEntry,
-							start: "top bottom",
-							trigger: root,
-						});
-
-						mobileGalleryTrigger = ScrollTrigger.create({
-							end: "bottom bottom",
-							id: "gallery-mobile-fisheye",
-							invalidateOnRefresh: true,
-							onRefresh: syncMobileGallery,
-							onUpdate: syncMobileGallery,
-							start: "top top",
-							trigger: root,
-						});
-
-						syncMobileGallery(mobileGalleryTrigger);
-
-						return () => {
-							mobilePreEntryTrigger.kill();
-							mobileGalleryTrigger.kill();
-							fisheye?.setActive(false);
-							fisheye?.setOpacity(0);
-							fisheye?.reset();
-						};
-					}
-
-					let stackComplete = reduceMotion;
-					let stackStarted = false;
-					let scrollLocked = false;
-					let galleryTrigger;
-
-					const setCollageFinal = () => {
-						gsap.set(panel, { autoAlpha: 1 });
-						gsap.set([collage, title], { autoAlpha: 1 });
-						gsap.set(cards, {
-							autoAlpha: 1,
-							rotation: (_, card) => getSplitRotation(card, splitLayout),
-							x: 0,
-							y: 0,
-							zIndex: 0,
-						});
-					};
-
-					const unlockScroll = () => {
-						if (!scrollLocked) return;
-						scrollLocked = false;
-						window.dispatchEvent(new CustomEvent(GALLERY_ANIMATION_UNLOCK));
-					};
-
-					const finishStack = () => {
-						stackComplete = true;
-						setCollageFinal();
-						unlockScroll();
-						if (galleryTrigger) syncGallery(galleryTrigger);
-					};
-
-					const cardAnimation = createCardStackAnimation(
-						cards,
-						splitLayout,
-						finishStack,
-					);
-					const titleTimeline = gsap.timeline({ paused: true });
-					titleTimeline.fromTo(
-						title,
-						{ autoAlpha: 0, scale: 0.82, y: 14 },
-						{
-							autoAlpha: 1,
-							duration: 0.42,
-							ease: "power2.out",
-							scale: 1,
-							y: 0,
-						},
-					);
-
-					const playStackOnce = () => {
-						if (stackComplete || stackStarted) return;
-						stackStarted = true;
-						scrollLocked = true;
-						fisheye?.setActive(false);
-						fisheye?.setOpacity(0);
-						window.dispatchEvent(new CustomEvent(GALLERY_ANIMATION_LOCK));
-						titleTimeline.play(0);
-						cardAnimation.play();
-					};
-
-					function syncGallery(self) {
-						const progress = clamp(self.progress, 0, 1);
-
-						if (!stackComplete) {
-							fisheye?.setActive(false);
-							fisheye?.setOpacity(0);
-							if (!stackStarted) {
-								gsap.set(collage, { autoAlpha: 1 });
-								gsap.set(title, { autoAlpha: 0 });
-							}
-							return;
-						}
-
-						if (progress <= 0.001) {
-							fisheye?.setActive(false);
-							fisheye?.setOpacity(0);
-							gsap.set([collage, title], { autoAlpha: 1 });
-							return;
-						}
-
-						fisheye?.setProgress(progress, self.getVelocity());
-						fisheye?.setActive(true);
-						fisheye?.setOpacity(1);
-						gsap.set(collage, { autoAlpha: 0 });
-						const titleProgress = clamp((progress - 0.18) / 0.82, 0, 1);
-						gsap.set(title, {
-							autoAlpha: 1 - titleProgress,
-							yPercent: -135 * titleProgress,
-						});
-					}
-
-					if (reduceMotion) {
-						setCollageFinal();
-						fisheye?.setActive(false);
-						fisheye?.setOpacity(0);
-						return () => {
-							cardAnimation.cancel();
-							titleTimeline.kill();
-						};
-					}
-
-					gsap.set(panel, { autoAlpha: 1 });
-					gsap.set([title, cards], { autoAlpha: 0 });
-
-					galleryTrigger = ScrollTrigger.create({
-						end: "bottom bottom",
-						id: "gallery-stack-fisheye",
-						invalidateOnRefresh: true,
-						onEnter: playStackOnce,
-						onEnterBack: () => syncGallery(galleryTrigger),
-						onLeaveBack: () => syncGallery(galleryTrigger),
-						onRefresh: (self) => {
-							if (self.progress > 0 && !stackStarted) playStackOnce();
-							syncGallery(self);
-						},
-						onUpdate: syncGallery,
-						start: "top top",
-						trigger: root,
-					});
-
-					syncGallery(galleryTrigger);
-
-					return () => {
-						unlockScroll();
-						cardAnimation.cancel();
-						titleTimeline.kill();
-						galleryTrigger.kill();
-						fisheye?.setActive(false);
-						fisheye?.setOpacity(0);
-						fisheye?.reset();
-					};
-				},
-			);
-
-			return () => media.revert();
-		},
-		{ scope: rootRef },
-	);
+function useGalleryScrollAnimation({ rootRef, finishRef, geometry, animated, items, lockScroll, unlockScroll }) {
+    useGSAP(() => {
+        const root = rootRef.current;
+        if (!root || !geometry || !animated || items.length < 4) return undefined;
+        const track = root.querySelector(".gallery-intro-track");
+        const panel = root.querySelector(".gallery-panel");
+        const collage = root.querySelector("[data-gallery-stack]");
+        const title = root.querySelector("[data-gallery-title]");
+        const action = root.querySelector("[data-gallery-action]");
+        const skip = root.querySelector("[data-gallery-skip]");
+        const cards = gsap.utils.toArray("[data-gallery-card]", collage);
+        const stacks = root.querySelectorAll("[data-gallery-stack]");
+        const setInteractive = (interactive) => stacks.forEach((stack) => { stack.inert = !interactive; });
+        let complete = false;
+        let started = false;
+        let locked = false;
+        const unlock = () => {
+            if (!locked) return;
+            locked = false;
+            root.dataset.galleryLocked = "false";
+            unlockScroll();
+            panel.style.width = "";
+        };
+        const reveal = gsap.timeline({ paused: true })
+            .fromTo(title, { opacity: 0, y: 14, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: GALLERY_CTA_MOTION.duration, ease: GALLERY_CTA_MOTION.ease })
+            .fromTo(action, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: GALLERY_CTA_MOTION.actionDuration, ease: GALLERY_CTA_MOTION.ease }, GALLERY_CTA_MOTION.actionDelay);
+        const finish = () => {
+            // Once split, the spotlight owns card transforms until it closes.
+            if (complete) return;
+            complete = true;
+            setInteractive(true);
+            root.dataset.galleryPhase = "split";
+            animation.finish();
+            reveal.progress(1).pause();
+            gsap.set([title, action], { opacity: 1, y: 0, scale: 1 });
+            if (skip) skip.hidden = true;
+            unlock();
+        };
+        const animation = createCardStackAnimation(cards, geometry.placements, finish, () => {
+            root.dataset.galleryPhase = "splitting";
+            reveal.play(0);
+        });
+        finishRef.current = finish;
+        const play = () => {
+            if (started || complete) return;
+            started = true;
+            setInteractive(false);
+            // Lenis removes the scrollbar while stopped; keep our measured width stable.
+            panel.style.width = `${geometry.width}px`;
+            locked = true;
+            root.dataset.galleryPhase = "stack";
+            root.dataset.galleryLocked = "true";
+            lockScroll();
+            animation.play();
+        };
+        const replay = () => {
+            if (root.dataset.gallerySpotlight !== "closed") return;
+            animation.finish();
+            complete = false;
+            started = false;
+            reveal.pause(0);
+            gsap.set([title, action], { opacity: 0 });
+            if (skip) skip.hidden = false;
+            play();
+        };
+        root.addEventListener("gallery-preview-intro", replay);
+        window.addEventListener("resize", finish);
+        const bounds = track.getBoundingClientRect();
+        if ((bounds.top < window.innerHeight && bounds.bottom > 0) || bounds.bottom <= 0) finish();
+        else {
+            root.dataset.galleryPhase = "waiting";
+            setInteractive(false);
+            gsap.set(cards, { autoAlpha: 0 });
+            // The link stays keyboard accessible; focusing it completes the reveal.
+            gsap.set([title, action], { opacity: 0 });
+        }
+        const trigger = ScrollTrigger.create({
+            id: "gallery-stack-split", trigger: track, start: "top top", end: "bottom bottom",
+            invalidateOnRefresh: true,
+            onEnter: play,
+            onLeave: finish,
+            onUpdate: (self) => { if (!complete && self.progress > 0.12) finish(); },
+            onRefresh: (self) => { if (!started && !complete && self.progress > 0) finish(); },
+        });
+        return () => {
+            root.removeEventListener("gallery-preview-intro", replay);
+            window.removeEventListener("resize", finish);
+            unlock();
+            setInteractive(true);
+            delete root.dataset.galleryPhase;
+            delete root.dataset.galleryLocked;
+            animation.cancel();
+            for (const element of [title, action]) {
+                element.style.opacity = "";
+                element.style.transform = "";
+            }
+            reveal.kill();
+            trigger.kill();
+            finishRef.current = null;
+            if (skip) skip.hidden = false;
+        };
+    }, { scope: rootRef, dependencies: [animated, geometry, items, lockScroll, unlockScroll], revertOnUpdate: true });
 }
 
 export default useGalleryScrollAnimation;

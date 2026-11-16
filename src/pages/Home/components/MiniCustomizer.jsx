@@ -1,6 +1,5 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import CustomizerScene from "../../Customize/three/CustomizerScene.jsx";
 import {
 	CHARM_BY_ID,
 	COLOUR_BY_ID,
@@ -10,6 +9,7 @@ import useMiniCustomizerIntro from "../animations/useMiniCustomizerIntro.js";
 import { drawSketchArrow } from "../utils/drawSketchArrow.js";
 import SketchArrow from "./SketchArrow.jsx";
 
+const EMPTY_ROTATIONS = {};
 const COLOUR_IDS = ["white", "pink", "mint", "butter-yellow"];
 const CHARM_IDS = ["smiley-vietnam", "flower", "lotus", "bubble-tea"];
 const PREVIEW_SLOT = "CharmSlot_08";
@@ -22,11 +22,17 @@ const HINT_COPY = {
 	done: { title: "LOOKING GOOD! ✦", body: "Your pair is ready to show off." },
 };
 
-function MiniCustomizer() {
+function MiniCustomizer({ isIntroDone, onLoadProgress, onPreviewStatus, previewStatus }) {
 	const [colourId, setColourId] = useState("white");
 	const [selectedCharmId, setSelectedCharmId] = useState(null);
 	const [hasTriedColour, setHasTriedColour] = useState(false);
-	const [modelRig, setModelRig] = useState(null);
+	const [CustomizerScene, setCustomizerScene] = useState(null);
+	const modelRigRef = useRef(null);
+	const handleModelReady = useCallback((rig) => {
+		modelRigRef.current = rig;
+		onPreviewStatus("ready");
+	}, [onPreviewStatus]);
+	const handleModelError = useCallback(() => onPreviewStatus("error"), [onPreviewStatus]);
 	const rootRef = useRef(null);
 	const previewRef = useRef(null);
 	const colourLegendRef = useRef(null);
@@ -42,13 +48,30 @@ function MiniCustomizer() {
 	const placements = selectedCharmId ? { [PREVIEW_SLOT]: selectedCharmId } : {};
 	const completeIntro = useMiniCustomizerIntro({
 		rootRef,
+		previewRef,
 		colourLegendRef,
 		charmLegendRef,
 		hintRef,
 		arrowSvgRef,
-		modelRig,
+		modelRigRef,
+		isIntroDone,
 		hintStep,
 	});
+
+	useEffect(() => {
+		// Let the hero finish its intro before compiling a second WebGL scene.
+		if (!isIntroDone) return undefined;
+		let mounted = true;
+		import("../../Customize/three/CustomizerScene.jsx").then(
+			({ default: Scene }) => {
+				if (mounted) setCustomizerScene(() => Scene);
+			},
+			() => {
+				if (mounted) handleModelError();
+			},
+		);
+		return () => { mounted = false; };
+	}, [handleModelError, isIntroDone]);
 
 	useLayoutEffect(() => {
 		const root = rootRef.current;
@@ -221,15 +244,24 @@ function MiniCustomizer() {
 			onClickCapture={completeIntro}
 		>
 			<div ref={previewRef} className="about-mini__preview">
-				<CustomizerScene
-					bodyColour={COLOUR_BY_ID[colourId].value}
-					compactPreview
-					controlsEnabled={false}
-					onModelReady={setModelRig}
-					placements={placements}
-					rotations={{}}
-					view="mini"
-				/>
+				{CustomizerScene ? (
+					<CustomizerScene
+						bodyColour={COLOUR_BY_ID[colourId].value}
+						compactPreview
+						controlsEnabled={false}
+						modelPending={previewStatus === "loading"}
+						onError={handleModelError}
+						onLoadProgress={onLoadProgress}
+						onModelReady={handleModelReady}
+						placements={placements}
+						rotations={EMPTY_ROTATIONS}
+						view="mini"
+					/>
+				) : previewStatus === "error" ? (
+					<div className="customizer-scene-status is-error" role="status">
+						MODEL UNAVAILABLE
+					</div>
+				) : null}
 			</div>
 
 			<div className="about-mini__controls">

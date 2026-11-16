@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useLayoutEffect, useMemo, useRef } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 
 import {
@@ -14,6 +14,8 @@ import {
 	getCharmOrientationQuaternion,
 	normalizeCharmScene,
 } from "../utils/charmModel.js";
+
+const PLACEMENT_DURATION = 0.48;
 
 function PlacedCharm({
 	animateIn = true,
@@ -36,8 +38,9 @@ function PlacedCharm({
 	const groupRef = useRef(null);
 	const progressRef = useRef(0);
 	const reducedMotionRef = useRef(false);
+	const invalidate = useThree((state) => state.invalidate);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (!selected) return undefined;
 
 		const outlines = [];
@@ -60,6 +63,7 @@ function PlacedCharm({
 			object.add(outline);
 			outlines.push({ object, outline });
 		});
+		invalidate();
 
 		return () => {
 			for (const { object, outline } of outlines) {
@@ -67,8 +71,9 @@ function PlacedCharm({
 				outline.geometry.dispose();
 				outline.material.dispose();
 			}
+			invalidate();
 		};
-	}, [normalized.object, selected]);
+	}, [invalidate, normalized.object, selected]);
 
 	const targetQuaternion = useMemo(() => {
 		const slotOut = new Vector3(0, 1, 0)
@@ -102,38 +107,31 @@ function PlacedCharm({
 		[modelSize, outward, slot.position],
 	);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
+		if (!animateIn) return;
 		const media = window.matchMedia("(prefers-reduced-motion: reduce)");
 		reducedMotionRef.current = media.matches;
 		progressRef.current = startAnimation && media.matches
-			? animationDelay + 0.48
+			? animationDelay + PLACEMENT_DURATION
 			: 0;
-	}, [animationDelay, charmId, slot.name, startAnimation]);
+		invalidate();
+	}, [animateIn, animationDelay, charmId, invalidate, slot.name, startAnimation]);
 
 	useFrame((_, delta) => {
 		const group = groupRef.current;
-		if (!group) return;
-		if (!animateIn) {
-			group.position.copy(slot.position);
-			group.quaternion.copy(targetQuaternion);
-			group.scale.setScalar(targetScale);
-			return;
-		}
-
+		if (!group || !animateIn) return;
 		if (!startAnimation) {
 			group.position.copy(startPosition);
-			group.quaternion.copy(targetQuaternion);
 			group.scale.setScalar(0);
 			return;
 		}
 
-		progressRef.current = Math.min(
-			animationDelay + 0.48,
-			progressRef.current + delta,
-		);
+		const end = animationDelay + PLACEMENT_DURATION;
+		// A demand canvas may have been idle before this animation started.
+		progressRef.current = Math.min(end, progressRef.current + Math.min(delta, 0.05));
 		const raw = Math.max(
 			0,
-			Math.min(1, (progressRef.current - animationDelay) / 0.48),
+			Math.min(1, (progressRef.current - animationDelay) / PLACEMENT_DURATION),
 		);
 		const ease = 1 - (1 - raw) ** 3;
 		const pop =
@@ -142,28 +140,32 @@ function PlacedCharm({
 				: 1;
 
 		group.position.lerpVectors(startPosition, slot.position, ease);
-		group.quaternion.copy(targetQuaternion);
 		group.scale.setScalar(targetScale * pop);
+		if (progressRef.current < end) invalidate();
 	});
+
+	const interaction = interactive ? {
+		onClick(event) {
+			if (event.delta > 6) return;
+			event.stopPropagation();
+			onSelect(slot.name);
+		},
+		onPointerOut() {
+			document.body.style.cursor = "";
+		},
+		onPointerOver(event) {
+			event.stopPropagation();
+			document.body.style.cursor = "pointer";
+		},
+	} : {};
 
 	return (
 		<group
 			ref={groupRef}
 			position={animateIn ? startPosition : slot.position}
-			scale={animateIn ? (startAnimation ? 1 : 0) : targetScale}
-			onClick={(event) => {
-				if (!interactive || event.delta > 6) return;
-				event.stopPropagation();
-				onSelect(slot.name);
-			}}
-			onPointerOut={() => {
-				document.body.style.cursor = "";
-			}}
-			onPointerOver={(event) => {
-				if (!interactive) return;
-				event.stopPropagation();
-				document.body.style.cursor = "pointer";
-			}}
+			quaternion={targetQuaternion}
+			scale={animateIn ? 0 : targetScale}
+			{...interaction}
 		>
 			<primitive object={normalized.object} dispose={null} />
 		</group>

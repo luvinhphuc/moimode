@@ -1,79 +1,157 @@
 @reference "../../../styles/globals.css";
 
-@layer components {
-	.site-header {
-		@apply fixed inset-x-0 top-0 z-50 flex items-center justify-between;
-		padding: max(1.75rem, env(safe-area-inset-top))
-			clamp(1.5rem, 3.5vw, 3rem) 0;
-		will-change: transform, opacity;
-	}
+.site-nav {
+  @apply [--nav-ink:var(--color-moi-ink)];
+}
 
-    .site-header__brand {
-        @apply inline-flex items-center no-underline;
-        line-height: 0;
-    }
+.site-header {
+  @apply fixed inset-x-0 top-0 z-60 flex h-[clamp(4rem,6.5vw,5.25rem)] w-full items-center justify-between px-[clamp(1rem,4vw,4rem)] bg-transparent [color:var(--nav-ink)] will-change-[transform,opacity];
+}
 
-    .site-header__logo-frame {
-        position: relative;
-        display: block;
-        width: clamp(6.5rem, 12vw, 9rem);
-        line-height: 0;
-    }
+.site-header__brand {
+  @apply inline-flex w-[clamp(7.5rem,14vw,11rem)] shrink-0 items-center leading-none no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-moi-accent;
+}
 
-    .site-header__logo {
-        display: block;
-        width: 100%;
-        height: auto;
-        object-fit: contain;
-    }
+.site-header__logo-frame {
+  @apply relative block w-full leading-none;
+}
 
-    .site-header--on-dark .site-header__logo {
-        clip-path: inset(0 0 0 82.75%);
-    }
+.site-header__logo {
+  @apply block h-auto w-full object-contain;
+}
 
-    .site-header__logo--light {
-        position: absolute;
-        inset: 0;
-        clip-path: inset(0 17.25% 0 0);
-        filter: brightness(0) invert(1);
-        opacity: 0;
-        transition: opacity 250ms ease;
-    }
+.site-header__logo--light {
+  @apply absolute inset-0 opacity-0 [filter:brightness(0)_invert(1)] [transition:opacity_380ms_ease];
+}
 
-    .site-header--on-dark .site-header__logo--light {
-        clip-path: inset(0 17.25% 0 0);
-        opacity: 1;
-    }
+.site-nav--light-ink .site-header__logo--light {
+  @apply opacity-100;
+}
 
-    .site-header__action {
-        @apply font-body text-base font-bold leading-none tracking-[0.18em] text-moi-ink no-underline transition-[color,transform] duration-200 ease-in-out;
-        padding: 0.5rem 0;
-    }
+.site-header__toggle {
+  @apply inline-flex min-h-11 shrink-0 items-center gap-2.5 border-0 bg-transparent p-0 font-body text-xs font-bold tracking-[0.12em] text-inherit cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-moi-accent;
+}
 
-    .site-header__action:hover {
-        @apply -translate-y-px text-moi-accent;
-    }
+.site-header__menu-glyph {
+  @apply relative block size-8 shrink-0 max-[650px]:size-7;
+}
 
-    .site-header--on-dark .site-header__action {
-        color: #fff;
-    }
+.site-header__menu-line {
+  @apply absolute left-0 top-1/2 block h-0.5 w-full rounded-full bg-current will-change-transform;
+}
 
-    .site-header--on-dark .site-header__action:hover {
-        color: var(--color-moi-bg);
-    }
+.site-menu__scrim {
+  @apply pointer-events-none fixed inset-0 z-40 invisible bg-moi-bg/15 opacity-0 [backdrop-filter:blur(0px)];
+}
 
-    .site-header__brand:focus-visible,
-    .site-header__action:focus-visible {
-        @apply outline-2 outline-moi-accent outline-offset-[6px];
-    }
+.site-nav--open .site-menu__scrim {
+  @apply pointer-events-auto visible;
+}
+
+.site-menu {
+  @apply fixed inset-x-0 bottom-0 z-50 flex max-h-[calc(100svh-4rem)] min-h-[32svh] w-full flex-col justify-between gap-7 overflow-y-auto overscroll-contain rounded-t-[26px] bg-moi-footer px-[clamp(1.5rem,5vw,4.75rem)] pt-11 pb-7 text-moi-ink invisible;
+}
+
+.site-nav--open .site-menu {
+  @apply visible;
+}
+
+.site-menu__grab-area {
+  @apply absolute inset-x-0 top-0 h-10 cursor-grab touch-none select-none active:cursor-grabbing;
+}
+
+.site-menu__handle {
+  @apply absolute left-1/2 top-2.5 h-1 w-11 -translate-x-1/2 rounded-full bg-current opacity-30;
+}
+
+.site-menu__links {
+  @apply grid grid-cols-4 gap-4;
+}
+
+.site-menu__link-wrap {
+  @apply min-w-0 overflow-hidden py-1 pb-2.5;
+}
+
+.site-menu__link {
+  @apply block w-fit max-w-full whitespace-nowrap text-inherit no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-moi-ink;
+}
+
+.site-menu__number {
+  @apply mb-2 block font-body text-[0.7rem] font-bold tracking-[0.1em];
+}
+
+.site-menu__link[aria-current="page"] .site-menu__number::after {
+  @apply ml-1 inline-block size-1.5 rounded-full bg-current content-[''];
+}
+
+.site-menu__word {
+  @apply relative inline-block font-display text-[clamp(1.65rem,4.6vw,4.75rem)] leading-none tracking-[-0.075em];
+}
+
+.site-menu__word::after {
+  @apply absolute inset-x-0 -bottom-1.5 h-0.5 bg-current content-[''] [transform:scaleX(0)] [transform-origin:right] [transition:transform_360ms_ease];
+}
+
+.site-menu__link:hover .site-menu__word::after,
+.site-menu__link:focus-visible .site-menu__word::after {
+  @apply [transform:scaleX(1)] [transform-origin:left];
+}
+
+.site-menu__secondary {
+  @apply flex flex-wrap items-center justify-between gap-3 border-t border-moi-ink/25 pt-4 font-body text-[0.65rem] font-extrabold tracking-[0.1em] uppercase;
+}
+
+.site-menu__secondary nav {
+  @apply flex flex-wrap items-center justify-center gap-x-5 gap-y-2;
+}
+
+.site-menu__secondary a {
+  @apply text-inherit no-underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-moi-ink;
+}
+
+.site-menu__tagline {
+  @apply font-serif text-base font-normal italic tracking-normal normal-case;
+}
+
+@media (max-width: 650px) {
+  .site-menu {
+    @apply min-h-0 gap-6 px-6 pt-11 pb-[max(1.5rem,env(safe-area-inset-bottom))];
+  }
+  .site-menu__links {
+    @apply grid-cols-2 gap-x-3 gap-y-5;
+  }
+  .site-menu__word {
+    @apply text-[clamp(1.9rem,8.5vw,3.5rem)];
+  }
+  .site-menu__secondary {
+    @apply text-[0.6rem];
+  }
+  .site-menu__secondary nav {
+    @apply order-3 w-full justify-start;
+  }
+  .site-menu__tagline {
+    @apply text-sm;
+  }
+}
+
+@media (max-height: 550px) {
+  .site-menu {
+    @apply gap-3 pt-10 pb-3;
+  }
+  .site-menu__links {
+    @apply gap-y-2;
+  }
+  .site-menu__word {
+    @apply text-[clamp(1.5rem,5vh,2.5rem)];
+  }
+  .site-menu__secondary {
+    @apply pt-2;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .site-header__logo--light {
-        transition: none;
-    }
-
-    .site-header__action {
-        @apply transition-none;
-    }
+  .site-header__logo--light,
+  .site-menu__word::after {
+    @apply [transition:none];
+  }
 }

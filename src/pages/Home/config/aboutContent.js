@@ -18,6 +18,23 @@ export const ABOUT_COPY = Object.freeze({
 		label: "OUR MISSION",
 		headline: ["EXPRESS MORE.", "CONSUME LESS."],
 		body: "MOIMODE aims to shift this mindset by promoting self-expression without the pressure to constantly buy new things.",
+		photos: [
+			{
+				src: "/images/about/express-more-1.jpg",
+				alt: "Friends in colorful outfits and Crocs pose together at a mountain campsite.",
+				height: 817,
+			},
+			{
+				src: "/images/about/express-more-2.jpg",
+				alt: "Four friends laugh together in front of a blue tent, surrounded by oversized charms.",
+				height: 817,
+			},
+			{
+				src: "/images/about/express-more-3.jpg",
+				alt: "Friends sit at a forest picnic table amid oversized Crocs and playful charms.",
+				height: 813,
+			},
+		],
 	},
 	experience: {
 		number: "04",

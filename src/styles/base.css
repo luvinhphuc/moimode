@@ -1,53 +1,44 @@
 @layer base {
 	:root {
-		font-family: var(--font-body);
-		color: var(--color-moi-ink);
-		background: var(--color-moi-bg);
-		font-synthesis: none;
-		text-rendering: optimizeLegibility;
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
+		@apply font-body text-moi-ink [background:var(--color-moi-bg)] [font-synthesis:none]
+			[text-rendering:optimizeLegibility] [-webkit-font-smoothing:antialiased] [-moz-osx-font-smoothing:grayscale];
 		/* scroll-behavior: smooth;
 		scrollbar-width: none; */
 	}
 
 	* {
-		box-sizing: border-box;
+		@apply box-border;
 	}
 
 	html,
 	body,
 	#root {
-		min-width: 320px;
-		min-height: 100svh;
+		@apply min-w-[320px] min-h-svh;
 	}
 
 	html,
 	body {
-		background: var(--color-moi-bg);
+		@apply [background:var(--color-moi-bg)];
 	}
 
 	body {
-		margin: 0;
-		overflow-x: hidden;
+		@apply m-0 overflow-x-hidden;
 	}
 
 	body.is-model-loading {
-		overflow: hidden;
+		@apply overflow-hidden;
 	}
 
 	button,
 	a {
-		-webkit-tap-highlight-color: transparent;
+		@apply [-webkit-tap-highlight-color:transparent];
 	}
 
 	button {
-		font: inherit;
-		cursor: pointer;
+		@apply [font:inherit] cursor-pointer;
 	}
 
 	::selection {
-		color: white;
-		background: var(--color-moi-accent);
+		@apply text-[white] [background:var(--color-moi-accent)];
 	}
 }

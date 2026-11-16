@@ -1,18 +1,22 @@
 import { Component } from "react";
 import { useProgress } from "@react-three/drei";
 
-export function SceneLoadingStatus({ isContextLost = false }) {
+export function SceneLoadingStatus({ isContextLost = false, modelPending }) {
 	const { active, errors, progress } = useProgress();
+	const useLocalStatus = modelPending !== undefined;
+	const hasError = !useLocalStatus && errors.length > 0;
+	const isLoading = modelPending ?? active;
+	const loadingLabel = `LOADING ${Math.round(progress)}%`;
 
-	if (!isContextLost && !active && errors.length === 0) return null;
+	if (!isContextLost && (!isLoading || useLocalStatus) && !hasError) return null;
 	return (
-		<div className={`customizer-scene-status${errors.length ? " is-error" : ""}`}>
+		<div className={`customizer-scene-status${hasError ? " is-error" : ""}`} role={useLocalStatus ? "status" : undefined}>
 			<span className="customizer-scene-status__dot" />
-			{errors.length
+			{hasError
 				? "MODEL UNAVAILABLE"
 				: isContextLost
 					? "RESTORING 3D PREVIEW"
-					: `LOADING ${Math.round(progress)}%`}
+					: loadingLabel}
 		</div>
 	);
 }
@@ -22,6 +26,10 @@ export class SceneErrorBoundary extends Component {
 
 	static getDerivedStateFromError() {
 		return { hasError: true };
+	}
+
+	componentDidCatch(error) {
+		this.props.onError?.(error);
 	}
 
 	render() {

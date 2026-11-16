@@ -2,6 +2,7 @@ import { useRef } from "react";
 
 import PeopleAnimation from "../animations/PeopleAnimation.jsx";
 import { PEOPLE_COPY } from "../config/peopleContent.js";
+import SectionDecor from "./SectionDecor.jsx";
 import SketchArrow from "./SketchArrow.jsx";
 
 function PeopleSection() {
@@ -17,6 +18,7 @@ function PeopleSection() {
 			>
 				<div className="people-intro-track">
 					<div className="people-intro-frame">
+						<SectionDecor variant="people" />
 						<h2
 							id="people-title"
 							className="people-title"
@@ -41,43 +43,50 @@ function PeopleSection() {
 				</div>
 				<div className="people-portrait-track">
 					<div className="people-portrait-frame">
-						<div className="people-portrait-stage">
-							<figure className="people-portrait" data-people-portrait>
-								<img
-									className="people-portrait__image"
-									src={PEOPLE_COPY.photo}
-									alt={PEOPLE_COPY.photoAlt}
-									width="900"
-									height="1350"
-								/>
-							</figure>
-							{PEOPLE_COPY.callouts.map(({ name, side, labelTop }) => (
-								<div
-									className={`people-callout people-callout--${side}`}
-									key={side}
-								>
-									<SketchArrow className="people-callout__arrow" outlined />
-									<span
-										className="people-callout__name"
-										style={{ top: labelTop }}
+						<div className="people-portrait-content">
+							<div className="people-portrait-stage">
+								<figure className="people-portrait" data-people-portrait>
+									<img
+										className="people-portrait__image"
+										src={PEOPLE_COPY.photo}
+										alt={PEOPLE_COPY.photoAlt}
+										width="900"
+										height="1350"
+										decoding="async"
+										fetchPriority="low"
+									/>
+								</figure>
+								{PEOPLE_COPY.callouts.map(({ name, side, labelTop }) => (
+									<div
+										className={`people-callout people-callout--${side}`}
+										key={side}
 									>
-										{name}
-									</span>
-								</div>
-							))}
+										<SketchArrow className="people-callout__arrow" outlined />
+										<span
+											className="people-callout__name"
+											style={{ top: labelTop }}
+										>
+											{name}
+										</span>
+									</div>
+								))}
+							</div>
 						</div>
 					</div>
 				</div>
-				<div className="people-story">
-					{PEOPLE_COPY.paragraphs.map((paragraph) => (
-						<p
-							className="people-story__paragraph"
-							data-people-copy
-							key={paragraph}
-						>
-							{paragraph}
-						</p>
-					))}
+				<div className="people-story-track">
+					<SectionDecor variant="people-journey" />
+					<div className="people-story">
+						{PEOPLE_COPY.paragraphs.map((paragraph) => (
+							<p
+								className="people-story__paragraph"
+								data-people-copy
+								key={paragraph}
+							>
+								{paragraph}
+							</p>
+						))}
+					</div>
 				</div>
 			</section>
 			<PeopleAnimation

@@ -28,8 +28,9 @@ function RgbPhoto({ images, canHover, reducedMotion, hovered, disabled, visible 
 				alt={images[0].alt}
 				width="460"
 				height="620"
-				loading="lazy"
+				loading={visible ? "eager" : "lazy"}
 				decoding="async"
+				fetchPriority="low"
 				draggable="false"
 				onError={() => setImageFailed(true)}
 				className={`rgb-photo__image${imageFailed ? " rgb-photo__image--hidden" : ""}`}
@@ -40,6 +41,9 @@ function RgbPhoto({ images, canHover, reducedMotion, hovered, disabled, visible 
 					alt=""
 					aria-hidden="true"
 					draggable="false"
+					loading="lazy"
+					decoding="async"
+					fetchPriority="low"
 					onLoad={() => setSecondaryReady(true)}
 					onError={() => setSecondaryReady(false)}
 					className={`rgb-photo__image${showSecondary ? "" : " rgb-photo__image--hidden"}`}

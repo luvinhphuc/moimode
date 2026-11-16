@@ -69,10 +69,11 @@ function StoryCard({
 			className={`story-card${flipped ? " story-card--flipped" : ""}${visible ? "" : " story-card--inactive"}`}
 			onClick={flip}
 			onKeyDown={handleKeyDown}
-			onPointerEnter={(event) => {
+			onPointerMove={(event) => {
 				if (
 					event.pointerType === "mouse" &&
 					canHover &&
+					!hovered &&
 					!flipped &&
 					!flipping &&
 					visible
@@ -128,7 +129,7 @@ function StoryCard({
 					aria-hidden={!flipped}
 				>
 					<span className="story-card__back-header">
-						<span></span>
+						<span className="story-card__title">{item.title}</span>
 					</span>
 					<span
 						ref={backRef}

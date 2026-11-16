@@ -1,27 +1,25 @@
-import { useRef } from "react";
-import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { SplitText } from "gsap/SplitText";
 
 import { gsap, ScrollTrigger, useGSAP } from "../../../utils/gsap.js";
 import { drawSketchArrow } from "../utils/drawSketchArrow.js";
 
-gsap.registerPlugin(DrawSVGPlugin, SplitText);
+gsap.registerPlugin(SplitText);
 
 function PeopleAnimation({ rootRef, peopleCallouts }) {
-	const revealedParagraphsRef = useRef(new WeakSet());
-	const titleRevealedRef = useRef(false);
-
 	useGSAP(
 		() => {
 			const section = rootRef.current;
 			const track = section?.querySelector(".people-intro-track");
+			const introFrame = section?.querySelector(".people-intro-frame");
+			const decor = introFrame?.querySelector(".section-decor--people");
 			const title = section?.querySelector("#people-title");
 			const our = section?.querySelector("[data-people-our]");
 			const people = section?.querySelector("[data-people-people]");
 			const portrait = section?.querySelector("[data-people-portrait]");
 			const portraitStage = section?.querySelector(".people-portrait-stage");
 			const portraitFrame = section?.querySelector(".people-portrait-frame");
-			if (!track || !title || !our || !people || !portrait || !portraitStage || !portraitFrame) return undefined;
+			const portraitContent = section?.querySelector(".people-portrait-content");
+			if (!track || !introFrame || !decor || !title || !our || !people || !portrait || !portraitStage || !portraitFrame || !portraitContent) return undefined;
 
 			const callouts = peopleCallouts.map(({ side, target }) => {
 				const callout = portraitStage.querySelector(`.people-callout--${side}`);
@@ -34,15 +32,23 @@ function PeopleAnimation({ rootRef, peopleCallouts }) {
 					head: callout.querySelector(".sketch-arrow__head"),
 				};
 			});
+			callouts.forEach(({ line }) => line.setAttribute("pathLength", "1"));
+			let lastCalloutLayout;
 			const drawCallouts = () => {
 				const { clientWidth: width, clientHeight: height } = portraitStage;
 				if (!width || !height) return;
-				for (const { side, target: [x, y], name, svg, line, head } of callouts) {
-					const startX = name.offsetLeft + (side === "left" ? name.offsetWidth + 4 : -4);
-					const startY = name.offsetTop + name.offsetHeight / 2;
+				const starts = callouts.map(({ side, name }) => [
+					name.offsetLeft + (side === "left" ? name.offsetWidth + 4 : -4),
+					name.offsetTop + name.offsetHeight / 2,
+				]);
+				const layout = [width, height, ...starts.flat()];
+				if (lastCalloutLayout?.every((value, index) => value === layout[index])) return;
+				lastCalloutLayout = layout;
+				callouts.forEach(({ target: [x, y], svg, line, head }, index) => {
+					const [startX, startY] = starts[index];
 					svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
 					drawSketchArrow(line, head, startX, startY, width * x, height * y);
-				}
+				});
 			};
 			drawCallouts();
 			const observer = new ResizeObserver(drawCallouts);
@@ -63,11 +69,7 @@ function PeopleAnimation({ rootRef, peopleCallouts }) {
 					shortViewport: "(max-height: 619px)",
 				},
 				({ conditions }) => {
-					if (conditions.reducedMotion) {
-						titleRevealedRef.current = true;
-						return;
-					}
-					if (titleRevealedRef.current) return;
+					if (conditions.reducedMotion) return;
 
 					// Taller screens already animate the title in the split-word intro.
 					titleEntrance = gsap.fromTo(title, { autoAlpha: 0, y: 20 }, {
@@ -75,13 +77,15 @@ function PeopleAnimation({ rootRef, peopleCallouts }) {
 						y: 0,
 						duration: 0.6,
 						ease: "power2.out",
-						clearProps: "opacity,visibility,transform",
-						onStart: () => { titleRevealedRef.current = true; },
 						onComplete: releaseParagraphs,
 						scrollTrigger: {
 							trigger: track,
 							start: "clamp(top 88%)",
-							once: true,
+							toggleActions: "play none none reverse",
+							onRefresh(self) {
+								if (self.scroll() >= self.start) self.animation?.play();
+								else self.animation?.reverse();
+							},
 						},
 					});
 					return () => {
@@ -98,11 +102,7 @@ function PeopleAnimation({ rootRef, peopleCallouts }) {
 				({ conditions }) => {
 					const paragraphTweens = [];
 					for (const paragraph of section.querySelectorAll("[data-people-copy]")) {
-						if (conditions.reducedMotion) {
-							revealedParagraphsRef.current.add(paragraph);
-							continue;
-						}
-						if (revealedParagraphsRef.current.has(paragraph)) continue;
+						if (conditions.reducedMotion) continue;
 
 						// Animate the paragraph wrapper independently of its line colour reveal.
 						const tween = gsap.fromTo(
@@ -114,18 +114,25 @@ function PeopleAnimation({ rootRef, peopleCallouts }) {
 								duration: 0.6,
 								ease: "power2.out",
 								paused: true,
-								clearProps: "opacity,visibility,transform",
-								onStart: () => revealedParagraphsRef.current.add(paragraph),
 							},
 						);
 						paragraphTweens.push(tween);
+						const revealParagraph = () => {
+							if (titleEntrance && titleEntrance.progress() < 1) pendingParagraphs.add(tween);
+							else tween.play();
+						};
+						const hideParagraph = () => {
+							pendingParagraphs.delete(tween);
+							tween.reverse();
+						};
 						ScrollTrigger.create({
 							trigger: paragraph,
 							start: "clamp(top 88%)",
-							once: true,
-							onEnter: () => {
-								if (titleEntrance && titleEntrance.progress() < 1) pendingParagraphs.add(tween);
-								else tween.play();
+							onEnter: revealParagraph,
+							onLeaveBack: hideParagraph,
+							onRefresh(self) {
+								if (self.scroll() >= self.start) revealParagraph();
+								else hideParagraph();
 							},
 						});
 					}
@@ -136,18 +143,26 @@ function PeopleAnimation({ rootRef, peopleCallouts }) {
 				"(prefers-reduced-motion: no-preference) and (min-height: 620px)",
 				() => {
 					section.classList.add("people-section--motion");
+					const decorShapes = Array.from(decor.children);
+					gsap.set(decorShapes, { translate: "0px 0px" });
 
 					const names = callouts.map(({ name }) => name);
 					const lines = callouts.map(({ line }) => line);
 					const heads = callouts.map(({ head }) => head);
 					gsap.set(names, { autoAlpha: 0 });
+					// Inline values also apply to the paths cloned by the white outline's <use>.
+					gsap.set(lines, { visibility: "hidden", strokeDasharray: 1, strokeDashoffset: 1 });
+					gsap.set(heads, { opacity: 0 });
 
 					const exitDistance = (word) => window.innerWidth / 2 + word.offsetWidth;
 					const splitDistance = (word, direction) => {
 						const innerEdge = direction < 0 ? word.offsetLeft + word.offsetWidth : word.offsetLeft;
 						const edgeFromCenter = innerEdge - title.offsetWidth / 2;
-						return Math.max(window.innerWidth * 0.26, portrait.offsetWidth / 2 + 16 - direction * edgeFromCenter);
+						return Math.max(window.innerWidth * 0.2, portrait.offsetWidth / 2 + 16 - direction * edgeFromCenter);
 					};
+					// Match the portrait's travel from the viewport center to its sticky dock.
+					const decorLift = () =>
+						(introFrame.clientHeight - portraitContent.offsetHeight) / 2 - parseFloat(getComputedStyle(portraitFrame).top);
 					const timeline = gsap.timeline({
 						defaults: { ease: "none" },
 						scrollTrigger: {
@@ -155,30 +170,29 @@ function PeopleAnimation({ rootRef, peopleCallouts }) {
 							trigger: track,
 							start: "top top",
 							end: "bottom bottom",
-							scrub: true,
+							scrub: 0.25,
 							invalidateOnRefresh: true,
-							onRefreshInit: drawCallouts,
 						},
 					});
 
 					timeline
 						.to(our, { x: () => -splitDistance(our, -1), duration: 0.2 }, 0)
 						.to(people, { x: () => splitDistance(people, 1), duration: 0.2 }, 0)
-						.to(portrait, { "--people-portrait-mask": "0%", duration: 0.16 }, 0.2)
+						.to(portrait, { clipPath: "inset(0% 0%)", duration: 0.16 }, 0.2)
 						.to(names, { autoAlpha: 1, duration: 0.06 }, 0.36)
 						.set(lines, { visibility: "visible" }, 0.38)
-						.fromTo(
-							lines,
-							{ drawSVG: 0 },
-							{ drawSVG: "100% nowrap", duration: 0.14, ease: "power1.inOut", immediateRender: false },
-							0.38,
-						)
+						.to(lines, { strokeDashoffset: 0, autoRound: false, duration: 0.14, ease: "power1.inOut" }, 0.38)
 						.to(heads, { opacity: 1, duration: 0.04 }, 0.5)
 						.to(heads, { opacity: 0, duration: 0.03 }, 0.65)
-						.to(lines, { drawSVG: "0% nowrap", duration: 0.12, ease: "power2.inOut" }, 0.67)
+						.to(lines, { strokeDashoffset: 1, autoRound: false, duration: 0.12, ease: "power2.inOut" }, 0.67)
 						.set(lines, { visibility: "hidden" }, 0.79)
 						.to(names, { autoAlpha: 0, duration: 0.07 }, 0.75)
-						.to(portraitFrame, { y: 0, duration: 0.35 }, 0.65)
+						.to(portraitContent, { y: 0, duration: 0.35 }, 0.65)
+						.to(decorShapes, {
+							// Individual translate runs before each motif's existing rotation.
+							translate: () => `0px ${-decorLift()}px`,
+							duration: 0.35,
+						}, 0.65)
 						.to(our, { x: () => -exitDistance(our), duration: 0.35 }, 0.65)
 						.to(people, { x: () => exitDistance(people), duration: 0.35 }, 0.65);
 
@@ -209,7 +223,7 @@ function PeopleAnimation({ rootRef, peopleCallouts }) {
 							}),
 					);
 
-					ScrollTrigger.refresh();
+					ScrollTrigger.refresh(true);
 					return () => {
 						splits.forEach((split) => split.revert());
 						section.classList.remove("people-section--motion");

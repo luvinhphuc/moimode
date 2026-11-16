@@ -105,6 +105,168 @@ const shapes = {
 		color: "#E5D6B4",
 		path: "M65.0 3.0 C65.0 3.0 64.5 4.5 64.0 5.0 C63.5 5.5 56.1 8.5 54.0 10.0 C51.9 11.5 49.6 14.0 48.0 16.0 C46.4 18.0 9.1 82.7 8.0 85.0 C6.9 87.3 5.4 92.5 5.0 93.0 C4.6 93.5 3.0 94.0 3.0 94.0 C3.0 94.0 3.0 113.0 3.0 113.0 C3.0 113.0 4.6 113.5 5.0 114.0 C5.4 114.5 5.5 117.6 6.0 119.0 C6.5 120.4 45.9 188.4 47.0 190.0 C48.1 191.6 49.6 193.7 51.0 195.0 C52.4 196.3 57.0 200.0 59.0 201.0 C61.0 202.0 65.5 202.6 66.0 203.0 C66.5 203.4 67.0 205.0 67.0 205.0 C67.0 205.0 162.0 205.0 162.0 205.0 C162.0 205.0 162.5 203.5 163.0 203.0 C163.5 202.5 171.6 199.7 174.0 198.0 C176.4 196.3 179.2 193.4 181.0 191.0 C182.8 188.6 219.9 124.3 221.0 122.0 C222.1 119.7 223.6 114.5 224.0 114.0 C224.4 113.5 226.0 113.0 226.0 113.0 C226.0 113.0 226.0 95.0 226.0 95.0 C226.0 95.0 224.5 94.5 224.0 94.0 C223.5 93.5 220.7 85.5 219.0 82.0 C217.3 78.5 183.9 20.6 182.0 18.0 C180.1 15.4 177.5 11.9 175.0 10.0 C172.5 8.1 165.5 5.5 165.0 5.0 C164.5 4.5 164.0 3.0 164.0 3.0 C164.0 3.0 65.0 3.0 65.0 3.0 Z",
 	},
+	// Star collection
+	sparkle: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#EABD61",
+		path: "M50 3 Q55 44 97 50 Q55 56 50 97 Q45 56 3 50 Q45 44 50 3Z",
+	},
+	wonkyStar: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#FEC1B3",
+		path: "M40 4 Q44 1 49 10 L62 32 89 24 Q97 22 93 32 L77 55 90 82 Q94 91 85 88 L57 76 33 94 Q25 99 25 89 L26 61 7 44 Q0 37 10 35 L34 32Z",
+	},
+	retroStar: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#EFA865",
+		path: "M50 2 L60 30 85 15 71 40 98 50 71 60 85 85 60 71 50 98 40 71 15 85 29 60 2 50 29 40 15 15 40 30Z",
+	},
+	puffyStar: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#E5D6B4",
+		path: "M40 14 Q50 0 60 14 L69 33 89 36 Q102 39 92 52 L76 67 80 87 Q82 100 67 93 L50 83 32 93 Q18 100 20 86 L24 67 8 52 Q-2 39 12 36 L32 33Z",
+	},
+	asterisk: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#EFA865",
+		path: "M40 10 Q50 0 60 10 L60 35 82 22 Q96 22 96 36 L71 50 96 64 Q96 78 82 78 L60 65 60 90 Q50 102 40 90 L40 65 18 78 Q4 78 4 64 L29 50 4 36 Q4 22 18 22 L40 35Z",
+	},
+	shootingStar: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#EABD61",
+		path: "M48 44 L60 56 C48 79 27 91 5 89 C30 82 42 65 48 44Z M65 54 L75 62 C65 83 43 101 19 104 C41 94 55 78 65 54Z M65 5 L76 28 101 31 83 48 87 73 65 61 43 73 47 48 29 31 54 28Z",
+	},
+	// Playful collection
+	puffyHeart: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#FEC1B3",
+		path: "M50 23 C30 -4 2 8 3 35 C3 57 28 78 50 96 C72 78 97 57 97 35 C98 8 70 -4 50 23Z",
+	},
+	ribbonBow: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#EFA865",
+		path: "M44 39 C25 13 4 4 4 29 L4 65 Q4 86 43 61 L32 95 49 85 65 95 57 61 Q96 86 96 65 L96 29 C96 4 75 13 56 39 Q50 35 44 39Z",
+	},
+	butterfly: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#EABD61",
+		path: "M46 44 C30 0 3 4 3 30 C3 47 17 55 29 59 C2 65 7 98 30 94 C40 92 47 76 50 66 C53 76 60 92 70 94 C93 98 98 65 71 59 C83 55 97 47 97 30 C97 4 70 0 54 44 Q50 37 46 44Z",
+	},
+	cloud: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#E5D6B4",
+		path: "M23 84 C-2 84 -3 48 20 44 C12 17 44 6 58 27 C77 7 101 26 89 46 C109 61 95 84 76 84Z",
+	},
+	lightning: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#EABD61",
+		path: "M47 2 L84 2 59 39 88 39 24 98 40 55 11 55Z",
+	},
+	mushroom: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#FEC1B3",
+		path: "M50 5 C76 5 96 29 97 51 Q98 65 82 65 L63 65 Q63 78 70 89 Q73 96 63 96 L37 96 Q27 96 30 89 Q37 78 37 65 L18 65 Q2 65 3 51 C4 29 24 5 50 5Z",
+	},
+	// Abstract collection
+	squiggle: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#EFA865",
+		path: "M8 66 C18 66 12 19 32 19 S48 66 57 66 S63 19 82 19 Q96 19 96 37 Q85 37 80 64 Q74 93 57 88 Q36 88 32 45 Q28 90 8 90 Q0 78 8 66Z",
+	},
+	groovyBlob: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#FEC1B3",
+		path: "M19 12 C44 -6 42 30 63 20 C92 2 105 41 84 56 C65 67 97 99 60 96 C37 94 46 72 19 81 C-5 90 -2 59 16 48 C35 38 0 35 19 12Z",
+	},
+	wavyRing: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#EABD61",
+		path: "M50 3 C70 -5 81 15 82 28 C108 38 104 68 83 73 C78 101 46 105 34 87 C7 91 -6 64 10 47 C-4 21 25 -3 50 3Z M50 29 C23 29 23 72 50 72 C77 72 77 29 50 29Z",
+		fillRule: "evenodd",
+	},
+	crescent: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#E5D6B4",
+		path: "M67 4 C9 -5 -9 64 26 89 C50 106 84 95 96 68 C40 82 19 30 67 4Z",
+	},
+	organicDiamond: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#FEC1B3",
+		path: "M50 3 C58 3 63 25 79 35 Q111 50 79 65 C63 75 58 97 50 97 C42 97 37 75 21 65 Q-11 50 21 35 C37 25 42 3 50 3Z",
+	},
+	// Additional collection
+	groovyWave: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#EFA865",
+		path: "M5 30 C25 30 22 7 43 7 C65 7 62 37 81 37 Q97 37 97 54 C97 74 76 90 57 90 C35 90 37 62 18 62 Q3 62 3 47Z",
+	},
+	luckyClover: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#EABD61",
+		path: "M50 43 C16 -5 -7 41 33 50 C-7 59 16 105 50 65 C84 105 107 59 67 50 C107 41 84 -5 50 43Z",
+	},
+	saturn: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#FEC1B3",
+		path: "M17 48 A35 35 0 0 1 85 38 C100 34 103 44 96 53 C78 77 23 94 7 79 C-4 67 3 57 17 48Z",
+	},
+	boomerang: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#E5D6B4",
+		path: "M12 9 Q3 3 5 18 L27 82 Q33 98 48 91 L94 65 Q105 53 90 49 L52 45 Q43 44 39 35Z",
+	},
+	daisy: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#EABD61",
+		path: "M50 30 C29 -10 7 17 27 39 C-12 30 -6 74 30 66 C6 98 45 114 50 77 C55 114 94 98 70 66 C106 74 112 30 73 39 C93 17 71 -10 50 30Z",
+	},
+	twinSparkle: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#FEC1B3",
+		path: "M35 4 Q40 30 68 35 Q40 40 35 66 Q30 40 2 35 Q30 30 35 4Z M76 52 Q80 72 99 76 Q80 80 76 99 Q72 80 53 76 Q72 72 76 52Z",
+	},
+	puzzle: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#EFA865",
+		path: "M10 23 Q10 15 20 15 L37 15 C24 -4 73 -4 61 15 L81 15 Q90 15 90 25 L90 40 C111 28 111 73 90 61 L90 81 Q90 90 80 90 L60 90 C72 67 28 67 40 90 L20 90 Q10 90 10 80Z",
+	},
+	teardrop: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#E5D6B4",
+		path: "M66 3 C79 24 97 52 86 77 C76 101 35 106 18 80 C-7 41 43 27 66 3Z",
+	},
+	ribbonLoop: {
+		viewBox: "-5 -5 110 110",
+		ratio: 1,
+		color: "#FEC1B3",
+		path: "M50 30 C23 -8 0 11 3 35 C5 55 29 72 50 90 C71 72 95 55 97 35 C100 11 77 -8 50 30Z M50 47 C30 19 15 24 20 39 C25 51 39 63 50 73 C61 63 75 51 80 39 C85 24 70 19 50 47Z",
+		fillRule: "evenodd",
+	},
 };
 
 const shapeNames = Object.freeze(Object.keys(shapes));
@@ -143,7 +305,7 @@ export function Shape({
 			{...svgProps}
 		>
 			{title && <title>{title}</title>}
-			<path d={shape.path} fill={color ?? shape.color} />
+			<path d={shape.path} fill={color ?? shape.color} fillRule={shape.fillRule} />
 		</svg>
 	);
 }
@@ -210,6 +372,110 @@ export function TripleBlob(props) {
 
 export function SoftHexagon(props) {
 	return <Shape type="softHexagon" {...props} />;
+}
+
+export function Sparkle(props) {
+	return <Shape type="sparkle" {...props} />;
+}
+
+export function WonkyStar(props) {
+	return <Shape type="wonkyStar" {...props} />;
+}
+
+export function RetroStar(props) {
+	return <Shape type="retroStar" {...props} />;
+}
+
+export function PuffyStar(props) {
+	return <Shape type="puffyStar" {...props} />;
+}
+
+export function Asterisk(props) {
+	return <Shape type="asterisk" {...props} />;
+}
+
+export function ShootingStar(props) {
+	return <Shape type="shootingStar" {...props} />;
+}
+
+export function PuffyHeart(props) {
+	return <Shape type="puffyHeart" {...props} />;
+}
+
+export function RibbonBow(props) {
+	return <Shape type="ribbonBow" {...props} />;
+}
+
+export function Butterfly(props) {
+	return <Shape type="butterfly" {...props} />;
+}
+
+export function Cloud(props) {
+	return <Shape type="cloud" {...props} />;
+}
+
+export function Lightning(props) {
+	return <Shape type="lightning" {...props} />;
+}
+
+export function Mushroom(props) {
+	return <Shape type="mushroom" {...props} />;
+}
+
+export function Squiggle(props) {
+	return <Shape type="squiggle" {...props} />;
+}
+
+export function GroovyBlob(props) {
+	return <Shape type="groovyBlob" {...props} />;
+}
+
+export function WavyRing(props) {
+	return <Shape type="wavyRing" {...props} />;
+}
+
+export function Crescent(props) {
+	return <Shape type="crescent" {...props} />;
+}
+
+export function OrganicDiamond(props) {
+	return <Shape type="organicDiamond" {...props} />;
+}
+
+export function GroovyWave(props) {
+	return <Shape type="groovyWave" {...props} />;
+}
+
+export function LuckyClover(props) {
+	return <Shape type="luckyClover" {...props} />;
+}
+
+export function Saturn(props) {
+	return <Shape type="saturn" {...props} />;
+}
+
+export function Boomerang(props) {
+	return <Shape type="boomerang" {...props} />;
+}
+
+export function Daisy(props) {
+	return <Shape type="daisy" {...props} />;
+}
+
+export function TwinSparkle(props) {
+	return <Shape type="twinSparkle" {...props} />;
+}
+
+export function Puzzle(props) {
+	return <Shape type="puzzle" {...props} />;
+}
+
+export function Teardrop(props) {
+	return <Shape type="teardrop" {...props} />;
+}
+
+export function RibbonLoop(props) {
+	return <Shape type="ribbonLoop" {...props} />;
 }
 
 export default Shape;

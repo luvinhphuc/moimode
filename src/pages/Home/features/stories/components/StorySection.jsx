@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
+import SectionDecor from "../../../components/SectionDecor.jsx";
 import useStoryEnvironment from "../animations/useStoryEnvironment.js";
 import useStoryRevealAnimation from "../animations/useStoryRevealAnimation.js";
 import { STORY_ITEMS } from "../config/storyContent.js";
@@ -13,9 +14,10 @@ function StorySection({ items = STORY_ITEMS }) {
 	const gestureRef = useRef(null);
 	const suppressClickRef = useRef(false);
 	const leadingIndexRef = useRef(0);
-	const { isDesktop, canHover, reducedMotion } = useStoryEnvironment();
+	const strideRef = useRef(0);
+	const { isDesktop, isWideDesktop, canHover, reducedMotion } = useStoryEnvironment();
 	const [activeIndex, setActiveIndex] = useState(0);
-	const visibleCount = isDesktop ? 3 : 1;
+	const visibleCount = isWideDesktop ? 4 : isDesktop ? 3 : 1;
 	const hasMoreStories = items.length > visibleCount;
 	const lastIndex = Math.max(0, items.length - visibleCount);
 	const currentIndex = Math.min(activeIndex, lastIndex);
@@ -25,37 +27,38 @@ function StorySection({ items = STORY_ITEMS }) {
 		const track = trackRef.current;
 		if (!track) return undefined;
 		let frame = 0;
-		const syncIndex = () => {
+		const measureStride = () => {
 			const first = track.children[0];
 			const second = track.children[1];
-			const stride = second
+			strideRef.current = second
 				? second.offsetLeft - first.offsetLeft
 				: track.clientWidth;
-			if (stride) {
-				const next = Math.min(
+		};
+		const updateIndex = (next) => {
+			if (next === leadingIndexRef.current) return;
+			leadingIndexRef.current = next;
+			setActiveIndex(next);
+		};
+		const syncIndex = () => {
+			frame = 0;
+			if (strideRef.current) {
+				updateIndex(Math.min(
 					lastIndex,
-					Math.max(0, Math.round(track.scrollLeft / stride)),
-				);
-				leadingIndexRef.current = next;
-				setActiveIndex(next);
+					Math.max(0, Math.round(track.scrollLeft / strideRef.current)),
+				));
 			}
 		};
 		const onScroll = () => {
-			cancelAnimationFrame(frame);
-			frame = requestAnimationFrame(syncIndex);
+			if (!frame) frame = requestAnimationFrame(syncIndex);
 		};
 		const realign = () => {
 			// Keep the same leading story when the viewport crosses a breakpoint.
-			const first = track.children[0];
-			const second = track.children[1];
-			const stride = second
-				? second.offsetLeft - first.offsetLeft
-				: track.clientWidth;
+			measureStride();
 			const next = Math.min(leadingIndexRef.current, lastIndex);
-			leadingIndexRef.current = next;
-			track.scrollTo({ left: next * stride, behavior: "instant" });
-			setActiveIndex(next);
+			track.scrollTo({ left: next * strideRef.current, behavior: "instant" });
+			updateIndex(next);
 		};
+		realign();
 		const observer = new ResizeObserver(realign);
 		observer.observe(track);
 		track.addEventListener("scroll", onScroll, { passive: true });
@@ -72,12 +75,8 @@ function StorySection({ items = STORY_ITEMS }) {
 			0,
 			Math.min(lastIndex, currentIndex + direction * visibleCount),
 		);
-		leadingIndexRef.current = next;
-		const stride = track.children[1]
-			? track.children[1].offsetLeft - track.children[0].offsetLeft
-			: track.clientWidth;
 		track.scrollTo({
-			left: next * stride,
+			left: next * strideRef.current,
 			behavior: reducedMotion ? "instant" : "smooth",
 		});
 	}
@@ -93,6 +92,7 @@ function StorySection({ items = STORY_ITEMS }) {
 		>
 			<div data-story-content className="stories-section__content">
 				<div className="stories-section__header">
+					<SectionDecor variant="stories" />
 					<div data-story-reveal-group="heading">
 						<h2
 							data-story-reveal
@@ -164,6 +164,16 @@ function StorySection({ items = STORY_ITEMS }) {
 						className="stories-section__navigation"
 					>
 						<div data-story-reveal className="stories-section__nav-controls">
+							<button
+								type="button"
+								aria-label="Previous stories"
+								aria-controls="stories-track"
+								disabled={currentIndex === 0}
+								onClick={() => navigate(-1)}
+								className="stories-section__nav-button"
+							>
+								<ArrowLeft size={18} aria-hidden="true" />
+							</button>
 							<p
 								role="status"
 								aria-live="polite"
@@ -179,16 +189,6 @@ function StorySection({ items = STORY_ITEMS }) {
 								<span className="stories-section__sr-only"> of </span>
 								{items.length}
 							</p>
-							<button
-								type="button"
-								aria-label="Previous stories"
-								aria-controls="stories-track"
-								disabled={currentIndex === 0}
-								onClick={() => navigate(-1)}
-								className="stories-section__nav-button"
-							>
-								<ArrowLeft size={18} aria-hidden="true" />
-							</button>
 							<button
 								type="button"
 								aria-label="Next stories"

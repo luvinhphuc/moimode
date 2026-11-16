@@ -1,0 +1,118 @@
+@reference "../../../styles/globals.css";
+
+@layer components {
+	.section-decor {
+		@apply absolute inset-0 z-[-1] overflow-clip pointer-events-none select-none;
+	}
+
+	.section-decor > svg {
+		@apply absolute h-auto;
+	}
+
+	.section-decor--who > :first-child {
+		@apply top-[clamp(1.5rem,5vh,4rem)] right-[8%] w-[clamp(3rem,11vw,10rem)];
+	}
+
+	.section-decor--who > :last-child {
+		@apply top-[clamp(1rem,3vh,2.25rem)] right-[5%] w-[clamp(1rem,3vw,2.75rem)];
+	}
+
+	.section-decor--challenge > :first-child {
+		@apply -bottom-14 left-[clamp(-4.5rem,-4vw,-2rem)] w-[clamp(9rem,24vw,23rem)] opacity-[0.35];
+	}
+
+	.section-decor--challenge > :last-child {
+		@apply top-[clamp(1rem,5vh,4rem)] right-[10%] w-[clamp(1.25rem,4vw,4rem)];
+	}
+
+	.section-decor--mission > :first-child {
+		@apply top-0 right-[clamp(-2rem,-1.5vw,-0.75rem)] w-[clamp(5rem,13vw,12rem)];
+	}
+
+	.section-decor--mission > :last-child {
+		@apply top-[clamp(1rem,4vh,3rem)] right-[clamp(3.75rem,12vw,11rem)] w-[clamp(1.25rem,4vw,3.75rem)];
+	}
+
+	.section-decor--experience > :first-child {
+		@apply -right-8 -bottom-8 w-[clamp(8rem,22vw,21rem)] opacity-[0.6];
+	}
+
+	.section-decor--experience > :last-child {
+		@apply top-[clamp(1.5rem,6vh,4.5rem)] right-[9%] w-[clamp(2.5rem,8vw,7rem)] opacity-[0.8];
+	}
+
+	.section-decor--people > :nth-child(1) {
+		@apply top-[16%] left-[14%] w-[clamp(2.25rem,9vw,8rem)];
+	}
+
+	.section-decor--people > :nth-child(2) {
+		@apply top-[32%] right-[12%] w-[clamp(1.75rem,6vw,5.5rem)];
+	}
+
+	.section-decor--people > :nth-child(3) {
+		@apply top-[14%] right-[22%] w-[clamp(1.75rem,6vw,5.5rem)];
+	}
+
+	.section-decor--people > :nth-child(4) {
+		@apply top-[52%] right-[72%] w-[clamp(1.75rem,6vw,5.5rem)];
+	}
+	.section-decor--people > :nth-child(5) {
+		@apply top-[58%] right-[88%] w-[clamp(1.75rem,6vw,5.5rem)];
+	}
+	.section-decor--people > :nth-child(6) {
+		@apply top-[32%] right-[72%] w-[clamp(1.75rem,6vw,5.5rem)];
+	}
+
+	.section-decor--people > :nth-child(7) {
+		@apply top-[12%] right-[52%] w-[clamp(1.75rem,6vw,5.5rem)];
+	}
+
+	.section-decor--people-journey > svg {
+		@apply w-[clamp(3rem,6.5vw,7rem)];
+	}
+
+	.section-decor--people-journey > :nth-child(odd) {
+		@apply left-[clamp(0.5rem,3vw,4rem)];
+	}
+
+	.section-decor--people-journey > :nth-child(even) {
+		@apply right-[clamp(0.5rem,3vw,4rem)];
+	}
+
+	.section-decor--people-journey > :nth-child(1) {
+		@apply top-[8%];
+	}
+	.section-decor--people-journey > :nth-child(2) {
+		@apply top-[21%];
+	}
+	.section-decor--people-journey > :nth-child(3) {
+		@apply top-[39%];
+	}
+	.section-decor--people-journey > :nth-child(4) {
+		@apply top-[53%];
+	}
+	.section-decor--people-journey > :nth-child(5) {
+		@apply top-[70%];
+	}
+	.section-decor--people-journey > :nth-child(6) {
+		@apply top-[85%];
+	}
+
+	.section-decor--stories > :first-child {
+		@apply top-[50%] right-[5%] w-[clamp(3.25rem,8.5vw,7rem)] [translate:0_-50%];
+	}
+
+	.section-decor--stories > :last-child {
+		@apply right-[clamp(4.25rem,17vw,16rem)] bottom-[16%] w-[clamp(1rem,3vw,2.5rem)];
+	}
+
+	@media (max-width: 767px) {
+		.section-decor--people-journey > svg {
+			@apply w-[clamp(1.5rem,6vw,2.25rem)];
+		}
+
+		.section-decor--mission > :first-child {
+			@apply top-3;
+		}
+	}
+}

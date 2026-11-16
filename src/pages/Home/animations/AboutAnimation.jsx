@@ -1,4 +1,5 @@
 import { gsap, ScrollTrigger, useGSAP } from "../../../utils/gsap.js";
+import createScribbleReveal from "./createScribbleReveal.js";
 import {
 	ABOUT_DECK_MOTION,
 	ABOUT_FLOW_MOTION,
@@ -92,6 +93,20 @@ function addPanelTextReveal(timeline, panel, start) {
 	);
 }
 
+function addMissionPhotoReveal(timeline, photos, start, { pop, shrink, stagger }) {
+	photos.forEach((photo, index) => {
+		const revealAt = start + index * stagger;
+		timeline
+			.fromTo(
+				photo,
+				{ autoAlpha: 0, yPercent: 18, scale: 0.78 },
+				{ autoAlpha: 1, yPercent: 0, scale: 1.12, duration: pop, ease: "power2.out" },
+				revealAt,
+			)
+			.to(photo, { scale: 1, duration: shrink, ease: "power2.inOut" }, revealAt + pop);
+	});
+}
+
 function setupPinnedAbout(section, frame, stage, editorial, title, header) {
 	const panels = Array.from(editorial.children);
 	const [firstPanel, ...remainingPanels] = panels;
@@ -101,6 +116,7 @@ function setupPinnedAbout(section, frame, stage, editorial, title, header) {
 		wipe,
 		panelReveal,
 		challengeTravel,
+		missionPhotos,
 	} = ABOUT_DECK_MOTION;
 	section.classList.add("about-section--deck");
 	gsap.set(firstPanel, { autoAlpha: 0 });
@@ -127,7 +143,7 @@ function setupPinnedAbout(section, frame, stage, editorial, title, header) {
 			firstReveal.start,
 		)
 		.fromTo(
-			firstPanel.children,
+			firstPanel.querySelectorAll(":scope > :not(.section-decor)"),
 			{ y: firstReveal.y },
 			{ y: 0, duration: firstReveal.duration, immediateRender: false },
 			firstReveal.start,
@@ -165,7 +181,7 @@ function setupPinnedAbout(section, frame, stage, editorial, title, header) {
 				start,
 			)
 			.fromTo(
-				Array.from(panel.children).filter((child) => !child.matches("h2")),
+				panel.querySelectorAll(":scope > :not(h2, [data-about-challenge-portrait], .section-decor)"),
 				{ y: panelReveal.y },
 				{
 					y: 0,
@@ -177,9 +193,20 @@ function setupPinnedAbout(section, frame, stage, editorial, title, header) {
 			)
 			.set(panels[index], { visibility: "hidden" }, start + wipe.duration);
 		addPanelTextReveal(timeline, panel, start + wipe.duration / 2);
+		const missionGallery = panel.querySelector("[data-about-mission-gallery]");
+		if (missionGallery) {
+			addMissionPhotoReveal(
+				timeline,
+				missionGallery.querySelectorAll("img"),
+				start + missionPhotos.start,
+				missionPhotos,
+			);
+		}
 	});
 
 	const challenge = editorial.querySelector("[data-about-challenge]");
+	const scribble = createScribbleReveal(challenge);
+	const scribbleStart = firstHandoffStart + wipe.duration;
 	timeline
 		.fromTo(
 			challenge.querySelectorAll("[data-about-fit-line], [data-about-stand-line]"),
@@ -193,9 +220,14 @@ function setupPinnedAbout(section, frame, stage, editorial, title, header) {
 		)
 		// Give the last panel the same amount of scroll as the others.
 		.to({}, { duration: 1 }, firstHandoffStart + remainingPanels.length - 1);
-	timeline.eventCallback("onUpdate", () => {
+	const syncChallengeReveal = () => {
 		syncHeaderContrast(header, getComputedStyle(stage).backgroundColor);
-	});
+		// Play in real time once panel 02 is uncovered, even if scrolling stops.
+		scribble.setActive(timeline.time() >= scribbleStart
+			&& timeline.time() < firstHandoffStart + 1 + wipe.duration);
+	};
+	timeline.eventCallback("onUpdate", syncChallengeReveal);
+	syncChallengeReveal();
 
 	// CSS hot updates must also refresh the colors cached by the sticky title bar.
 	const refreshTheme = () => {
@@ -205,6 +237,7 @@ function setupPinnedAbout(section, frame, stage, editorial, title, header) {
 	import.meta.hot?.on("vite:afterUpdate", refreshTheme);
 
 	return () => {
+		scribble.destroy();
 		import.meta.hot?.off("vite:afterUpdate", refreshTheme);
 		section.classList.remove("about-section--deck");
 		header?.classList.remove("site-header--on-dark");
@@ -220,7 +253,8 @@ function AboutAnimation({ rootRef }) {
 			const title = section?.querySelector("#about-title");
 			const editorial = section?.querySelector(".about-editorial");
 			if (!frame || !stage || !title || !editorial) return undefined;
-			const header = section.parentElement?.querySelector(".site-header");
+			// The header is portaled outside the page blur; retain its contrast behavior.
+			const header = document.querySelector(".site-header");
 
 			const motion = gsap.matchMedia();
 
@@ -238,7 +272,9 @@ function AboutAnimation({ rootRef }) {
 						Array.from(editorial.children),
 						header,
 					);
-					if (conditions.reduceMotion) return cleanupStageTheme;
+					if (conditions.reduceMotion) {
+						return cleanupStageTheme;
+					}
 
 					const intro = gsap.timeline({
 						defaults: { ease: "none" },
@@ -280,6 +316,7 @@ function AboutAnimation({ rootRef }) {
 						"[data-about-mission-line-two]",
 					);
 					const missionCopy = section.querySelector("[data-about-mission-copy]");
+					const missionGallery = missionSection.querySelector("[data-about-mission-gallery]");
 					const experienceSection = section.querySelector(
 						"[data-about-experience]",
 					);
@@ -297,11 +334,11 @@ function AboutAnimation({ rootRef }) {
 					);
 
 					const { revealStart, who, challenge, mission, experience } = ABOUT_FLOW_MOTION;
-					const createReveal = (trigger) =>
+					const createReveal = (trigger, start = revealStart) =>
 						gsap.timeline({
 							scrollTrigger: {
 								trigger,
-								start: revealStart,
+								start,
 								toggleActions: "play none none reverse",
 							},
 						});
@@ -355,6 +392,15 @@ function AboutAnimation({ rootRef }) {
 							? challenge.travel.tablet
 							: challenge.travel.mobile;
 					const challengeTimeline = createReveal(challengeSection);
+					const scribble = createScribbleReveal(challengeSection);
+					const scribbleTrigger = ScrollTrigger.create({
+						trigger: challengeSection.querySelector("[data-about-challenge-portrait]"),
+						start: "top 85%",
+						end: "bottom top",
+						onToggle: (trigger) => scribble.setActive(trigger.isActive),
+						onRefresh: (trigger) => scribble.setActive(trigger.isActive),
+					});
+					scribble.setActive(scribbleTrigger.isActive);
 					challengeTimeline
 						.fromTo(
 							challengeLabel,
@@ -463,6 +509,16 @@ function AboutAnimation({ rootRef }) {
 							mission.copy.start,
 						);
 
+					const photoTriggers = conditions.isMobile ? Array.from(missionGallery.children) : [missionGallery];
+					for (const trigger of photoTriggers) {
+						addMissionPhotoReveal(
+							createReveal(trigger, mission.photos.scrollStart),
+							trigger.querySelectorAll("img"),
+							mission.photos.start,
+							mission.photos,
+						);
+					}
+
 					const experienceTimeline = createReveal(experienceSection);
 					experienceTimeline
 						.fromTo(
@@ -510,7 +566,10 @@ function AboutAnimation({ rootRef }) {
 							},
 							experience.disclaimer.start,
 						);
-					return cleanupStageTheme;
+					return () => {
+						scribble.destroy();
+						cleanupStageTheme();
+					};
 				},
 			);
 

@@ -135,6 +135,13 @@ test("textures match object-fit cover and resolution is capped at 2x", () => {
 	assert.equal(x, (1200 - width) / 2);
 	assert.deepEqual([dx, dy, dw, dh], [0, 0, 460, 620]);
 	assert.ok(env.sources[1].includes("q1-drift*.45"), "the delayed image echo must remain in the shader");
+	renderer.resize();
+	assert.equal(env.crops.length, 2, "unchanged sizes must reuse both uploaded textures");
+	assert.equal(env.draws, 1);
+	env.canvas.clientWidth = 200;
+	renderer.resize();
+	assert.equal(env.canvas.width, 400);
+	assert.equal(env.crops.length, 4);
 	renderer.destroy();
 });
 

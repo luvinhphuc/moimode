@@ -4,6 +4,7 @@ const QUERIES = [
 	"(min-width: 768px)",
 	"(hover: hover) and (pointer: fine)",
 	"(prefers-reduced-motion: reduce)",
+	"(min-width: 1280px)",
 ];
 
 function subscribe(callback) {
@@ -21,6 +22,7 @@ export default function useStoryEnvironment() {
 	const mask = useSyncExternalStore(subscribe, getSnapshot, () => 0);
 	return {
 		isDesktop: Boolean(mask & 1),
+		isWideDesktop: Boolean(mask & 8),
 		canHover: Boolean(mask & 1) && Boolean(mask & 2),
 		reducedMotion: Boolean(mask & 4),
 	};

@@ -1,6 +1,6 @@
 export const PEOPLE_COPY = Object.freeze({
 	title: "OUR PEOPLE",
-	photo: "/images/our_people.jpg",
+	photo: "/images/our_people.webp",
 	photoAlt: "Two MOIMODE creators posing together in Crocs",
 	callouts: [
 		{

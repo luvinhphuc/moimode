@@ -1,82 +1,36 @@
-import {
-	Cloud,
-	Flower2,
-	Footprints,
-	Heart,
-	Smile,
-	Sparkles,
-	Star,
-	WandSparkles,
-} from "lucide-react";
+import { useState } from "react";
+import { GALLERY_LAYOUT } from "../config/galleryMotionConfig.js";
 
-import { GALLERY_ITEMS } from "../config/galleryContent.js";
-import { GALLERY_SPLIT_LAYOUTS } from "../config/galleryMotionConfig.js";
-
-const ICONS = Object.freeze({
-	cloud: Cloud,
-	flower: Flower2,
-	footprints: Footprints,
-	heart: Heart,
-	smile: Smile,
-	sparkles: Sparkles,
-	star: Star,
-	wand: WandSparkles,
-});
-
-function GalleryCard({ item }) {
-	const Icon = ICONS[item.fallbackIcon] ?? Sparkles;
-	const desktop = GALLERY_SPLIT_LAYOUTS.desktop[item.id];
-	const mobile = GALLERY_SPLIT_LAYOUTS.mobile[item.id];
-	const splitStyle = desktop
-		? {
-				"--gallery-desktop-top": desktop.top,
-				"--gallery-desktop-right": desktop.right,
-				"--gallery-desktop-bottom": desktop.bottom,
-				"--gallery-desktop-left": desktop.left,
-				"--gallery-mobile-top": mobile?.top ?? desktop.top,
-				"--gallery-mobile-right": mobile?.right ?? desktop.right,
-				"--gallery-mobile-bottom": mobile?.bottom ?? desktop.bottom,
-				"--gallery-mobile-left": mobile?.left ?? desktop.left,
-			}
-		: undefined;
-
-	return (
-		<div
-			className={`gallery-card gallery-card--${item.position} gallery-card--${item.size} gallery-card--${item.tone}`}
-			data-gallery-card={item.id}
-			data-entry={item.entry}
-			style={splitStyle}
-		>
-			{item.src ? (
-				<img
-					className="gallery-card__image"
-					src={item.src}
-					alt={item.alt}
-					decoding="async"
-					onError={(event) => {
-						event.currentTarget.hidden = true;
-						event.currentTarget.nextElementSibling?.removeAttribute("hidden");
-					}}
-				/>
-			) : null}
-			<Icon
-				className="gallery-card__icon"
-				aria-hidden="true"
-				hidden={Boolean(item.src)}
-				strokeWidth={1.55}
-			/>
-		</div>
-	);
+function GalleryCard({ item, index, positioned, onSelect, onImageError }) {
+    const [failed, setFailed] = useState(false);
+    const scatter = GALLERY_LAYOUT.scatter[index % GALLERY_LAYOUT.scatter.length];
+    return (
+        <button type="button" className="gallery-card" data-gallery-card={item.id} data-gallery-index={index}
+            aria-label={`Read the story by ${item.nickname}`}
+            aria-controls="gallery-spotlight"
+            style={{ "--gallery-flow-x": `${scatter.x}px`, "--gallery-flow-y": `${scatter.band * 24}px`,
+                "--gallery-flow-rotation": `${scatter.rotation}deg`,
+                ...(positioned ? { left: `var(--card-${index}-x)`, top: `var(--card-${index}-y)`,
+                    "--gallery-card-rotation": `var(--card-${index}-rotation, 0deg)` } : {}) }}
+            onClick={(event) => onSelect(item, event.currentTarget)}>
+            {failed ? <span className="gallery-image-fallback">Image unavailable</span> : (
+                <img className="gallery-card__image" src={item.image}
+                    alt={`${item.isDemo ? "Demo photo" : "Personal style"} by ${item.nickname}: ${item.personality}`}
+                    width="220" height="300" decoding="async"
+                    onError={() => { setFailed(true); onImageError?.(); }} />
+            )}
+            <span className="gallery-card__caption" aria-hidden="true">{item.nickname} <span>Read story ↗</span></span>
+        </button>
+    );
 }
 
-function GalleryStack() {
-	return (
-		<div className="gallery-stack" data-gallery-stack="" aria-hidden="true">
-			{GALLERY_ITEMS.filter((item) => item.isInitialStack).map((item) => (
-				<GalleryCard key={item.id} item={item} />
-			))}
-		</div>
-	);
+function GalleryStack({ items, positioned = false, interactive = true, onSelect, onImageError }) {
+    return (
+        <div className="gallery-stack" data-gallery-stack="" inert={!interactive}>
+            {items.map((item, index) => <GalleryCard key={item.id + item.image} item={item} index={index}
+                positioned={positioned} onSelect={onSelect} onImageError={onImageError} />)}
+        </div>
+    );
 }
 
 export default GalleryStack;

@@ -3,8 +3,9 @@ import { useRef } from "react";
 import AboutAnimation from "../animations/AboutAnimation.jsx";
 import { ABOUT_COPY } from "../config/aboutContent.js";
 import MiniCustomizer from "./MiniCustomizer.jsx";
+import SectionDecor from "./SectionDecor.jsx";
 
-function AboutSection() {
+function AboutSection({ isIntroDone, onLoadProgress, onPreviewStatus, previewStatus }) {
 	const rootRef = useRef(null);
 	const { title, who, challenge, mission, experience } = ABOUT_COPY;
 
@@ -30,6 +31,7 @@ function AboutSection() {
 							data-about-who
 							aria-labelledby="about-who-title"
 						>
+							<SectionDecor variant="who" />
 							<div className="about-editorial__row">
 								<p className="about-editorial__label" data-about-who-label>
 									<span className="about-editorial__label-number">{who.number}</span>
@@ -55,6 +57,16 @@ function AboutSection() {
 									</div>
 								</div>
 							</div>
+							<figure className="about-editorial__portrait-banner">
+								<img
+									src="/images/about/moimode-community-cutout.png"
+									alt="Eight MOIMODE community members expressing their individual styles."
+									width="2172"
+									height="724"
+										loading="lazy"
+										decoding="async"
+									/>
+							</figure>
 						</section>
 
 						<section
@@ -63,6 +75,7 @@ function AboutSection() {
 							data-about-challenge
 							aria-labelledby="about-challenge-title"
 						>
+							<SectionDecor variant="challenge" />
 							<p className="about-editorial__label" data-about-challenge-label>
 								<span className="about-editorial__label-number">{challenge.number}</span>
 								<span className="about-editorial__label-divider">/</span>
@@ -90,6 +103,15 @@ function AboutSection() {
 									</span>
 								</span>
 							</h2>
+							<figure className="about-editorial__challenge-portrait" data-about-challenge-portrait>
+								<img
+									src="/images/about/challenge-fit-in-cutout.png"
+									alt="A young woman expressing her style in a blue top, wide-leg jeans and Crocs."
+									width="467"
+									height="1294"
+								/>
+								<canvas data-about-scribble-canvas aria-hidden="true" />
+							</figure>
 							<div className="about-editorial__challenge-copy">
 								<p className="about-editorial__body" data-about-challenge-copy>
 									{challenge.body}
@@ -103,6 +125,7 @@ function AboutSection() {
 							data-about-mission
 							aria-labelledby="about-mission-title"
 						>
+							<SectionDecor variant="mission" />
 							<div className="about-editorial__row">
 								<p className="about-editorial__label" data-about-mission-label>
 									<span className="about-editorial__label-number">{mission.number}</span>
@@ -140,6 +163,21 @@ function AboutSection() {
 									</div>
 								</div>
 							</div>
+							<div className="about-editorial__mission-gallery" data-about-mission-gallery>
+								{mission.photos.map(({ src, alt, height }) => (
+									<div key={src} className="about-editorial__mission-photo-slot">
+										<img
+											className="about-editorial__mission-photo"
+											src={src}
+											alt={alt}
+											width="1440"
+											height={height}
+											loading="lazy"
+											decoding="async"
+										/>
+									</div>
+								))}
+							</div>
 						</section>
 
 						<section
@@ -148,6 +186,7 @@ function AboutSection() {
 							data-about-experience
 							aria-labelledby="about-experience-title"
 						>
+							<SectionDecor variant="experience" />
 							<div className="about-editorial__row about-editorial__row--experience">
 								<p className="about-editorial__label" data-about-experience-label>
 									<span className="about-editorial__label-number">{experience.number}</span>
@@ -168,7 +207,12 @@ function AboutSection() {
 							</div>
 
 							<div className="about-editorial__experience-layout">
-								<MiniCustomizer />
+								<MiniCustomizer
+									isIntroDone={isIntroDone}
+									onLoadProgress={onLoadProgress}
+									onPreviewStatus={onPreviewStatus}
+									previewStatus={previewStatus}
+								/>
 								<div className="about-editorial__experience-copy">
 									<div className="about-editorial__copy-mask" data-about-experience-copy>
 										<p className="about-editorial__body">

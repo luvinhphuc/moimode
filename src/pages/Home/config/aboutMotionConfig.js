@@ -20,6 +20,7 @@ export const ABOUT_DECK_MOTION = Object.freeze({
 	panelReveal: { duration: 0.33, ease: "power2.out", y: 18 },
 	textReveal: { titleDuration: 0.28, copyDuration: 0.42, stagger: 0.08 },
 	challengeTravel: 0.035,
+	missionPhotos: { start: 0.52, pop: 0.14, shrink: 0.14, stagger: 0.08 },
 });
 
 export const ABOUT_FLOW_MOTION = Object.freeze({
@@ -45,6 +46,7 @@ export const ABOUT_FLOW_MOTION = Object.freeze({
 		firstLine: { start: 0.08, duration: 0.58 },
 		secondLine: { start: 0.2, duration: 0.58 },
 		copy: { start: 0.78, duration: 0.56 },
+		photos: { scrollStart: "top 88%", start: 0, pop: 0.34, shrink: 0.3, stagger: 0.14 },
 	},
 	experience: {
 		label: { start: 0, duration: 0.38 },

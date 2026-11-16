@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from "react";
-import { useGLTF } from "@react-three/drei";
+import { useLoader } from "@react-three/fiber";
+import { GLTFLoader } from "three-stdlib";
 
 import { MODEL_ASSETS } from "../../../config/modelAssets.js";
 import { Box3, Quaternion, Sphere, Vector3 } from "../../../utils/three.js";
@@ -11,22 +12,22 @@ import HeroModelRig from "./HeroModelRig.jsx";
 
 function CrocsModel({
 	modelUrl = MODEL_ASSETS.classicClog,
+	onLoadProgress,
 	onReady,
 	pose = CROCS_POSE,
 	enablePointerMotion = true,
 	transitionControlRef,
 }) {
-	const { scene } = useGLTF(modelUrl);
+	const { scene } = useLoader(GLTFLoader, modelUrl, undefined, onLoadProgress);
 	const { model, modelSize, radius, slots } = useMemo(() => {
 		const clone = scene.clone(true);
 		const bounds = new Box3().setFromObject(clone);
 		clone.position.sub(bounds.getCenter(new Vector3()));
 		clone.updateMatrixWorld(true);
 
-		const sphere = new Box3()
-			.setFromObject(clone)
-			.getBoundingSphere(new Sphere());
-		const size = new Box3().setFromObject(clone).getSize(new Vector3());
+		// Centering translates the bounds without changing their size or radius.
+		const sphere = bounds.getBoundingSphere(new Sphere());
+		const size = bounds.getSize(new Vector3());
 		const slots = [];
 
 		clone.traverse((object) => {

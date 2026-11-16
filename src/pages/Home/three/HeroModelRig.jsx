@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo, useRef } from 'react';
+import { Suspense, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 
 import { MathUtils, Vector3 } from '../../../utils/three.js';
@@ -42,7 +42,9 @@ function HeroModelRig({
     const targetRef = useRef({ x: 0, y: 0 });
     const reducedMotionRef = useRef(false);
     const spinAngleRef = useRef(0);
-    const { camera, size } = useThree();
+    const camera = useThree((state) => state.camera);
+    const size = useThree((state) => state.size);
+    const invalidate = useThree((state) => state.invalidate);
     const baseRotation = useMemo(
         () => pose.rotationDegrees.map(MathUtils.degToRad),
         [pose.rotationDegrees],
@@ -50,16 +52,17 @@ function HeroModelRig({
     const rotationRef = useRef(baseRotation);
     const transitionStateRef = useRef({
         active: 0,
+        invalidate,
         pointerInfluence: 1,
         rotationX: baseRotation[0],
         rotationY: baseRotation[1],
         rotationZ: baseRotation[2],
         poseActive: 0,
         spinActive: 0,
-        scale: 0,
+        scale: 1.45,
     });
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         rotationRef.current = baseRotation;
 
         const transition = transitionStateRef.current;
@@ -68,7 +71,8 @@ function HeroModelRig({
             transition.rotationY = baseRotation[1];
             transition.rotationZ = baseRotation[2];
         }
-    }, [baseRotation]);
+        invalidate();
+    }, [baseRotation, invalidate]);
 
     useEffect(() => {
         if (!transitionControlRef) return undefined;
@@ -89,12 +93,14 @@ function HeroModelRig({
             targetRef.current.y = 0;
             motionRef.current.x = 0;
             motionRef.current.y = 0;
+            invalidate();
             return undefined;
         }
 
         const media = window.matchMedia('(prefers-reduced-motion: reduce)');
         const syncReducedMotion = () => {
             reducedMotionRef.current = media.matches;
+            invalidate();
         };
         const handlePointerMove = (event) => {
             if (
@@ -113,10 +119,12 @@ function HeroModelRig({
                 -1,
                 1,
             );
+            invalidate();
         };
         const resetMotion = () => {
             targetRef.current.x = 0;
             targetRef.current.y = 0;
+            invalidate();
         };
 
         syncReducedMotion();
@@ -131,27 +139,32 @@ function HeroModelRig({
             window.removeEventListener('pointermove', handlePointerMove);
             window.removeEventListener('blur', resetMotion);
         };
-    }, [enablePointerMotion]);
+    }, [enablePointerMotion, invalidate]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         fitCameraToModel({
             camera,
             height: size.height,
             radius,
             width: size.width,
         });
-    }, [camera, radius, size.height, size.width]);
+        invalidate();
+    }, [camera, invalidate, radius, size.height, size.width]);
 
     useFrame((_, delta) => {
         if (!groupRef.current) return;
 
         const motion = motionRef.current;
-        const target = reducedMotionRef.current
-            ? { x: 0, y: 0 }
-            : targetRef.current;
-
-        motion.x = MathUtils.damp(motion.x, target.x, 5, delta);
-        motion.y = MathUtils.damp(motion.y, target.y, 5, delta);
+        const targetX = reducedMotionRef.current ? 0 : targetRef.current.x;
+        const targetY = reducedMotionRef.current ? 0 : targetRef.current.y;
+        const step = Math.min(delta, 0.05);
+        motion.x = MathUtils.damp(motion.x, targetX, 5, step);
+        motion.y = MathUtils.damp(motion.y, targetY, 5, step);
+        const isSettling = Math.hypot(motion.x - targetX, motion.y - targetY) > 0.001;
+        if (!isSettling) {
+            motion.x = targetX;
+            motion.y = targetY;
+        }
 
         const [baseX, baseY, baseZ] = rotationRef.current;
         const transition = transitionStateRef.current;
@@ -161,8 +174,9 @@ function HeroModelRig({
         const y = usesTransitionPose ? transition.rotationY : baseY;
         const z = usesTransitionPose ? transition.rotationZ : baseZ;
 
-        if (transition.spinActive && !transition.active) {
-            spinAngleRef.current += (delta * Math.PI * 2) / 4;
+        const isSpinning = transition.spinActive && !transition.active;
+        if (isSpinning) {
+            spinAngleRef.current += (step * Math.PI * 2) / 4;
         }
 
         groupRef.current.rotation.set(
@@ -172,6 +186,7 @@ function HeroModelRig({
         );
         groupRef.current.position.y = -motion.y * 0.008 * pointerInfluence;
         groupRef.current.scale.setScalar(transition.scale);
+        if (isSpinning || isSettling) invalidate();
     });
 
     return (
