@@ -15,9 +15,10 @@ function StarArtwork() {
 	);
 }
 
-function Footer() {
+function Footer({ pathnameOverride }) {
 	const footerRef = useRef(null);
-	const { pathname } = useLocation();
+	const { pathname: routePathname } = useLocation();
+	const pathname = pathnameOverride ?? routePathname;
 	const isHome = pathname === ROUTE_PATHS.home;
 	const id = useId().replace(/:/g, "");
 	const starId = `footer-star-${id}`;

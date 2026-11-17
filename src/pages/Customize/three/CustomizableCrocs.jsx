@@ -1,8 +1,10 @@
 import { Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useLoader, useThree } from "@react-three/fiber";
 import { GLTFLoader } from "three-stdlib";
+import { Color } from "three";
 
 import { MODEL_ASSETS } from "../../../config/modelAssets.js";
+import { gsap } from "../../../utils/gsap.js";
 import { Box3, Quaternion, Vector3 } from "../../../utils/three.js";
 import useFirstModelFrame from "../../../utils/useFirstModelFrame.js";
 import PlacedCharm from "./PlacedCharm.jsx";
@@ -16,9 +18,29 @@ function cloneMaterials(root) {
 	});
 }
 
-function SlotMarker({ modelSize, onSelect, slot }) {
+function disposeClonedMaterials(root) {
+	root.traverse((object) => {
+		if (!object.isMesh || !object.material) return;
+		const materials = Array.isArray(object.material) ? object.material : [object.material];
+		materials.forEach((material) => material.dispose());
+	});
+}
+
+function SlotMarker({ modelSize, onSelect, pulseKey, slot }) {
+	const markerRef = useRef(null);
+	const invalidate = useThree((state) => state.invalidate);
+	useEffect(() => {
+		if (!pulseKey || !markerRef.current || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+		const marker = markerRef.current;
+		const target = modelSize * 0.022;
+		const tween = gsap.fromTo(marker.scale, { x: target * 0.6, y: target * 0.6, z: target * 0.6 }, {
+			x: target, y: target, z: target, duration: 0.38, ease: "back.out(2)", overwrite: true, onUpdate: invalidate,
+		});
+		return () => tween.kill();
+	}, [invalidate, modelSize, pulseKey]);
 	return (
 		<mesh
+			ref={markerRef}
 			position={slot.position}
 			quaternion={slot.quaternion}
 			scale={modelSize * 0.022}
@@ -59,9 +81,11 @@ function CustomizableCrocs({
 	animateCharms = true,
 	placements,
 	rotations,
+	selectedCharmId,
 	selectedSlot,
 }) {
 	const groupRef = useRef(null);
+	const hasSetInitialColour = useRef(false);
 	const invalidate = useThree((state) => state.invalidate);
 	const { scene } = useLoader(GLTFLoader, MODEL_ASSETS.classicClog, undefined, onLoadProgress);
 
@@ -93,7 +117,12 @@ function CustomizableCrocs({
 		return { model: clone, modelSize: nextModelSize, slots: nextSlots };
 	}, [scene]);
 
+	useEffect(() => () => disposeClonedMaterials(model), [model]);
+
 	useLayoutEffect(() => {
+		const next = new Color(bodyColour);
+		const immediate = !hasSetInitialColour.current || matchMedia("(prefers-reduced-motion: reduce)").matches;
+		const tweens = [];
 		model.traverse((object) => {
 			if (!object.isMesh || !object.material) return;
 			const materials = Array.isArray(object.material)
@@ -101,10 +130,16 @@ function CustomizableCrocs({
 				: [object.material];
 			for (const material of materials) {
 				if (material.name !== "Body_Crocs" || !material.color) continue;
-				material.color.set(bodyColour);
+				if (immediate) material.color.copy(next);
+				else tweens.push(gsap.to(material.color, {
+					r: next.r, g: next.g, b: next.b,
+					duration: 0.38, ease: "power2.inOut", overwrite: true, onUpdate: invalidate,
+				}));
 			}
 		});
+		hasSetInitialColour.current = true;
 		invalidate();
+		return () => tweens.forEach((tween) => tween.kill());
 	}, [bodyColour, invalidate, model]);
 
 	useEffect(() => {
@@ -143,6 +178,7 @@ function CustomizableCrocs({
 					<SlotMarker
 						key={slot.name}
 						modelSize={modelSize}
+						pulseKey={selectedCharmId}
 						onSelect={onSlotSelect}
 						slot={slot}
 					/>

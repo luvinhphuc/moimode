@@ -24,7 +24,8 @@ export default function MagneticShapes({ containerRef, exclusionRef, hasSubmissi
             finePointer: "(hover: hover) and (pointer: fine)",
             reduced: "(prefers-reduced-motion: reduce)",
         }, (context) => {
-            const { desktop, mobile, finePointer, reduced } = context.conditions;
+            const { desktop, tablet, mobile, finePointer, reduced } = context.conditions;
+            const layoutKey = mobile ? "mobile" : tablet ? "tablet" : "desktop";
             const intensity = desktop ? 1 : mobile ? 0.3 : 0.6;
             const magnetism = !mobile && finePointer && !reduced;
             const anchors = [...layer.querySelectorAll("[data-shape-anchor]")].filter((_, i) => !mobile || i < 4);
@@ -93,11 +94,12 @@ export default function MagneticShapes({ containerRef, exclusionRef, hasSubmissi
                 const scale = populated ? 0.62 : 1;
                 const placements = anchors.map((node, index) => {
                     const shape = MAGNETIC_SHAPES[index];
+                    const coordinates = shape.responsivePositions?.[layoutKey] ?? shape;
                     const radius = Math.hypot(node.offsetWidth, node.offsetHeight) * scale / 2
                         + (reduced ? 0 : 20 * intensity + (magnetism ? MAGNETIC_LIMIT * intensity * scale : 0)) + 14;
                     const spread = populated ? (mobile ? 1.5 : 1.2) : 1;
-                    return getShapePosition({ x: width * (0.5 + (shape.x - 0.5) * spread),
-                        y: height * (0.5 + (shape.y - 0.5) * spread), radius, width, height, exclusion: box,
+                    return getShapePosition({ x: width * (0.5 + (coordinates.x - 0.5) * spread),
+                        y: height * (0.5 + (coordinates.y - 0.5) * spread), radius, width, height, exclusion: box,
                         edge: populated ? -radius * 0.6 : 8 });
                 });
                 onLeave();

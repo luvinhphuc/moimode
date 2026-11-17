@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:vercel": "npx --yes vercel dev",
     "build": "vite build",
+    "test": "node --test api/send-email.test.js src/pages/Customize/utils/scorePersonality.test.js src/pages/Customize/utils/storySubmission.test.js src/pages/Home/features/stories/animations/rgbTransition.test.js",
     "generate:charm-previews": "node scripts/generate-charm-previews.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
@@ -18,6 +20,7 @@
     "hls.js": "^1.7.4",
     "lenis": "^1.3.27",
     "lucide-react": "^1.61.0",
+    "nodemailer": "^10.6.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-router-dom": "^7.18.4",

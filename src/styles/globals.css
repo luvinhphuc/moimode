@@ -1,4 +1,6 @@
 @import "tailwindcss";
+
+/* Shared foundation: font faces, design tokens, then browser/app base rules. */
 @import "./fonts.css";
 @import "./theme.css";
 @import "./base.css";

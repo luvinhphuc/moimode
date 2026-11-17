@@ -148,6 +148,7 @@ function StorySection({ items = STORY_ITEMS }) {
 								className="stories-section__slide"
 							>
 								<StoryCard
+									key={`${item.id}:${visible}`}
 									item={item}
 									visible={visible}
 									canHover={canHover}

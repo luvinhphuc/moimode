@@ -15,25 +15,10 @@ function StoryCard({
 	const [hovered, setHovered] = useState(false);
 	const flipTimerRef = useRef(null);
 	const backRef = useRef(null);
+	const hoverActive = canHover && hovered;
+	const flipActive = !reducedMotion && flipping;
 
 	useEffect(() => () => clearTimeout(flipTimerRef.current), []);
-	useEffect(() => {
-		if (!visible) {
-			clearTimeout(flipTimerRef.current);
-			setFlipped(false);
-			setFlipping(false);
-			setHovered(false);
-		}
-	}, [visible]);
-	useEffect(() => {
-		if (!canHover) setHovered(false);
-	}, [canHover]);
-	useEffect(() => {
-		if (reducedMotion) {
-			clearTimeout(flipTimerRef.current);
-			setFlipping(false);
-		}
-	}, [reducedMotion]);
 
 	function flip(event) {
 		if (!visible || (event.detail !== 0 && suppressClickRef.current)) return;
@@ -73,9 +58,9 @@ function StoryCard({
 				if (
 					event.pointerType === "mouse" &&
 					canHover &&
-					!hovered &&
+					!hoverActive &&
 					!flipped &&
-					!flipping &&
+					!flipActive &&
 					visible
 				)
 					setHovered(true);
@@ -112,8 +97,8 @@ function StoryCard({
 							images={item.images}
 							canHover={canHover}
 							reducedMotion={reducedMotion}
-							hovered={hovered}
-							disabled={flipped || flipping || !visible}
+							hovered={hoverActive}
+							disabled={flipped || flipActive || !visible}
 							visible={visible}
 						/>
 					</span>

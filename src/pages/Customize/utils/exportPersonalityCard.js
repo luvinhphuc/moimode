@@ -10,10 +10,6 @@ function labelForCollection(id) {
 	return CHARM_CATEGORIES.find((category) => category.id === id)?.label ?? "None yet";
 }
 
-async function imageFromBlob(blob) {
-	return createImageBitmap(blob);
-}
-
 function roundedPanel(context, x, y, width, height, radius, fill) {
 	context.beginPath();
 	context.roundRect(x, y, width, height, radius);
@@ -38,15 +34,11 @@ function downloadBlob(blob, filename) {
 	window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export async function createPersonalityCardBlob({ result, shoeBlob }) {
-	if (!shoeBlob) throw new Error("The Crocs image is not ready yet.");
+export async function createPersonalityCardBlob({ result }) {
 	const personality = PERSONALITIES[result.primaryPersonality];
-	const [artResponse, shoeImage] = await Promise.all([
-		fetch(personality.front),
-		imageFromBlob(shoeBlob),
-	]);
+	const artResponse = await fetch(personality.front);
 	if (!artResponse.ok) throw new Error("The personality artwork could not be loaded.");
-	const artImage = await imageFromBlob(await artResponse.blob());
+	const artImage = await createImageBitmap(await artResponse.blob());
 	await document.fonts.ready;
 	try {
 		const canvas = document.createElement("canvas");
@@ -64,14 +56,19 @@ export async function createPersonalityCardBlob({ result, shoeBlob }) {
 		// The source card stays intact inside the composition at its native 4:5 ratio.
 		context.drawImage(artImage, 100, 365, 650, 812.5);
 		roundedPanel(context, 785, 365, 715, 813, 42, PAPER);
-		context.drawImage(shoeImage, 805, 390, 675, 520);
-		text(context, "YOUR ONE-OF-A-KIND CROC", 835, 986, '29px "Karl ST VN", sans-serif');
 		const colour = COLOUR_BY_ID[result.customizationStats.bodyColor];
+		roundedPanel(context, 825, 410, 635, 470, 36, "#fffdf8");
+		text(context, "YOUR CROCS COLOUR", 875, 500, '31px "Karl ST VN", sans-serif');
 		context.fillStyle = colour.value;
 		context.beginPath();
-		context.arc(854, 1052, 24, 0, Math.PI * 2);
+		context.arc(930, 635, 72, 0, Math.PI * 2);
 		context.fill();
-		text(context, colour.label, 900, 1065, '38px "Karl ST Black VN", sans-serif');
+		context.strokeStyle = INK;
+		context.lineWidth = 4;
+		context.stroke();
+		text(context, colour.label, 1045, 650, '42px "Karl ST Black VN", sans-serif');
+		text(context, `${result.customizationStats.charmCount} charms placed`, 875, 790, '31px "Karl ST VN", sans-serif');
+		text(context, "See your live custom design on Móimode", 875, 840, '23px "Karl ST VN", sans-serif');
 
 		roundedPanel(context, 100, 1220, 1400, 680, 48, PAPER);
 		text(context, "STYLE DNA", 165, 1310, '63px "Karl ST Black VN", sans-serif');
@@ -92,7 +89,6 @@ export async function createPersonalityCardBlob({ result, shoeBlob }) {
 		});
 	} finally {
 		artImage.close();
-		shoeImage.close();
 	}
 }
 

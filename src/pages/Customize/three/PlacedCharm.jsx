@@ -37,6 +37,13 @@ function PlacedCharm({
 		() => normalizeCharmScene(scene, charm.orientation),
 		[charm, scene],
 	);
+	useEffect(() => () => {
+		normalized.object.traverse((object) => {
+			if (!object.isMesh || !object.material) return;
+			const materials = Array.isArray(object.material) ? object.material : [object.material];
+			materials.forEach((material) => material.dispose());
+		});
+	}, [normalized.object]);
 	const groupRef = useRef(null);
 	const progressRef = useRef(0);
 	const reducedMotionRef = useRef(false);

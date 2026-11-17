@@ -3,7 +3,37 @@ import { gsap, ScrollTrigger, useGSAP } from "../../../../../utils/gsap.js";
 function useGalleryScrubAnimation({ rootRef, finishRef, geometry, animated, items, reducedMotion }) {
     useGSAP(() => {
         const root = rootRef.current;
-        if (!root || reducedMotion || window.matchMedia("(max-width: 767px)").matches) return undefined;
+        if (!root || reducedMotion) return undefined;
+        if (window.matchMedia("(max-width: 767px)").matches) {
+            if (!("IntersectionObserver" in window)) return undefined;
+            const targets = [...root.querySelectorAll(
+                "[data-gallery-title], [data-gallery-action], [data-gallery-card]",
+            )];
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.dataset.galleryMobileReveal = "visible";
+                    observer.unobserve(entry.target);
+                });
+            }, { threshold: 0.12, rootMargin: "0px 0px -5% 0px" });
+
+            targets.forEach((target) => {
+                const isCard = target.hasAttribute("data-gallery-card");
+                const index = Number(target.dataset.galleryIndex) || 0;
+                const delay = isCard ? Math.min(index, 5) * 45 : target.hasAttribute("data-gallery-action") ? 70 : 0;
+                target.dataset.galleryMobileReveal = "pending";
+                target.style.setProperty("--gallery-mobile-reveal-delay", `${delay}ms`);
+                observer.observe(target);
+            });
+
+            return () => {
+                observer.disconnect();
+                targets.forEach((target) => {
+                    delete target.dataset.galleryMobileReveal;
+                    target.style.removeProperty("--gallery-mobile-reveal-delay");
+                });
+            };
+        }
         if (!animated || items.length < 4) {
             const heading = root.querySelectorAll("[data-gallery-title], [data-gallery-action]");
             const fitsViewport = root.offsetHeight <= window.innerHeight + 1;

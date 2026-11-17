@@ -77,6 +77,7 @@ function CharmsStep({
 	colour,
 	editingSlot,
 	onBack,
+	onModelReady,
 	onClear,
 	onCloseEditor,
 	onNext,
@@ -89,6 +90,7 @@ function CharmsStep({
 	placements,
 	rotations,
 	selectedCharmId,
+	sparkleKey,
 	view,
 	onViewChange,
 }) {
@@ -96,11 +98,6 @@ function CharmsStep({
 
 	return (
 		<main className="customizer-main customizer-main--charms">
-			<div className="tape-note tape-note--pink" aria-hidden="true">
-				Small charms.
-				<br />
-				Big personality.
-			</div>
 			<StepHeading
 				step={3}
 				title="Add Charms"
@@ -126,15 +123,19 @@ function CharmsStep({
 					<div className="charms-stage__scene">
 						<CustomizerScene
 							bodyColour={colour.value}
+							onModelReady={onModelReady}
+							onError={onModelReady}
 							interactiveSlots
 							onSlotSelect={onSlotSelect}
 							onViewChange={onViewChange}
 							placements={placements}
 							selectedSlot={editingSlot}
 							rotations={rotations}
+							selectedCharmId={selectedCharmId}
 							view={view}
 						/>
 					</div>
+					{sparkleKey ? <span key={sparkleKey} className="charm-placement-sparkle" aria-hidden="true">✦</span> : null}
 					{editingSlot ? (
 						<SlotEditor
 							currentCharmId={placements[editingSlot]}

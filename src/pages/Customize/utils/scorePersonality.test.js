@@ -35,6 +35,55 @@ test("empty design redistributes inactive weights and reports no collection", ()
 	assert.equal(Object.values(result.scores).reduce((sum, score) => sum + score, 0), 100);
 });
 
+test("an empty design reflects each Crocs colour instead of always returning minimalist", () => {
+	const primaryByColour = Object.fromEntries(COLOURS.map(({ id }) => [
+		id,
+		scorePersonality({ colourId: id, placements: {} }).primaryPersonality,
+	]));
+
+	assert.deepEqual(primaryByColour, {
+		white: "minimalist",
+		cream: "minimalist",
+		black: "minimalist",
+		grey: "minimalist",
+		navy: "minimalist",
+		sand: "minimalist",
+		espresso: "minimalist",
+		"light-blue": "creative",
+		green: "minimalist",
+		"baby-pink": "minimalist",
+		mint: "creative",
+		lilac: "creative",
+		"butter-yellow": "playful",
+		peach: "playful",
+		periwinkle: "creative",
+		pink: "playful",
+		red: "bold",
+		purple: "creative",
+		lime: "playful",
+		"electric-blue": "bold",
+	});
+});
+
+test("crossing six charms can flip the same food-heavy design to playful", () => {
+	const charmIds = [
+		"food-burger",
+		"food-donut",
+		"food-pizza",
+		"food-ice-cream",
+		"food-french-fries",
+		"food-bubble-tea",
+	];
+	const placementsFor = (ids) => Object.fromEntries(ids.map((id, index) => [`slot-${index}`, id]));
+	const fiveCharms = scorePersonality({ colourId: "white", placements: placementsFor(charmIds.slice(0, 5)) });
+	const sixCharms = scorePersonality({ colourId: "white", placements: placementsFor(charmIds) });
+
+	assert.equal(fiveCharms.primaryPersonality, "minimalist");
+	assert.deepEqual(fiveCharms.scores, { playful: 36, minimalist: 41, creative: 23, bold: 0 });
+	assert.equal(sixCharms.primaryPersonality, "playful");
+	assert.deepEqual(sixCharms.scores, { playful: 46, minimalist: 31, creative: 23, bold: 0 });
+});
+
 test("repeated charms count for quantity but only once for selection", () => {
 	const one = scorePersonality({ colourId: "lime", placements: { a: "travel-airplane" } });
 	const two = scorePersonality({ colourId: "lime", placements: { a: "travel-airplane", b: "travel-airplane" } });

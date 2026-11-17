@@ -2,14 +2,9 @@ import { Check } from "lucide-react";
 import CustomizerScene from "../three/CustomizerScene.jsx";
 import { StepHeading, FlowFooter } from "./FlowComponents.jsx";
 
-function StyleStep({ colour, onExit, onNext, rotations }) {
+function StyleStep({ colour, onExit, onModelReady, onNext, rotations }) {
 	return (
 		<main className="customizer-main customizer-main--style">
-			<div className="tape-note tape-note--blue" aria-hidden="true">
-				Same canvas.
-				<br />
-				Different vibes.
-			</div>
 			<StepHeading
 				step={1}
 				title="Choose a Crocs Style"
@@ -26,6 +21,8 @@ function StyleStep({ colour, onExit, onNext, rotations }) {
 						<CustomizerScene
 							compactPreview
 							controlsEnabled={false}
+							onModelReady={onModelReady}
+							onError={onModelReady}
 							bodyColour={colour.value}
 							onSlotSelect={() => {}}
 							placements={{}}

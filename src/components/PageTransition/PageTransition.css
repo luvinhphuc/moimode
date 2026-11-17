@@ -1,0 +1,45 @@
+.page-wipe {
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+	background: var(--color-moi-coral);
+	transform: translateX(110%) skewX(-8deg);
+	pointer-events: none;
+	box-shadow: 0 0 36px var(--color-moi-shadow);
+}
+
+.page-wipe::before,
+.page-wipe::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 18px;
+	pointer-events: none;
+}
+
+.page-wipe::before {
+	left: 0;
+	background: linear-gradient(90deg, rgb(246 241 232 / 32%), transparent);
+}
+
+.page-wipe::after {
+	right: 0;
+	background: linear-gradient(270deg, rgb(246 241 232 / 32%), transparent);
+}
+
+.page-wipe__star {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 70px;
+	height: 70px;
+	transform: translate(-50%, -50%) rotate(12deg);
+	background: var(--color-moi-ink);
+	-webkit-mask: url("/images/moimode-brand-star.png") center / contain no-repeat;
+	mask: url("/images/moimode-brand-star.png") center / contain no-repeat;
+}
+
+html[data-page-transition="busy"] #site-page-content {
+	pointer-events: none;
+}

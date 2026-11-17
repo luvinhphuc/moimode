@@ -40,7 +40,7 @@ export const ABOUT_COPY = Object.freeze({
 		number: "04",
 		label: "THE EXPERIENCE",
 		headline: "MAKE IT YOURS.",
-		body: "Through an interactive customisation experience, users can explore their personal styles, discover different forms of individuality, and share their stories with others.",
+		body: "Through an interactive customization experience, users can explore their personal styles, discover different forms of individuality, and share their stories with others.",
 		detail: "Using Crocs Classic Clog and Jibbitz charms as an illustrative canvas for creativity.",
 		disclaimer: "MOIMODE is an independent project and is not sponsored or endorsed by Crocs.",
 	},

@@ -39,11 +39,12 @@ function PersonalityCard({ personalityId }) {
 	}
 
 	function handlePointerLeave() {
+		const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 		gsap.to(tiltRef.current, {
 			rotationX: 0,
 			rotationY: 0,
 			scale: 1,
-			duration: 0.5,
+			duration: reduced ? 0 : 0.5,
 			ease: "power3.out",
 			overwrite: "auto",
 		});

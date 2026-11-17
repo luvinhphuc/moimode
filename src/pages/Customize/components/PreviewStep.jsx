@@ -23,6 +23,7 @@ function CharmRecap({ placements }) {
 function PreviewStep({
 	colour,
 	onEdit,
+	onModelReady,
 	onRandomise,
 	onReset,
 	onShare,
@@ -33,15 +34,10 @@ function PreviewStep({
 }) {
 	return (
 		<main className="customizer-main customizer-main--preview">
-			<div className="tape-note tape-note--blue" aria-hidden="true">
-				Your style.
-				<br />
-				Your story.
-			</div>
 			<StepHeading
 				step={4}
 				title="Preview Your Design"
-				description="Take a final look at your customised Crocs. Make changes anytime!"
+				description="Take a final look at your customized Crocs. Make changes anytime!"
 			/>
 
 			<div className="preview-layout">
@@ -61,6 +57,8 @@ function PreviewStep({
 					<div className="preview-stage__scene">
 						<CustomizerScene
 							bodyColour={colour.value}
+							onModelReady={onModelReady}
+							onError={onModelReady}
 							onSlotSelect={() => {}}
 							onViewChange={onViewChange}
 							placements={placements}
@@ -70,9 +68,9 @@ function PreviewStep({
 					</div>
 				</section>
 
-				<aside className="customisation-recap">
-					<div className="customisation-recap__title">
-						<h2>Your Customisation</h2>
+				<aside className="customization-recap">
+					<div className="customization-recap__title">
+						<h2>Your Customization</h2>
 						<button type="button" onClick={() => onEdit(3)}>
 							<Pencil size={14} /> Edit
 						</button>
@@ -90,7 +88,7 @@ function PreviewStep({
 						</strong>
 						<ArrowRight size={16} />
 					</button>
-					<div className="customisation-recap__charms">
+					<div className="customization-recap__charms">
 						<span>Charms / Jibbitz ({Object.keys(placements).length})</span>
 						<CharmRecap placements={placements} />
 					</div>

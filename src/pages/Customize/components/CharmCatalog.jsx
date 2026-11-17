@@ -1,12 +1,23 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useGLTF } from "@react-three/drei";
 import { Check, Search } from "lucide-react";
+import { gsap } from "../../../utils/gsap.js";
 
 import { CHARM_CATALOG, CHARM_CATEGORIES } from "../config/customizerConfig.js";
 
 function CharmCatalog({ onSelect, selectedCharmId }) {
+	const rootRef = useRef(null);
 	const [activeCategory, setActiveCategory] = useState("all");
 	const [query, setQuery] = useState("");
+	useEffect(() => {
+		if (!selectedCharmId || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+		const card = rootRef.current?.querySelector('.charm-card.is-selected');
+		if (!card) return;
+		const check = card.querySelector('.charm-card__selected');
+		const pop = gsap.fromTo(card, { scale: 0.88, rotation: -5 }, { scale: 1, rotation: 0, duration: 0.28, ease: 'back.out(2)', overwrite: true });
+		const mark = gsap.fromTo(check, { scale: 0 }, { scale: 1, duration: 0.22, ease: 'back.out(2)', delay: 0.08, overwrite: true });
+		return () => { pop.kill(); mark.kill(); };
+	}, [selectedCharmId]);
 
 	useEffect(() => {
 		// Preload the first visible cards immediately, then warm the rest of the
@@ -44,7 +55,7 @@ function CharmCatalog({ onSelect, selectedCharmId }) {
 	}, [activeCategory, query]);
 
 	return (
-		<aside className="charm-catalog" aria-label="Charm catalogue">
+		<aside ref={rootRef} className="charm-catalog" aria-label="Charm catalogue">
 			<div className="charm-catalog__content">
 				<div className="charm-catalog__heading">
 					<p>Make it yours</p>

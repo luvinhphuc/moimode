@@ -65,6 +65,7 @@ function CustomizerScene({
 	onModelReady,
 	placements,
 	rotations,
+	selectedCharmId,
 	selectedSlot,
 	view,
 	onViewChange,
@@ -82,6 +83,9 @@ function CustomizerScene({
 	}, []);
 	const handleModelReady = useCallback(() => { setModelReady(true); }, []);
 	const captureReady = modelReady && readySlots.size >= Object.keys(placements).length;
+	useEffect(() => {
+		if (!captureMode && captureReady) onModelReady?.();
+	}, [captureMode, captureReady, onModelReady]);
 	const handleContextLost = useCallback(() => {
 		setIsContextLost(true);
 		if (captureMode) onCaptureError?.(new Error("The 3D renderer was interrupted. Please retry the capture."));
@@ -129,14 +133,15 @@ function CustomizerScene({
 						<CustomizableCrocs
 							bodyColour={bodyColour}
 							animateCharms={!captureMode}
-							onCharmReady={captureMode ? handleCharmReady : undefined}
+							onCharmReady={captureMode || onModelReady ? handleCharmReady : undefined}
 							interactiveSlots={interactiveSlots}
 							onLoadProgress={onLoadProgress}
 							onMetrics={setModelSize}
-							onModelReady={captureMode ? handleModelReady : onModelReady}
+							onModelReady={handleModelReady}
 							onSlotSelect={onSlotSelect}
 							placements={placements}
 							rotations={rotations}
+							selectedCharmId={selectedCharmId}
 							selectedSlot={selectedSlot}
 						/>
 					</Suspense>

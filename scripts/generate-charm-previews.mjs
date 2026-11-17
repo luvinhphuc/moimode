@@ -44,7 +44,7 @@ if (charmIds.length === 0) {
 }
 
 const chromeProfileDir = await mkdtemp(
-	path.join(tmpdir(), "moimode-charm-preview-"),
+	path.join(tmpdir(), "MOIMODE-charm-preview-"),
 );
 
 await mkdir(outputDir, { recursive: true });

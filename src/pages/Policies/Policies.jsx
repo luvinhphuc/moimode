@@ -104,8 +104,8 @@ function Policies() {
 
 						<div className="min-w-0 max-w-3xl">
 							<PolicySection id="overview" number="01" title="About this policy">
-								<p>{POLICY_DETAILS.operator} created MOIMODE as a space to explore personal style, customise Crocs designs and share ideas. This policy explains how personal data is used in connection with the website.</p>
-								<p>You can browse and explore the customiser without an account or an email address. If you choose to submit a design through Share, the submission and Gallery terms below apply.</p>
+								<p>{POLICY_DETAILS.operator} created MOIMODE as a space to explore personal style, customize Crocs designs and share ideas. This policy explains how personal data is used in connection with the website.</p>
+								<p>You can browse and explore the customizer without an account or an email address. If you choose to submit a design through Share, the submission and Gallery terms below apply.</p>
 								{POLICY_DETAILS.operatorDetails && <p>Website operator: {POLICY_DETAILS.operatorDetails}.</p>}
 								{POLICY_DETAILS.contactAddress && <p>Contact address: {POLICY_DETAILS.contactAddress}.</p>}
 							</PolicySection>
@@ -127,7 +127,7 @@ function Policies() {
 							<PolicySection id="consent" number="04" title="Your choices come first">
 								<p>Opening or continuing to use this website does not mean you consent to every use of your personal data.</p>
 								<p>A submission notice must distinguish receiving, reviewing and contacting you about your submission from publishing your display name and design in the Gallery. Consent choices must not be preselected, and the scope, time and relevant notice must be recorded.</p>
-								<p>You can choose not to submit and still use the customiser. If you choose to submit specifically for the Gallery, you need to actively allow the content intended for publication. The team’s approval does not replace your permission.</p>
+								<p>You can choose not to submit and still use the customizer. If you choose to submit specifically for the Gallery, you need to actively allow the content intended for publication. The team’s approval does not replace your permission.</p>
 								<p>Providing an email for a submission does not sign you up for marketing. Any future marketing programme requires its own notice and appropriate choice. You can request to withdraw your consent as described under <a href="#your-rights" className={linkStyle}>Your rights & removal</a>.</p>
 							</PolicySection>
 

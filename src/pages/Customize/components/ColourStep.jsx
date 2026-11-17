@@ -1,4 +1,6 @@
+import { useEffect, useRef, useState } from "react";
 import CustomizerScene from "../three/CustomizerScene.jsx";
+import { gsap } from "../../../utils/gsap.js";
 import { COLOUR_GROUPS } from "../config/customizerConfig.js";
 import { StepHeading, ViewControls, FlowFooter } from "./FlowComponents.jsx";
 
@@ -6,6 +8,7 @@ function ColourStep({
 	colour,
 	colourId,
 	onBack,
+	onModelReady,
 	onNext,
 	onSelectColour,
 	placements,
@@ -13,13 +16,23 @@ function ColourStep({
 	view,
 	onViewChange,
 }) {
+	const rootRef = useRef(null);
+	const previousColour = useRef(colourId);
+	const [rippleKey, setRippleKey] = useState(0);
+	useEffect(() => {
+		if (previousColour.current === colourId) return;
+		previousColour.current = colourId;
+		if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+		const selected = rootRef.current?.querySelector(".colour-swatches button.is-selected > span");
+		const name = rootRef.current?.querySelector(".selected-colour strong");
+		const tweens = [
+			selected && gsap.fromTo(selected, { scale: 0.84 }, { scale: 1, duration: 0.28, ease: "back.out(2)", overwrite: true }),
+			name && gsap.fromTo(name, { y: 9, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.28, ease: "power2.out", overwrite: true }),
+		].filter(Boolean);
+		return () => tweens.forEach((tween) => tween.kill());
+	}, [colourId]);
 	return (
-		<main className="customizer-main customizer-main--colour">
-			<div className="tape-note tape-note--blue" aria-hidden="true">
-				Same shoe.
-				<br />
-				Different you.
-			</div>
+		<main ref={rootRef} className="customizer-main customizer-main--colour">
 			<StepHeading
 				step={2}
 				title="Choose a Colour"
@@ -39,7 +52,11 @@ function ColourStep({
 										className={item.id === colourId ? "is-selected" : ""}
 										aria-label={`Choose ${item.label}`}
 										aria-pressed={item.id === colourId}
-										onClick={() => onSelectColour(item.id)}
+										onClick={() => {
+											if (item.id === colourId) return;
+											setRippleKey((value) => value + 1);
+											onSelectColour(item.id);
+										}}
 									>
 										<span
 											style={{
@@ -58,10 +75,13 @@ function ColourStep({
 					className="product-paper"
 					aria-label="Selected Crocs colour preview"
 				>
+					{rippleKey ? <span key={rippleKey} className="colour-ripple" style={{ borderColor: colour.value }} aria-hidden="true" /> : null}
 					<ViewControls view={view} onChange={onViewChange} />
 					<div className="product-paper__scene">
 						<CustomizerScene
 							bodyColour={colour.value}
+							onModelReady={onModelReady}
+							onError={onModelReady}
 							onSlotSelect={() => {}}
 							onViewChange={onViewChange}
 							placements={placements}

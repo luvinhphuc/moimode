@@ -1,13 +1,11 @@
 import { BrowserRouter } from "react-router-dom";
 
-import AppRoutes from "./routes/AppRoutes.jsx";
+import PageTransition from "./components/PageTransition/PageTransition.jsx";
 
 function App() {
 	return (
 		<BrowserRouter>
-			<div id="site-page-content">
-				<AppRoutes />
-			</div>
+			<PageTransition />
 		</BrowserRouter>
 	);
 }
