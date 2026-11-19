@@ -1,7 +1,7 @@
 export const HERO_COPY = Object.freeze({
 	brand: "MOIMODE",
 	buttonLabel: "CUSTOMIZE",
-	buttonStatus: "Opening the customize.",
+	buttonStatus: "Opening the customizer.",
 	heading: "Make it yours.",
 	make: "MAKE IT",
 	yours: "YOURS!",

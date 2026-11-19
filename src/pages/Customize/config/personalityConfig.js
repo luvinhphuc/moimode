@@ -118,11 +118,11 @@ export const CHARM_AFFINITIES = Object.freeze({
 	"vietnam-vietnamese-coffee": [2, 0, 3, 0],
 });
 
-export const COLOUR_AFFINITIES = Object.freeze({
+export const COLOR_AFFINITIES = Object.freeze({
 	white: [0, 4, 1, 0],
 	cream: [0, 4, 1, 0],
 	black: [0, 3, 0, 2],
-	grey: [0, 4, 0, 1],
+	gray: [0, 4, 0, 1],
 	navy: [0, 2, 0, 3],
 	"light-blue": [1, 1, 3, 0],
 	pink: [3, 0, 2, 0],

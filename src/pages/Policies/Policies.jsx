@@ -9,9 +9,9 @@ import { CURRENT_DATA, LEGAL_SOURCES, POLICY_DETAILS, POLICY_NAV, RIGHTS, SHARE_
 const linkStyle = "rounded-sm text-moi-accent underline underline-offset-4 decoration-moi-accent/40 hover:decoration-moi-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-moi-accent";
 const bodyStyle = "space-y-4 text-base leading-[1.85] text-moi-ink/85 [&_p]:m-0";
 const highlights = [
-	{ Icon: LockKeyhole, title: "Your email stays private", text: "An email shared with your design is used to receive your submission and contact you about it.", colour: "bg-moi-powder/50", shape: "softStar", shapeColour: "var(--color-moi-sage)" },
-	{ Icon: Eye, title: "You choose what to share", text: "Your display name and Crocs design appear in the Gallery only within the permission you give.", colour: "bg-moi-coral/35", shape: "flower", shapeColour: "var(--color-moi-coral)" },
-	{ Icon: Mail, title: "You can ask for a change", text: "You can request access, corrections or removal, or withdraw your consent as provided by law.", colour: "bg-moi-sky/35", shape: "sunburst", shapeColour: "var(--color-moi-sky)" },
+	{ Icon: LockKeyhole, title: "Your email stays private", text: "An email shared with your design is used to receive your submission and contact you about it.", color: "bg-moi-powder/50", shape: "softStar", shapeColor: "var(--color-moi-sage)" },
+	{ Icon: Eye, title: "You choose what to share", text: "Your display name and Crocs design appear in the Gallery only within the permission you give.", color: "bg-moi-coral/35", shape: "flower", shapeColor: "var(--color-moi-coral)" },
+	{ Icon: Mail, title: "You can ask for a change", text: "You can request access, corrections or removal, or withdraw your consent as provided by law.", color: "bg-moi-sky/35", shape: "sunburst", shapeColor: "var(--color-moi-sky)" },
 ];
 
 function PolicySection({ id, number, title, children }) {
@@ -78,9 +78,9 @@ function Policies() {
 
 				<div className="mx-auto max-w-[86rem] px-6 py-10 md:px-12 md:py-14">
 					<div className="mb-12 grid gap-4 md:grid-cols-3">
-						{highlights.map(({ Icon, title, text, colour, shape, shapeColour }) => (
-							<div key={title} className={"relative isolate overflow-hidden rounded-2xl border border-moi-line p-6 " + colour}>
-								<div aria-hidden="true" className="pointer-events-none absolute -right-3 -top-4 -z-10 w-24 rotate-12 opacity-65"><Shape type={shape} width="100%" color={shapeColour} /></div>
+						{highlights.map(({ Icon, title, text, color, shape, shapeColor }) => (
+							<div key={title} className={"relative isolate overflow-hidden rounded-2xl border border-moi-line p-6 " + color}>
+								<div aria-hidden="true" className="pointer-events-none absolute -right-3 -top-4 -z-10 w-24 rotate-12 opacity-65"><Shape type={shape} width="100%" color={shapeColor} /></div>
 								<Icon size={22} strokeWidth={1.5} className="mb-5 text-moi-accent" aria-hidden="true" />
 								<h2 className="m-0 text-base font-bold">{title}</h2>
 								<p className="mb-0 mt-3 text-sm leading-relaxed text-moi-ink/75">{text}</p>
@@ -128,7 +128,7 @@ function Policies() {
 								<p>Opening or continuing to use this website does not mean you consent to every use of your personal data.</p>
 								<p>A submission notice must distinguish receiving, reviewing and contacting you about your submission from publishing your display name and design in the Gallery. Consent choices must not be preselected, and the scope, time and relevant notice must be recorded.</p>
 								<p>You can choose not to submit and still use the customizer. If you choose to submit specifically for the Gallery, you need to actively allow the content intended for publication. The team’s approval does not replace your permission.</p>
-								<p>Providing an email for a submission does not sign you up for marketing. Any future marketing programme requires its own notice and appropriate choice. You can request to withdraw your consent as described under <a href="#your-rights" className={linkStyle}>Your rights & removal</a>.</p>
+								<p>Providing an email for a submission does not sign you up for marketing. Any future marketing program requires its own notice and appropriate choice. You can request to withdraw your consent as described under <a href="#your-rights" className={linkStyle}>Your rights & removal</a>.</p>
 							</PolicySection>
 
 							<PolicySection id="third-parties" number="05" title="Third-party services & cookies">
@@ -140,7 +140,7 @@ function Policies() {
 									{POLICY_DETAILS.emailProviders && <li><strong>Email delivery and the team inbox:</strong> {POLICY_DETAILS.emailProviders}.</li>}
 								</ul>
 								<p>For submissions sent by email, the email delivery service and the provider hosting the team’s inbox may process the message, attachments and delivery information. Team members reviewing or responding to a submission may access the information needed for that purpose.</p>
-								<p>Resource providers may receive technical connection information under their own service practices. These connections do not, by themselves, mean MOIMODE uses behavioural advertising tools.</p>
+								<p>Resource providers may receive technical connection information under their own service practices. These connections do not, by themselves, mean MOIMODE uses behavioral advertising tools.</p>
 								<p>The current MOIMODE website does not integrate Google Analytics, Meta Pixel or analytics and advertising cookies in its own application features. If this changes, we will update this information and provide any required choices before optional tools operate.</p>
 								{POLICY_DETAILS.processingLocations ? <p>Storage and processing locations: {POLICY_DETAILS.processingLocations}.</p> : <p>Depending on the services involved, data may be processed outside Vietnam. Cross-border processing is subject to applicable personal data protection requirements.</p>}
 							</PolicySection>

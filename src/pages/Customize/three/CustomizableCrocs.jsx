@@ -71,7 +71,7 @@ function SlotMarker({ modelSize, onSelect, pulseKey, slot }) {
 }
 
 function CustomizableCrocs({
-	bodyColour,
+	bodyColor,
 	interactiveSlots,
 	onLoadProgress,
 	onMetrics,
@@ -85,7 +85,7 @@ function CustomizableCrocs({
 	selectedSlot,
 }) {
 	const groupRef = useRef(null);
-	const hasSetInitialColour = useRef(false);
+	const hasSetInitialColor = useRef(false);
 	const invalidate = useThree((state) => state.invalidate);
 	const { scene } = useLoader(GLTFLoader, MODEL_ASSETS.classicClog, undefined, onLoadProgress);
 
@@ -120,8 +120,8 @@ function CustomizableCrocs({
 	useEffect(() => () => disposeClonedMaterials(model), [model]);
 
 	useLayoutEffect(() => {
-		const next = new Color(bodyColour);
-		const immediate = !hasSetInitialColour.current || matchMedia("(prefers-reduced-motion: reduce)").matches;
+		const next = new Color(bodyColor);
+		const immediate = !hasSetInitialColor.current || matchMedia("(prefers-reduced-motion: reduce)").matches;
 		const tweens = [];
 		model.traverse((object) => {
 			if (!object.isMesh || !object.material) return;
@@ -137,10 +137,10 @@ function CustomizableCrocs({
 				}));
 			}
 		});
-		hasSetInitialColour.current = true;
+		hasSetInitialColor.current = true;
 		invalidate();
 		return () => tweens.forEach((tween) => tween.kill());
-	}, [bodyColour, invalidate, model]);
+	}, [bodyColor, invalidate, model]);
 
 	useEffect(() => {
 		onMetrics(modelSize);

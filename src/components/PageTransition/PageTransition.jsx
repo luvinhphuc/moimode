@@ -53,10 +53,11 @@ export default function PageTransition() {
 		overlay.dataset.phase = "covering";
 		document.documentElement.dataset.pageTransition = "busy";
 		const sign = direction === "back" ? -1 : 1;
-		gsap.set(overlay, { x: 0, xPercent: sign * 115, skewX: sign * -8 });
+		gsap.set(overlay, { x: 0, xPercent: sign * 115, skewX: sign * -8, visibility: "visible" });
 		timelineRef.current = gsap.timeline({
 			paused: true,
 			onComplete: () => {
+				gsap.set(overlay, { visibility: "hidden" });
 				busyRef.current = false;
 				phaseRef.current = "idle";
 				overlay.dataset.phase = "idle";

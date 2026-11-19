@@ -3,13 +3,15 @@ import {
     ArrowLeft,
     ArrowRight,
     Download,
+    Plus,
     Send,
+    Shirt,
 } from 'lucide-react';
 
 import BrandStar from '../../../components/BrandStar.jsx';
 import { Shape } from '../../../components/Shapes.jsx';
 import { gsap, useGSAP } from '../../../utils/gsap.js';
-import { CHARM_BY_ID, CHARM_CATEGORIES } from '../config/customizerConfig.js';
+import { CHARM_BY_ID, CHARM_CATEGORIES, CHARM_SLOT_NAMES } from '../config/customizerConfig.js';
 import {
     PERSONALITIES,
     PERSONALITY_ORDER,
@@ -26,20 +28,18 @@ import StorySubmission from './StorySubmission.jsx';
 import './PersonalityWrapped.css';
 
 function collectionLabel(id) {
-    return (
-        CHARM_CATEGORIES.find((category) => category.id === id)?.label ?? null
-    );
+    return CHARM_CATEGORIES.find((category) => category.id === id)?.label ?? null;
 }
 
-function CrocsPreview({ colour, placements, rotations, className = '', onReady, onError }) {
+function CrocsPreview({ color, placements, rotations, className = '', onReady, onError }) {
     return (
         <div
             className={className}
             role="img"
-            aria-label={`Your customized ${colour.label} Crocs with selected charms`}
+            aria-label={`Your customized ${color.label} Crocs with selected charms`}
         >
             <CustomizerScene
-                bodyColour={colour.value}
+                bodyColor={color.value}
                 compactPreview
                 controlsEnabled={false}
                 onError={onError}
@@ -54,11 +54,12 @@ function CrocsPreview({ colour, placements, rotations, className = '', onReady, 
 }
 
 function PersonalityWrapped({
-    colour,
+    color,
     placements,
     rotations,
     result,
     onCustomizeAgain,
+    onEditCharms,
     onReady,
 }) {
     const { runTransition } = usePageTransition();
@@ -78,8 +79,7 @@ function PersonalityWrapped({
     const stats = result.customizationStats;
     const selectedCharms = useMemo(
         () =>
-            [...new Set(Object.values(placements))]
-                .slice(0, 5)
+            Object.values(placements)
                 .map((id) => CHARM_BY_ID[id])
                 .filter(Boolean),
         [placements],
@@ -129,7 +129,7 @@ function PersonalityWrapped({
         if (exportPendingRef.current) {
             return Promise.reject(new Error('Your Crocs image is already being prepared.'));
         }
-        if (!colour.value || !result.primaryPersonality || !placements) {
+        if (!color.value || !result.primaryPersonality || !placements) {
             return Promise.reject(new Error('Your customization is unavailable. Please return to the customizer and try again.'));
         }
 
@@ -142,7 +142,7 @@ function PersonalityWrapped({
             failCrocsExport('The Crocs model took too long to load. Please try again.');
         }, 30000);
         return promise;
-    }, [colour, failCrocsExport, placements, result]);
+    }, [color, failCrocsExport, placements, result]);
 
     useEffect(() => () => {
         window.clearTimeout(exportTimerRef.current);
@@ -205,31 +205,22 @@ function PersonalityWrapped({
                     duration: 0.55,
                 });
                 timeline.from(
-                    '.wrapped-decode__fact',
-                    { y: 30, autoAlpha: 0, duration: 0.5, stagger: 0.18 },
+                    '.wrapped-decode__recap',
+                    { y: 30, autoAlpha: 0, duration: 0.5 },
                     '-=0.2',
                 );
+                timeline.from('.wrapped-decode__stat', {
+                    y: 18,
+                    autoAlpha: 0,
+                    duration: 0.42,
+                    stagger: 0.1,
+                }, '-=0.25');
                 timeline.fromTo('.wrapped-decode__scan', { top: '8%', autoAlpha: 0 }, { top: '88%', autoAlpha: 0.8, duration: 0.8, ease: 'power2.inOut' }, 0.34);
                 timeline.to('.wrapped-decode__scan', { autoAlpha: 0, duration: 0.14 }, 1.03);
-                const stickerNodes = rootRef.current.querySelectorAll('.wrapped-decode__charms img');
+                const stickerNodes = rootRef.current.querySelectorAll('.wrapped-decode__charm img');
                 if (stickerNodes.length) timeline.from(stickerNodes, { scale: 0, rotation: -25, autoAlpha: 0, duration: 0.36, stagger: 0.08, ease: 'back.out(2)' }, 0.55);
                 timeline.from('.wrapped-decode__shape', { scale: 0.45, rotation: -22, autoAlpha: 0, duration: 0.55, ease: 'back.out(1.5)' }, 0.45);
                 timeline.from('.wrapped-decode > .wrapped-cta', { y: 12, autoAlpha: 0, duration: 0.35 }, 0.9);
-                rootRef.current
-                    .querySelectorAll('[data-count]')
-                    .forEach((element) => {
-                        const target = Number(element.dataset.count);
-                        timeline.fromTo(
-                            element,
-                            { textContent: 0 },
-                            {
-                                textContent: target,
-                                snap: { textContent: 1 },
-                                duration: 0.8,
-                                ease: 'power2.out',
-                            },
-                        );
-                    });
                 return startOnReveal(timeline);
             }
             if (stage === 'reveal') {
@@ -470,39 +461,75 @@ function PersonalityWrapped({
                             says something.
                         </h1>
                         <p>
-                            Your colours. Your charms. Your story. Let’s
+                            Your colors. Your charms. Your story. Let’s
                             discover your style DNA.
                         </p>
                     </div>
-                    <div className="wrapped-decode__grid">
-                        <div className="wrapped-decode__fact wrapped-decode__fact--colour">
-                            <span>YOUR COLOUR</span>
-                            <i style={{ backgroundColor: colour.value }} />
-                            <strong>{colour.label}</strong>
+                    <div className="wrapped-decode__recap">
+                        <h2><Shirt size={22} strokeWidth={2.2} /> Your Customization Recap</h2>
+                        <div className="wrapped-decode__recap-items">
+                            <div className="wrapped-decode__recap-item wrapped-decode__recap-item--style">
+                                <span>Style</span>
+                                <div className="wrapped-decode__style-value">
+                                    <div className="wrapped-decode__style-shoe" aria-hidden="true">
+                                        <img src="/images/classic-clog-white.webp" alt="" width="150" height="150" />
+                                    </div>
+                                    <strong>Classic Clog</strong>
+                                </div>
+                            </div>
+                            <div className="wrapped-decode__recap-item wrapped-decode__recap-item--color">
+                                <span>Color</span>
+                                <div className="wrapped-decode__color-value">
+                                    <i style={{ backgroundColor: color.value }} aria-hidden="true" />
+                                    <strong>{color.label}</strong>
+                                </div>
+                            </div>
+                            <div className="wrapped-decode__recap-item wrapped-decode__recap-item--charms">
+                                <span>Charms / Jibbitz ({selectedCharms.length})</span>
+                                {selectedCharms.length ? (
+                                    <div className="wrapped-decode__charm-list">
+                                        {selectedCharms.map((charm, index) => (
+                                            <div className="wrapped-decode__charm" key={`${charm.id}-${index}`} title={charm.label}>
+                                                <img src={`/model/charms/previews/${charm.id}.png`} alt={charm.label} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="wrapped-decode__empty-charms">
+                                        <strong>No charms yet</strong>
+                                        <p>{CHARM_SLOT_NAMES.length} spots ready for your story. Tap + to add.</p>
+                                        <button
+                                            className="wrapped-decode__empty-slots"
+                                            type="button"
+                                            onClick={onEditCharms}
+                                            aria-label="Add charms to your Crocs"
+                                        >
+                                            {[0, 1, 2].map((slot) => (
+                                                <span key={slot} aria-hidden="true"><Plus size={20} strokeWidth={1.7} /></span>
+                                            ))}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <div className="wrapped-decode__fact">
-                            <span>CHARMS PLACED</span>
-                            <strong data-count={stats.charmCount}>
-                                {stats.charmCount}
-                            </strong>
+                    </div>
+                    <div className="wrapped-decode__stats" aria-label="Your design in numbers">
+                        <div className="wrapped-decode__stat">
+                            <span>Collections in your mix</span>
+                            <strong>{stats.collectionCount}</strong>
+                            <small>different themes</small>
                         </div>
-                        <div className="wrapped-decode__fact">
-                            <span>COLLECTIONS EXPLORED</span>
-                            <strong data-count={stats.collectionCount}>
-                                {stats.collectionCount}
+                        <div className="wrapped-decode__stat">
+                            <span>Top collection</span>
+                            <strong className="wrapped-decode__stat-collection">
+                                {collectionLabel(stats.topCollection) ?? 'Your canvas is clear'}
                             </strong>
-                        </div>
-                        <div className="wrapped-decode__fact">
-                            <span>YOUR TOP COLLECTION</span>
-                            <strong className="wrapped-decode__top">
-                                {collectionLabel(stats.topCollection) ??
-                                    'Your canvas is clear'}
-                            </strong>
+                            <small>{stats.topCollection ? 'your most picked theme' : 'ready to explore'}</small>
                         </div>
                     </div>
                     <div className="wrapped-decode__shoe">
                         <CrocsPreview
-                            colour={colour}
+                            color={color}
                             onError={markPreviewReady}
                             onReady={markPreviewReady}
                             placements={placements}
@@ -510,15 +537,6 @@ function PersonalityWrapped({
                             className="wrapped-shoe"
                         />
                         <span className="wrapped-decode__scan" aria-hidden="true" />
-                    </div>
-                    <div className="wrapped-decode__charms" aria-hidden="true">
-                        {selectedCharms.map((charm) => (
-                            <img
-                                key={charm.id}
-                                src={`/model/charms/previews/${charm.id}.png`}
-                                alt=""
-                            />
-                        ))}
                     </div>
                     <Shape
                         type="wonkyStar"
@@ -637,7 +655,7 @@ function PersonalityWrapped({
                         <div className="wrapped-final__grid">
                             <div className="wrapped-final__product">
                             <CrocsPreview
-                                    colour={colour}
+                                    color={color}
                                 onError={markPreviewReady}
                                 onReady={markPreviewReady}
                                 placements={placements}
@@ -647,10 +665,10 @@ function PersonalityWrapped({
                                 <div className="wrapped-final__swatch">
                                     <i
                                         style={{
-                                            backgroundColor: colour.value,
+                                            backgroundColor: color.value,
                                         }}
                                     />{' '}
-                                    Your {colour.label} Crocs
+                                    Your {color.label} Crocs
                                 </div>
                             </div>
                             <div className="wrapped-final__card">
@@ -710,7 +728,7 @@ function PersonalityWrapped({
             ) : null}
             {storyOpen ? (
                 <StorySubmission
-                    colour={colour}
+                    color={color}
                     onExportCrocs={exportCrocsPng}
                     placements={placements}
                     result={result}
@@ -725,7 +743,7 @@ function PersonalityWrapped({
                     style={{ width: CROCS_EXPORT_SIZE, height: CROCS_EXPORT_SIZE }}
                 >
                     <CustomizerScene
-                        bodyColour={colour.value}
+                        bodyColor={color.value}
                         captureMode
                         compactPreview
                         controlsEnabled={false}

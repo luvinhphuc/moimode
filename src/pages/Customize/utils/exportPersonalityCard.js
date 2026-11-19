@@ -1,4 +1,4 @@
-import { CHARM_CATEGORIES, COLOUR_BY_ID } from "../config/customizerConfig.js";
+import { CHARM_CATEGORIES, COLOR_BY_ID } from "../config/customizerConfig.js";
 import { PERSONALITIES, PERSONALITY_ORDER } from "../config/personalityConfig.js";
 
 const WIDTH = 1600;
@@ -56,17 +56,17 @@ export async function createPersonalityCardBlob({ result }) {
 		// The source card stays intact inside the composition at its native 4:5 ratio.
 		context.drawImage(artImage, 100, 365, 650, 812.5);
 		roundedPanel(context, 785, 365, 715, 813, 42, PAPER);
-		const colour = COLOUR_BY_ID[result.customizationStats.bodyColor];
+		const color = COLOR_BY_ID[result.customizationStats.bodyColor];
 		roundedPanel(context, 825, 410, 635, 470, 36, "#fffdf8");
-		text(context, "YOUR CROCS COLOUR", 875, 500, '31px "Karl ST VN", sans-serif');
-		context.fillStyle = colour.value;
+		text(context, "YOUR CROCS COLOR", 875, 500, '31px "Karl ST VN", sans-serif');
+		context.fillStyle = color.value;
 		context.beginPath();
 		context.arc(930, 635, 72, 0, Math.PI * 2);
 		context.fill();
 		context.strokeStyle = INK;
 		context.lineWidth = 4;
 		context.stroke();
-		text(context, colour.label, 1045, 650, '42px "Karl ST Black VN", sans-serif');
+		text(context, color.label, 1045, 650, '42px "Karl ST Black VN", sans-serif');
 		text(context, `${result.customizationStats.charmCount} charms placed`, 875, 790, '31px "Karl ST VN", sans-serif');
 		text(context, "See your live custom design on MOIMODE", 875, 840, '23px "Karl ST VN", sans-serif');
 

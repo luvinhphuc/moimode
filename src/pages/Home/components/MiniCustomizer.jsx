@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 
 import {
 	CHARM_BY_ID,
-	COLOUR_BY_ID,
+	COLOR_BY_ID,
 } from "../../Customize/config/customizerConfig.js";
 import { gsap } from "../../../utils/gsap.js";
 import useMiniCustomizerIntro from "../animations/useMiniCustomizerIntro.js";
@@ -10,11 +10,11 @@ import { drawSketchArrow } from "../utils/drawSketchArrow.js";
 import SketchArrow from "./SketchArrow.jsx";
 
 const EMPTY_ROTATIONS = {};
-const COLOUR_IDS = ["white", "pink", "mint", "butter-yellow"];
+const COLOR_IDS = ["white", "pink", "mint", "butter-yellow"];
 const CHARM_IDS = ["smiley-vietnam", "flower", "lotus", "bubble-tea"];
 const PREVIEW_SLOT = "CharmSlot_08";
 const HINT_COPY = {
-	colour: {
+	color: {
 		title: "Pick your color",
 		body: "Start with a shade that feels like you.",
 	},
@@ -23,9 +23,9 @@ const HINT_COPY = {
 };
 
 function MiniCustomizer({ isIntroDone, onLoadProgress, onPreviewStatus, previewStatus }) {
-	const [colourId, setColourId] = useState("white");
+	const [colorId, setColorId] = useState("white");
 	const [selectedCharmId, setSelectedCharmId] = useState(null);
-	const [hasTriedColour, setHasTriedColour] = useState(false);
+	const [hasTriedColor, setHasTriedColor] = useState(false);
 	const [CustomizerScene, setCustomizerScene] = useState(null);
 	const modelRigRef = useRef(null);
 	const handleModelReady = useCallback((rig) => {
@@ -35,13 +35,13 @@ function MiniCustomizer({ isIntroDone, onLoadProgress, onPreviewStatus, previewS
 	const handleModelError = useCallback(() => onPreviewStatus("error"), [onPreviewStatus]);
 	const rootRef = useRef(null);
 	const previewRef = useRef(null);
-	const colourLegendRef = useRef(null);
+	const colorLegendRef = useRef(null);
 	const charmLegendRef = useRef(null);
 	const charmTargetRef = useRef(null);
 	const hintRef = useRef(null);
 	const arrowSvgRef = useRef(null);
-	const hintStep = !hasTriedColour
-		? "colour"
+	const hintStep = !hasTriedColor
+		? "color"
 		: selectedCharmId
 			? "done"
 			: "charm";
@@ -49,7 +49,7 @@ function MiniCustomizer({ isIntroDone, onLoadProgress, onPreviewStatus, previewS
 	const completeIntro = useMiniCustomizerIntro({
 		rootRef,
 		previewRef,
-		colourLegendRef,
+		colorLegendRef,
 		charmLegendRef,
 		hintRef,
 		arrowSvgRef,
@@ -80,8 +80,8 @@ function MiniCustomizer({ isIntroDone, onLoadProgress, onPreviewStatus, previewS
 		const path = svg?.querySelector(".sketch-arrow__line");
 		const head = svg?.querySelector(".sketch-arrow__head");
 		const target =
-			hintStep === "colour"
-				? colourLegendRef.current
+			hintStep === "color"
+				? colorLegendRef.current
 				: hintStep === "charm"
 					? charmTargetRef.current
 					: previewRef.current;
@@ -118,7 +118,7 @@ function MiniCustomizer({ isIntroDone, onLoadProgress, onPreviewStatus, previewS
 			const startX = done
 				? card.offsetLeft + 8
 				: card.offsetLeft +
-					card.offsetWidth * (hintStep === "colour" ? 0.65 : 0.25);
+					card.offsetWidth * (hintStep === "color" ? 0.65 : 0.25);
 			const startY = done
 				? card.offsetTop + card.offsetHeight * 0.7
 				: card.offsetTop + card.offsetHeight - 3;
@@ -141,7 +141,7 @@ function MiniCustomizer({ isIntroDone, onLoadProgress, onPreviewStatus, previewS
 		const animate = () => {
 			path.setAttribute("pathLength", "1");
 			// The initial hint is part of the single assembly timeline.
-			if (hintStep === "colour") {
+			if (hintStep === "color") {
 				draw();
 				return;
 			}
@@ -211,7 +211,7 @@ function MiniCustomizer({ isIntroDone, onLoadProgress, onPreviewStatus, previewS
 			window.cancelAnimationFrame(frame);
 			frame = window.requestAnimationFrame(() => {
 				const length = draw();
-				if (length && hintStep !== "colour" && !timeline?.isActive()) {
+				if (length && hintStep !== "color" && !timeline?.isActive()) {
 					gsap.set(path, { strokeDasharray: 1, strokeDashoffset: 0 });
 				}
 			});
@@ -224,7 +224,7 @@ function MiniCustomizer({ isIntroDone, onLoadProgress, onPreviewStatus, previewS
 			reduceMotion.removeEventListener("change", onMotionChange);
 			window.cancelAnimationFrame(frame);
 			timeline?.kill();
-			if (hintStep !== "colour") gsap.killTweensOf([card, path, head]);
+			if (hintStep !== "color") gsap.killTweensOf([card, path, head]);
 		};
 	}, [hintStep]);
 
@@ -246,7 +246,7 @@ function MiniCustomizer({ isIntroDone, onLoadProgress, onPreviewStatus, previewS
 			<div ref={previewRef} className="about-mini__preview">
 				{CustomizerScene ? (
 					<CustomizerScene
-						bodyColour={COLOUR_BY_ID[colourId].value}
+						bodyColor={COLOR_BY_ID[colorId].value}
 						compactPreview
 						controlsEnabled={false}
 						modelPending={previewStatus === "loading"}
@@ -266,31 +266,31 @@ function MiniCustomizer({ isIntroDone, onLoadProgress, onPreviewStatus, previewS
 
 			<div className="about-mini__controls">
 				<fieldset className="about-mini__group">
-					<legend ref={colourLegendRef}>COLOR</legend>
-					<div className="about-mini__options about-mini__options--colours">
-						{COLOUR_IDS.map((id) => {
-							const colour = COLOUR_BY_ID[id];
+					<legend ref={colorLegendRef}>COLOR</legend>
+					<div className="about-mini__options about-mini__options--colors">
+						{COLOR_IDS.map((id) => {
+							const color = COLOR_BY_ID[id];
 							return (
 								<button
 									key={id}
 									type="button"
-									className="about-mini__colour"
-									aria-label={colour.label}
-									aria-pressed={hasTriedColour && colourId === id}
-									title={colour.label}
+									className="about-mini__color"
+									aria-label={color.label}
+									aria-pressed={hasTriedColor && colorId === id}
+									title={color.label}
 									onClick={() => {
-										setColourId(id);
-										setHasTriedColour(true);
+										setColorId(id);
+										setHasTriedColor(true);
 									}}
 								>
-									<span style={{ backgroundColor: colour.value }} />
+									<span style={{ backgroundColor: color.value }} />
 								</button>
 							);
 						})}
 					</div>
 				</fieldset>
 
-				<fieldset className="about-mini__group" disabled={!hasTriedColour}>
+				<fieldset className="about-mini__group" disabled={!hasTriedColor}>
 					<legend ref={charmLegendRef}>CHARMS</legend>
 					<div className="about-mini__options about-mini__options--charms">
 						{CHARM_IDS.map((id) => {

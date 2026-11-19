@@ -3,6 +3,7 @@
 .page-wipe {
 	@apply fixed inset-0 z-[100] bg-moi-coral;
 	transform: translateX(110%) skewX(-8deg);
+	visibility: hidden;
 	@apply pointer-events-none;
 	box-shadow: 0 0 36px var(--color-moi-shadow);
 }

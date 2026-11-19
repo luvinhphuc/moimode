@@ -21,10 +21,10 @@ function CharmRecap({ placements }) {
 }
 
 function PreviewStep({
-	colour,
+	color,
 	onEdit,
 	onModelReady,
-	onRandomise,
+	onRandomize,
 	onReset,
 	onShare,
 	placements,
@@ -49,14 +49,14 @@ function PreviewStep({
 							<button type="button" onClick={onReset}>
 								<RefreshCcw size={14} /> Reset
 							</button>
-							<button type="button" onClick={onRandomise}>
-								<Shuffle size={14} /> Randomise
+							<button type="button" onClick={onRandomize}>
+								<Shuffle size={14} /> Randomize
 							</button>
 						</div>
 					</div>
 					<div className="preview-stage__scene">
 						<CustomizerScene
-							bodyColour={colour.value}
+							bodyColor={color.value}
 							onModelReady={onModelReady}
 							onError={onModelReady}
 							onSlotSelect={() => {}}
@@ -81,10 +81,10 @@ function PreviewStep({
 						<ArrowRight size={16} />
 					</button>
 					<button type="button" onClick={() => onEdit(2)}>
-						<span>Colour</span>
+						<span>Color</span>
 						<strong>
-							<i style={{ backgroundColor: colour.value }} />
-							{colour.label}
+							<i style={{ backgroundColor: color.value }} />
+							{color.label}
 						</strong>
 						<ArrowRight size={16} />
 					</button>

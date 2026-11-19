@@ -126,7 +126,7 @@ export default function useFooterJourney(footerRef, pathname) {
 			started = true;
 			visibilityObserver.disconnect();
 			cancelPreload?.();
-			footer.dataset.journey = "travelling";
+			footer.dataset.journey = "traveling";
 			timeline.play();
 		};
 		const scheduleMeasure = () => {

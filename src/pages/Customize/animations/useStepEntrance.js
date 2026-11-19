@@ -20,8 +20,8 @@ export default function useStepEntrance(scope, step, phase) {
 			add(".style-card__scene", { scale: 0.92, duration: 0.65 }, 0.22);
 			add(".style-card__radio", { scale: 0, rotation: -18, duration: 0.34, ease: "back.out(2)" }, 0.45);
 		} else if (step === 2) {
-			add(".colour-group h2", { autoAlpha: 0, x: -12, duration: 0.42, stagger: 0.1 }, 0.12);
-			add(".colour-swatches button", { autoAlpha: 0, scale: 0.7, rotation: -8, duration: 0.38, stagger: 0.018, ease: "back.out(1.5)" }, 0.2);
+			add(".color-group h2", { autoAlpha: 0, x: -12, duration: 0.42, stagger: 0.1 }, 0.12);
+			add(".color-swatches button", { autoAlpha: 0, scale: 0.7, rotation: -8, duration: 0.38, stagger: 0.018, ease: "back.out(1.5)" }, 0.2);
 			add(".product-paper", { autoAlpha: 0, x: 28, rotation: 2, duration: 0.62 }, 0.12);
 			add(".product-paper__scene", { scale: 0.94, duration: 0.56 }, 0.22);
 		} else if (step === 3) {

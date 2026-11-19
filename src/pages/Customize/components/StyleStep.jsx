@@ -2,7 +2,7 @@ import { Check } from "lucide-react";
 import CustomizerScene from "../three/CustomizerScene.jsx";
 import { StepHeading, FlowFooter } from "./FlowComponents.jsx";
 
-function StyleStep({ colour, onExit, onModelReady, onNext, rotations }) {
+function StyleStep({ color, onExit, onModelReady, onNext, rotations }) {
 	return (
 		<main className="customizer-main customizer-main--style">
 			<StepHeading
@@ -22,7 +22,7 @@ function StyleStep({ colour, onExit, onModelReady, onNext, rotations }) {
 							controlsEnabled={false}
 							onModelReady={onModelReady}
 							onError={onModelReady}
-							bodyColour={colour.value}
+							bodyColor={color.value}
 							onSlotSelect={() => {}}
 							placements={{}}
 							rotations={rotations}

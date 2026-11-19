@@ -1,9 +1,9 @@
-import { DEFAULT_COLOUR_ID } from "../config/customizerConfig.js";
+import { DEFAULT_COLOR_ID } from "../config/customizerConfig.js";
 
 function createInitialState() {
 	return {
 		modelId: "classic-clog",
-		colourId: DEFAULT_COLOUR_ID,
+		colorId: DEFAULT_COLOR_ID,
 		placements: {},
 		rotations: {},
 		selectedCharmId: null,
@@ -22,8 +22,8 @@ function customizerReducer(state, action) {
 				phase: "customize",
 				editingSlot: null,
 			};
-		case "SELECT_COLOUR":
-			return { ...state, colourId: action.colourId };
+		case "SELECT_COLOR":
+			return { ...state, colorId: action.colorId };
 		case "SELECT_CHARM":
 			return { ...state, selectedCharmId: action.charmId };
 		case "PLACE_CHARM":
@@ -86,7 +86,7 @@ function customizerReducer(state, action) {
 		case "RESET_DESIGN":
 			return {
 				...state,
-				colourId: DEFAULT_COLOUR_ID,
+				colorId: DEFAULT_COLOR_ID,
 				placements: {},
 				rotations: {},
 				selectedCharmId: null,
@@ -95,7 +95,7 @@ function customizerReducer(state, action) {
 		case "SET_RANDOM_DESIGN":
 			return {
 				...state,
-				colourId: action.colourId,
+				colorId: action.colorId,
 				placements: action.placements,
 				rotations: {},
 				editingSlot: null,

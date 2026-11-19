@@ -309,11 +309,11 @@
 		@apply border-(--about-mini-select);
 	}
 
-	.about-mini__colour {
+	.about-mini__color {
 		@apply w-[2.9rem] h-[2.9rem];
 	}
 
-	.about-mini__colour span {
+	.about-mini__color span {
 		@apply w-[2.2rem] aspect-[1] [border:1px_solid_rgba(0,45,53,0.22)] rounded-[50%];
 	}
 

@@ -19,24 +19,24 @@ function FieldError({ id, message }) {
 	) : null;
 }
 
-function CreationSummary({ colour, personality, selectedCharms }) {
+function CreationSummary({ color, personality, selectedCharms }) {
 	return (
 		<div className="story-creation" aria-label="Your customized creation">
 			<div className="story-creation__preview" aria-hidden="true">
-				<span style={{ backgroundColor: colour.value }} />
+				<span style={{ backgroundColor: color.value }} />
 			</div>
 			<div className="story-creation__copy">
 				<p className="story-creation__eyebrow">Your creation</p>
 				<p className="story-creation__name">{personality.name}</p>
 				<p className="story-creation__details">
-					{colour.label} · {selectedCharms.length ? selectedCharms.join(", ") : "No charms"}
+					{color.label} · {selectedCharms.length ? selectedCharms.join(", ") : "No charms"}
 				</p>
 			</div>
 		</div>
 	);
 }
 
-function StorySubmission({ colour, placements, result, onExportCrocs, onClose }) {
+function StorySubmission({ color, placements, result, onExportCrocs, onClose }) {
 	const [draft, setDraft] = useState(INITIAL_DRAFT);
 	const [errors, setErrors] = useState({});
 	const [mode, setMode] = useState("form");
@@ -385,7 +385,7 @@ function StorySubmission({ colour, placements, result, onExportCrocs, onClose })
 								</div>
 								<div className="story-main__body">
 								<CreationSummary
-									colour={colour}
+									color={color}
 									personality={personality}
 									selectedCharms={selectedCharms}
 								/>

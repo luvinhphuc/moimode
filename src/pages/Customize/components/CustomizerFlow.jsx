@@ -7,7 +7,7 @@ import useStepEntrance from "../animations/useStepEntrance.js";
 import { gsap } from "../../../utils/gsap.js";
 import PersonalityWrapped from "./PersonalityWrapped.jsx";
 import StyleStep from "./StyleStep.jsx";
-import ColourStep from "./ColourStep.jsx";
+import ColorStep from "./ColorStep.jsx";
 import CharmsStep from "./CharmsStep.jsx";
 import PreviewStep from "./PreviewStep.jsx";
 import { createInitialState, customizerReducer } from "./customizerReducer.js";
@@ -15,7 +15,7 @@ import { scorePersonality } from "../utils/scorePersonality.js";
 import {
 	CHARM_CATALOG,
 	CHARM_SLOT_NAMES,
-	COLOUR_BY_ID,
+	COLOR_BY_ID,
 } from "../config/customizerConfig.js";
 
 function CustomizerFlow({ onExit }) {
@@ -32,14 +32,14 @@ function CustomizerFlow({ onExit }) {
 	);
 	const [view, setView] = useState("side");
 	const [sparkleKey, setSparkleKey] = useState(0);
-	const colour = COLOUR_BY_ID[state.colourId];
+	const color = COLOR_BY_ID[state.colorId];
 	const personalityResult = useMemo(
 		() =>
 			scorePersonality({
-				colourId: state.colourId,
+				colorId: state.colorId,
 				placements: state.placements,
 			}),
-		[state.colourId, state.placements],
+		[state.colorId, state.placements],
 	);
 	useStepEntrance(contentRef, state.step, state.phase);
 
@@ -114,10 +114,10 @@ function CustomizerFlow({ onExit }) {
 		} });
 	}, []);
 
-	const randomiseDesign = useCallback(() => {
+	const randomizeDesign = useCallback(() => {
 		if (randomTimelineRef.current?.isActive()) return;
-		const colourIds = Object.keys(COLOUR_BY_ID);
-		const colourId = colourIds[Math.floor(Math.random() * colourIds.length)];
+		const colorIds = Object.keys(COLOR_BY_ID);
+		const colorId = colorIds[Math.floor(Math.random() * colorIds.length)];
 		const shuffledCharms = [...CHARM_CATALOG].sort(() => Math.random() - 0.5);
 		const shuffledSlots = [...CHARM_SLOT_NAMES].sort(() => Math.random() - 0.5);
 		const count = 3 + Math.floor(Math.random() * 4);
@@ -129,7 +129,7 @@ function CustomizerFlow({ onExit }) {
 					shuffledCharms[index % shuffledCharms.length].id,
 				]),
 		);
-		const apply = () => dispatch({ type: "SET_RANDOM_DESIGN", colourId, placements });
+		const apply = () => dispatch({ type: "SET_RANDOM_DESIGN", colorId, placements });
 		const scene = contentRef.current?.querySelector('.preview-stage__scene');
 		const recap = contentRef.current?.querySelector('.customization-recap');
 		if (!scene || matchMedia('(prefers-reduced-motion: reduce)').matches) { apply(); return; }
@@ -148,8 +148,9 @@ function CustomizerFlow({ onExit }) {
 		if (state.phase === "share") {
 			return (
 				<PersonalityWrapped
-					colour={colour}
+					color={color}
 					onCustomizeAgain={customizeAgain}
+					onEditCharms={() => goToStep(3)}
 					onReady={handleDestinationReady}
 					placements={state.placements}
 					rotations={state.rotations}
@@ -162,7 +163,7 @@ function CustomizerFlow({ onExit }) {
 			case 1:
 				return (
 					<StyleStep
-						colour={colour}
+						color={color}
 						onModelReady={handleDestinationReady}
 						onExit={onExit}
 						onNext={() => goToStep(2)}
@@ -171,14 +172,14 @@ function CustomizerFlow({ onExit }) {
 				);
 			case 2:
 				return (
-					<ColourStep
-						colour={colour}
+					<ColorStep
+						color={color}
 						onModelReady={handleDestinationReady}
-						colourId={state.colourId}
+						colorId={state.colorId}
 						onBack={() => goToStep(1)}
 						onNext={() => goToStep(3)}
-						onSelectColour={(colourId) =>
-							dispatch({ type: "SELECT_COLOUR", colourId })
+						onSelectColor={(colorId) =>
+							dispatch({ type: "SELECT_COLOR", colorId })
 						}
 						placements={state.placements}
 						rotations={state.rotations}
@@ -189,7 +190,7 @@ function CustomizerFlow({ onExit }) {
 			case 3:
 				return (
 					<CharmsStep
-						colour={colour}
+						color={color}
 						onModelReady={handleDestinationReady}
 						editingSlot={state.editingSlot}
 						onBack={() => goToStep(2)}
@@ -231,10 +232,10 @@ function CustomizerFlow({ onExit }) {
 			default:
 				return (
 					<PreviewStep
-						colour={colour}
+						color={color}
 						onModelReady={handleDestinationReady}
 						onEdit={goToStep}
-						onRandomise={randomiseDesign}
+						onRandomize={randomizeDesign}
 						onReset={() => dispatch({ type: "RESET_DESIGN" })}
 						onShare={showShare}
 						placements={state.placements}
@@ -245,13 +246,13 @@ function CustomizerFlow({ onExit }) {
 				);
 		}
 	}, [
-		colour,
+		color,
 		goToStep,
 		handleSlotSelect,
 		handleDestinationReady,
 		onExit,
 		customizeAgain,
-		randomiseDesign,
+		randomizeDesign,
 		removeCharm,
 		showShare,
 		personalityResult,

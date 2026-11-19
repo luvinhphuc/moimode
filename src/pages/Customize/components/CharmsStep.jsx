@@ -75,7 +75,7 @@ function SlotEditor({
 }
 
 function CharmsStep({
-	colour,
+	color,
 	editingSlot,
 	onBack,
 	onModelReady,
@@ -99,69 +99,71 @@ function CharmsStep({
 
 	return (
 		<main className="customizer-main customizer-main--charms">
-			<StepHeading
-				step={3}
-				title="Add Charms"
-				description="Pick a favourite, then tap a pink spot on your clog."
-				accent="pink"
-			/>
-
-			<div className="charms-layout">
-				<section
-					className="charms-stage"
-					aria-label="Place charms on your Crocs"
-				>
-					<div className="charms-stage__topbar">
-						<span>{placementCount}/13 slots filled</span>
-						<button
-							type="button"
-							onClick={onClear}
-							disabled={placementCount === 0}
-						>
-							<Trash2 size={14} /> Clear all
-						</button>
-					</div>
-					<div className="charms-stage__scene">
-						<CustomizerScene
-							bodyColour={colour.value}
-							onModelReady={onModelReady}
-							onError={onModelReady}
-							interactiveSlots
-							onSlotSelect={onSlotSelect}
-							onViewChange={onViewChange}
-							placements={placements}
-							selectedSlot={editingSlot}
-							rotations={rotations}
-							selectedCharmId={selectedCharmId}
-							view={view}
-						/>
-					</div>
-					{sparkleKey ? <span key={sparkleKey} className="charm-placement-sparkle" aria-hidden="true">✦</span> : null}
-					{editingSlot ? (
-						<SlotEditor
-							currentCharmId={placements[editingSlot]}
-							onClose={onCloseEditor}
-							onRemove={onRemove}
-							onRotate={onRotate}
-							onRotationChange={onRotationChange}
-							onReplace={onReplace}
-							rotation={rotations?.[editingSlot] ?? 0}
-							selectedCharmId={selectedCharmId}
-						/>
-					) : null}
-					<ViewControls view={view} onChange={onViewChange} />
-					<p className="placement-hint">
-						<Sparkles size={14} /> Select a charm, then tap a pink marker.
-					</p>
-				</section>
-				<CharmCatalog
-					onSelect={onSelectCharm}
-					selectedCharmId={selectedCharmId}
+			<div className="charms-step-content">
+				<StepHeading
+					step={3}
+					title="Add Charms"
+					description="Pick a favorite, then tap a pink spot on your clog."
+					accent="pink"
 				/>
+
+				<div className="charms-layout">
+					<section
+						className="charms-stage"
+						aria-label="Place charms on your Crocs"
+					>
+						<div className="charms-stage__topbar">
+							<span>{placementCount}/13 slots filled</span>
+							<button
+								type="button"
+								onClick={onClear}
+								disabled={placementCount === 0}
+							>
+								<Trash2 size={14} /> Clear all
+							</button>
+						</div>
+						<div className="charms-stage__scene">
+							<CustomizerScene
+								bodyColor={color.value}
+								onModelReady={onModelReady}
+								onError={onModelReady}
+								interactiveSlots
+								onSlotSelect={onSlotSelect}
+								onViewChange={onViewChange}
+								placements={placements}
+								selectedSlot={editingSlot}
+								rotations={rotations}
+								selectedCharmId={selectedCharmId}
+								view={view}
+							/>
+							{sparkleKey ? <span key={sparkleKey} className="charm-placement-sparkle" aria-hidden="true">✦</span> : null}
+						</div>
+						{editingSlot ? (
+							<SlotEditor
+								currentCharmId={placements[editingSlot]}
+								onClose={onCloseEditor}
+								onRemove={onRemove}
+								onRotate={onRotate}
+								onRotationChange={onRotationChange}
+								onReplace={onReplace}
+								rotation={rotations?.[editingSlot] ?? 0}
+								selectedCharmId={selectedCharmId}
+							/>
+						) : null}
+						<ViewControls view={view} onChange={onViewChange} />
+						<p className="placement-hint">
+							<Sparkles size={14} /> Select a charm, then tap a pink marker.
+						</p>
+					</section>
+					<CharmCatalog
+						onSelect={onSelectCharm}
+						selectedCharmId={selectedCharmId}
+					/>
+				</div>
 			</div>
 
 			<FlowFooter
-				nextLabel="Next: Preview your design"
+				nextLabel="Next"
 				onBack={onBack}
 				onNext={onNext}
 				step={3}

@@ -7,7 +7,7 @@ import { VIEW_FIT, VIEW_POSITIONS } from "./customizerCameraConfig.js";
 const ORIGIN = new Vector3();
 const FIT_EPSILON_SQUARED = 1e-8;
 
-function CustomizerCameraRig({ compactPreview = false, controlsRef, modelSize, view }) {
+function CustomizerCameraRig({ compactPreview = false, controlsRef, interactiveSlots = false, modelSize, view }) {
 	const camera = useThree((state) => state.camera);
 	const { width, height } = useThree((state) => state.size);
 	const invalidate = useThree((state) => state.invalidate);
@@ -16,11 +16,11 @@ function CustomizerCameraRig({ compactPreview = false, controlsRef, modelSize, v
 		if (view === "free") return null;
 		// Increase camera distance on narrow canvases to avoid clipping the shoe.
 		const aspect = width / Math.max(height, 1);
-		const mobileFit = width < 768 ? Math.max(1.3, 1.35 / Math.max(aspect, 0.75)) : 1;
+		const mobileFit = width < 768 ? Math.max(interactiveSlots ? 1.1 : 1.3, 1.35 / Math.max(aspect, 0.75)) : 1;
 		const previewFit = compactPreview ? 1.05 : 1;
 		const multiplier = Math.max(modelSize, 1) * mobileFit * previewFit * VIEW_FIT[view];
 		return VIEW_POSITIONS[view].clone().multiplyScalar(multiplier);
-	}, [compactPreview, height, modelSize, view, width]);
+	}, [compactPreview, height, interactiveSlots, modelSize, view, width]);
 
 	useLayoutEffect(() => {
 		if (targetPosition) invalidate();

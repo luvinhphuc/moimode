@@ -33,7 +33,7 @@ function CharmCatalog({ onSelect, selectedCharmId }) {
 	}, [activeCategory, query]);
 
 	return (
-		<aside ref={rootRef} className="charm-catalog" aria-label="Charm catalogue">
+		<aside ref={rootRef} className="charm-catalog" aria-label="Charm catalog">
 			<div className="charm-catalog__content">
 				<div className="charm-catalog__heading">
 					<p>Make it yours</p>

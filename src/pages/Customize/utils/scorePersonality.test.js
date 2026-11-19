@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { CHARM_CATALOG, CHARM_CATEGORIES, COLOURS } from "../config/customizerConfig.js";
-import { CHARM_AFFINITIES, COLOUR_AFFINITIES } from "../config/personalityConfig.js";
+import { CHARM_CATALOG, CHARM_CATEGORIES, COLORS } from "../config/customizerConfig.js";
+import { CHARM_AFFINITIES, COLOR_AFFINITIES } from "../config/personalityConfig.js";
 import { scorePersonality } from "./scorePersonality.js";
 
 test("every catalog charm has one valid category and a five-point individual affinity", () => {
@@ -17,16 +17,16 @@ test("every catalog charm has one valid category and a five-point individual aff
 	}
 });
 
-test("all twenty Crocs colours have weighted affinities", () => {
-	assert.equal(COLOURS.length, 20);
-	for (const colour of COLOURS) {
-		assert.equal(COLOUR_AFFINITIES[colour.id]?.length, 4, colour.id);
-		assert.equal(COLOUR_AFFINITIES[colour.id].reduce((sum, point) => sum + point, 0), 5, colour.id);
+test("all twenty Crocs colors have weighted affinities", () => {
+	assert.equal(COLORS.length, 20);
+	for (const color of COLORS) {
+		assert.equal(COLOR_AFFINITIES[color.id]?.length, 4, color.id);
+		assert.equal(COLOR_AFFINITIES[color.id].reduce((sum, point) => sum + point, 0), 5, color.id);
 	}
 });
 
 test("empty design redistributes inactive weights and reports no collection", () => {
-	const result = scorePersonality({ colourId: "white", placements: {} });
+	const result = scorePersonality({ colorId: "white", placements: {} });
 	assert.equal(result.primaryPersonality, "minimalist");
 	assert.equal(result.customizationStats.charmCount, 0);
 	assert.equal(result.customizationStats.collectionCount, 0);
@@ -35,17 +35,17 @@ test("empty design redistributes inactive weights and reports no collection", ()
 	assert.equal(Object.values(result.scores).reduce((sum, score) => sum + score, 0), 100);
 });
 
-test("an empty design reflects each Crocs colour instead of always returning minimalist", () => {
-	const primaryByColour = Object.fromEntries(COLOURS.map(({ id }) => [
+test("an empty design reflects each Crocs color instead of always returning minimalist", () => {
+	const primaryByColor = Object.fromEntries(COLORS.map(({ id }) => [
 		id,
-		scorePersonality({ colourId: id, placements: {} }).primaryPersonality,
+		scorePersonality({ colorId: id, placements: {} }).primaryPersonality,
 	]));
 
-	assert.deepEqual(primaryByColour, {
+	assert.deepEqual(primaryByColor, {
 		white: "minimalist",
 		cream: "minimalist",
 		black: "minimalist",
-		grey: "minimalist",
+		gray: "minimalist",
 		navy: "minimalist",
 		sand: "minimalist",
 		espresso: "minimalist",
@@ -75,8 +75,8 @@ test("crossing six charms can flip the same food-heavy design to playful", () =>
 		"food-bubble-tea",
 	];
 	const placementsFor = (ids) => Object.fromEntries(ids.map((id, index) => [`slot-${index}`, id]));
-	const fiveCharms = scorePersonality({ colourId: "white", placements: placementsFor(charmIds.slice(0, 5)) });
-	const sixCharms = scorePersonality({ colourId: "white", placements: placementsFor(charmIds) });
+	const fiveCharms = scorePersonality({ colorId: "white", placements: placementsFor(charmIds.slice(0, 5)) });
+	const sixCharms = scorePersonality({ colorId: "white", placements: placementsFor(charmIds) });
 
 	assert.equal(fiveCharms.primaryPersonality, "minimalist");
 	assert.deepEqual(fiveCharms.scores, { playful: 36, minimalist: 41, creative: 23, bold: 0 });
@@ -85,8 +85,8 @@ test("crossing six charms can flip the same food-heavy design to playful", () =>
 });
 
 test("repeated charms count for quantity but only once for selection", () => {
-	const one = scorePersonality({ colourId: "lime", placements: { a: "travel-airplane" } });
-	const two = scorePersonality({ colourId: "lime", placements: { a: "travel-airplane", b: "travel-airplane" } });
+	const one = scorePersonality({ colorId: "lime", placements: { a: "travel-airplane" } });
+	const two = scorePersonality({ colorId: "lime", placements: { a: "travel-airplane", b: "travel-airplane" } });
 	assert.equal(one.customizationStats.uniqueCharmCount, 1);
 	assert.equal(two.customizationStats.uniqueCharmCount, 1);
 	assert.equal(two.customizationStats.charmCount, 2);
@@ -95,7 +95,7 @@ test("repeated charms count for quantity but only once for selection", () => {
 });
 
 test("collection statistics use single primary categories and deterministic ties", () => {
-	const input = { colourId: "periwinkle", placements: {
+	const input = { colorId: "periwinkle", placements: {
 		a: "travel-camera", b: "food-pizza", c: "travel-map-does-not-exist", d: "food-burger",
 	} };
 	const result = scorePersonality(input);
@@ -106,7 +106,7 @@ test("collection statistics use single primary categories and deterministic ties
 });
 
 test("unknown charm affinity uses a neutral fallback", () => {
-	const result = scorePersonality({ colourId: "electric-blue", placements: { a: "unknown-charm" } });
+	const result = scorePersonality({ colorId: "electric-blue", placements: { a: "unknown-charm" } });
 	assert.equal(result.customizationStats.charmCount, 1);
 	assert.equal(result.customizationStats.topCollection, null);
 	assert.equal(Object.values(result.scores).reduce((sum, score) => sum + score, 0), 100);

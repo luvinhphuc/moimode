@@ -104,7 +104,7 @@ function PeopleAnimation({ rootRef, peopleCallouts }) {
 					for (const paragraph of section.querySelectorAll("[data-people-copy]")) {
 						if (conditions.reducedMotion) continue;
 
-						// Animate the paragraph wrapper independently of its line colour reveal.
+						// Animate the paragraph wrapper independently of its line color reveal.
 						const tween = gsap.fromTo(
 							paragraph,
 							{ autoAlpha: 0, y: 20 },

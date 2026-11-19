@@ -23,7 +23,7 @@ function isPreviewInView(preview, panel, section) {
 export default function useMiniCustomizerIntro({
 	rootRef,
 	previewRef,
-	colourLegendRef,
+	colorLegendRef,
 	charmLegendRef,
 	hintRef,
 	arrowSvgRef,
@@ -37,15 +37,15 @@ export default function useMiniCustomizerIntro({
 
 	useLayoutEffect(() => {
 		// Release tooltip ownership before React starts its next guidance step.
-		if (hintStep !== "colour") return undefined;
+		if (hintStep !== "color") return undefined;
 		const root = rootRef.current;
 		const preview = previewRef.current;
 		const card = hintRef.current;
 		const path = arrowSvgRef.current?.querySelector(".sketch-arrow__line");
 		const head = arrowSvgRef.current?.querySelector(".sketch-arrow__head");
 		if (!root || !preview || !card || !path || !head) return undefined;
-		const labels = [colourLegendRef.current, charmLegendRef.current];
-		const swatches = Array.from(root.querySelectorAll(".about-mini__colour"));
+		const labels = [colorLegendRef.current, charmLegendRef.current];
+		const swatches = Array.from(root.querySelectorAll(".about-mini__color"));
 		// Animate the images so the existing disabled-button opacity is preserved.
 		const charms = root.querySelectorAll(".about-mini__charm-option img");
 		const panel = root.closest("[data-about-experience]");
@@ -186,7 +186,7 @@ export default function useMiniCustomizerIntro({
 			root,
 		);
 		return () => media.revert();
-	}, [rootRef, previewRef, colourLegendRef, charmLegendRef, hintRef, arrowSvgRef, modelRigRef, isIntroDone, hintStep]);
+	}, [rootRef, previewRef, colorLegendRef, charmLegendRef, hintRef, arrowSvgRef, modelRigRef, isIntroDone, hintStep]);
 
 	return completeIntro;
 }

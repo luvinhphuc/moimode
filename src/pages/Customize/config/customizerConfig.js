@@ -1,19 +1,19 @@
 export const CUSTOMIZER_STEPS = Object.freeze([
 	{ id: 1, label: "Choose Style", shortLabel: "Style" },
-	{ id: 2, label: "Choose Colour", shortLabel: "Colour" },
+	{ id: 2, label: "Choose Color", shortLabel: "Color" },
 	{ id: 3, label: "Add Charms", shortLabel: "Charms" },
 	{ id: 4, label: "Preview & Save", shortLabel: "Preview" },
 ]);
 
-export const COLOUR_GROUPS = Object.freeze([
+export const COLOR_GROUPS = Object.freeze([
 	{
 		id: "classic",
-		label: "Classic colours",
-		colours: [
+		label: "Classic colors",
+		colors: [
 			{ id: "white", label: "White", value: "#f7f6f1" },
 			{ id: "cream", label: "Cream", value: "#ead9bd" },
 			{ id: "black", label: "Black", value: "#25282b" },
-			{ id: "grey", label: "Grey", value: "#bec3c8" },
+			{ id: "gray", label: "Gray", value: "#bec3c8" },
 			{ id: "navy", label: "Navy", value: "#263f64" },
 			{ id: "sand", label: "Sand", value: "#d4bc9b" },
 			{ id: "espresso", label: "Espresso", value: "#5a3a32" },
@@ -22,7 +22,7 @@ export const COLOUR_GROUPS = Object.freeze([
 	{
 		id: "pastel",
 		label: "Pastel vibes",
-		colours: [
+		colors: [
 			{ id: "light-blue", label: "Light Blue", value: "#a8d5f4" },
 			{ id: "green", label: "Green", value: "#91ad8b" },
 			{ id: "baby-pink", label: "Baby Pink", value: "#f2c6d5" },
@@ -35,8 +35,8 @@ export const COLOUR_GROUPS = Object.freeze([
 	},
 	{
 		id: "statement",
-		label: "Statement colours",
-		colours: [
+		label: "Statement colors",
+		colors: [
 			{ id: "pink", label: "Pink", value: "#eba8c5" },
 			{ id: "red", label: "Red", value: "#d63d3d" },
 			{ id: "purple", label: "Purple", value: "#ad78d4" },
@@ -46,11 +46,11 @@ export const COLOUR_GROUPS = Object.freeze([
 	},
 ]);
 
-export const COLOURS = Object.freeze(
-	COLOUR_GROUPS.flatMap((group) => group.colours),
+export const COLORS = Object.freeze(
+	COLOR_GROUPS.flatMap((group) => group.colors),
 );
 
-export const DEFAULT_COLOUR_ID = "light-blue";
+export const DEFAULT_COLOR_ID = "light-blue";
 
 export const CHARM_CATEGORIES = Object.freeze([
 	{ id: "all", label: "All" },
@@ -169,8 +169,8 @@ export const CHARM_BY_ID = Object.freeze(
 	Object.fromEntries(CHARM_CATALOG.map((item) => [item.id, item])),
 );
 
-export const COLOUR_BY_ID = Object.freeze(
-	Object.fromEntries(COLOURS.map((item) => [item.id, item])),
+export const COLOR_BY_ID = Object.freeze(
+	Object.fromEntries(COLORS.map((item) => [item.id, item])),
 );
 
 export const CHARM_SLOT_NAMES = Object.freeze(
@@ -181,6 +181,6 @@ export const CHARM_SLOT_NAMES = Object.freeze(
 
 export const DEFAULT_CUSTOMIZATION = Object.freeze({
 	modelId: "classic-clog",
-	colourId: DEFAULT_COLOUR_ID,
+	colorId: DEFAULT_COLOR_ID,
 	placements: Object.freeze({}),
 });

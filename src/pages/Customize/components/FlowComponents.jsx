@@ -68,7 +68,7 @@ function ViewControls({ view, onChange }) {
 
 function FlowFooter({ backLabel = "Back", nextLabel, onBack, onNext, step }) {
 	return (
-		<footer className="customizer-footer">
+		<footer className={`customizer-footer${step > 1 ? " customizer-footer--compact" : ""}`}>
 			<button
 				className="paper-button paper-button--back"
 				type="button"
@@ -79,7 +79,7 @@ function FlowFooter({ backLabel = "Back", nextLabel, onBack, onNext, step }) {
 			</button>
 			<ProgressDots step={step} />
 			<button
-				className="paper-button paper-button--primary"
+				className="paper-button paper-button--primary paper-button--next"
 				type="button"
 				onClick={onNext}
 			>

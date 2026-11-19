@@ -54,7 +54,7 @@ function CaptureObserver({ ready, onCapture, onCaptureError }) {
 }
 
 function CustomizerScene({
-	bodyColour,
+	bodyColor,
 	compactPreview = false,
 	interactiveSlots = false,
 	controlsEnabled = true,
@@ -126,12 +126,13 @@ function CustomizerScene({
 					<CustomizerCameraRig
 						compactPreview={compactPreview}
 						controlsRef={controlsRef}
+							interactiveSlots={interactiveSlots}
 						modelSize={modelSize}
 						view={view}
 					/>
 					<Suspense fallback={null}>
 						<CustomizableCrocs
-							bodyColour={bodyColour}
+							bodyColor={bodyColor}
 							animateCharms={!captureMode}
 							onCharmReady={captureMode || onModelReady ? handleCharmReady : undefined}
 							interactiveSlots={interactiveSlots}

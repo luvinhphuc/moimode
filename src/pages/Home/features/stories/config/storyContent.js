@@ -7,7 +7,7 @@ export const STORY_ITEMS = Object.freeze([
 		username: "@Dang Khoa",
 		title: "Where Curiosity Takes Me",
 		story:
-			"From catching flights to wandering through my favourite bookstores, my Crocs are always part of the journey. Comfortable, versatile, and easy to style - they go wherever my curiosity takes me.",
+			"From catching flights to wandering through my favorite bookstores, my Crocs are always part of the journey. Comfortable, versatile, and easy to style - they go wherever my curiosity takes me.",
 		images: [
 			{
 				src: "/images/stories/khoanguyeno-1.webp",
@@ -23,7 +23,7 @@ export const STORY_ITEMS = Object.freeze([
 		id: "ngockhanh",
 		username: "@Ngoc Khanh",
 		title: "Dresses, Crocs & Grocery Runs",
-		story: `Who says dresses and Crocs don't go together? I love mixing feminine outfits with a casual, playful touch. Even on a simple grocery run, my Crocs let me stay comfortable while expressing my personal style`,
+		story: `Who says dresses and Crocs don't go together? I love mixing feminine outfits with a casual, playful touch. Even on a simple grocery run, my Crocs let me stay comfortable while expressing my personal style.`,
 		images: [
 			{
 				src: "/images/stories/ngockhanh-1.webp",
@@ -57,7 +57,7 @@ export const STORY_ITEMS = Object.freeze([
 		username: "@Bao Nghi",
 		title: "Can't Go Without Them",
 		story:
-			" I've tried different shoes, but I always find myself reaching for my Crocs. They go effortlessly with almost every outfit, making them my easiest choice whenever I head out. Somehow, they've become a familiar part of my everyday style — the one detail that makes every outfit feel like me.",
+			"I've tried different shoes, but I always find myself reaching for my Crocs. They go effortlessly with almost every outfit, making them my easiest choice whenever I head out. Somehow, they've become a familiar part of my everyday style — the one detail that makes every outfit feel like me.",
 		images: [
 			{
 				src: "/images/stories/baonghi-1.webp",

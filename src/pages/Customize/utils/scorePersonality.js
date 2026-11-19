@@ -1,17 +1,17 @@
 import {
 	CHARM_BY_ID,
 	CHARM_CATEGORIES,
-	COLOUR_BY_ID,
-	DEFAULT_COLOUR_ID,
+	COLOR_BY_ID,
+	DEFAULT_COLOR_ID,
 } from "../config/customizerConfig.js";
 import {
 	CHARM_AFFINITIES,
-	COLOUR_AFFINITIES,
+	COLOR_AFFINITIES,
 	PERSONALITY_ORDER,
 } from "../config/personalityConfig.js";
 
 const NEUTRAL = [1.25, 1.25, 1.25, 1.25];
-const BASE_WEIGHTS = Object.freeze({ selection: 40, colour: 25, quantity: 15, diversity: 10 });
+const BASE_WEIGHTS = Object.freeze({ selection: 40, color: 25, quantity: 15, diversity: 10 });
 const CATEGORY_ORDER = CHARM_CATEGORIES.filter(({ id }) => id !== "all").map(({ id }) => id);
 
 function quantityAffinity(count) {
@@ -37,7 +37,7 @@ function roundedPercentages(raw) {
 	return Object.fromEntries(PERSONALITY_ORDER.map((key, index) => [key, percentages[index]]));
 }
 
-export function scorePersonality({ colourId, placements }) {
+export function scorePersonality({ colorId, placements }) {
 	const charmIds = Object.values(placements ?? {}).filter(Boolean);
 	const uniqueCharmIds = [...new Set(charmIds)];
 	const categoryCounts = new Map();
@@ -55,19 +55,19 @@ export function scorePersonality({ colourId, placements }) {
 		if (!affinity && import.meta.env?.DEV) console.warn(`Missing personality affinity for charm: ${charmId}`);
 		(affinity ?? NEUTRAL).forEach((value, index) => { selection[index] += value / uniqueCharmIds.length; });
 	}
-	const actualColourId = COLOUR_BY_ID[colourId] ? colourId : DEFAULT_COLOUR_ID;
-	const colour = COLOUR_AFFINITIES[actualColourId] ?? NEUTRAL;
+	const actualColorId = COLOR_BY_ID[colorId] ? colorId : DEFAULT_COLOR_ID;
+	const color = COLOR_AFFINITIES[actualColorId] ?? NEUTRAL;
 	const quantity = quantityAffinity(charmIds.length);
 	const diversity = diversityAffinity(collectionCount);
-	const criteria = { selection, colour, quantity, diversity };
-	const active = charmIds.length ? ["selection", "colour", "quantity", "diversity"] : ["colour", "quantity"];
+	const criteria = { selection, color, quantity, diversity };
+	const active = charmIds.length ? ["selection", "color", "quantity", "diversity"] : ["color", "quantity"];
 	const totalWeight = active.reduce((sum, key) => sum + BASE_WEIGHTS[key], 0);
 	const raw = PERSONALITY_ORDER.map((_, index) =>
 		active.reduce((sum, key) => sum + (criteria[key][index] / 5) * (BASE_WEIGHTS[key] / totalWeight) * 100, 0));
 	const ranked = PERSONALITY_ORDER.map((key, index) => ({ key, index })).sort((a, b) =>
 		raw[b.index] - raw[a.index]
 		|| selection[b.index] - selection[a.index]
-		|| colour[b.index] - colour[a.index]
+		|| color[b.index] - color[a.index]
 		|| a.index - b.index);
 
 	return {
@@ -75,7 +75,7 @@ export function scorePersonality({ colourId, placements }) {
 		secondaryPersonality: ranked[1].key,
 		scores: roundedPercentages(raw),
 		customizationStats: {
-			bodyColor: actualColourId,
+			bodyColor: actualColorId,
 			strapColor: null,
 			charmCount: charmIds.length,
 			uniqueCharmCount: uniqueCharmIds.length,

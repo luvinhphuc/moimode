@@ -8,7 +8,7 @@ export const POLICY_DETAILS = Object.freeze({
 	hostingProvider: "",
 	processingLocations: "",
 	retentionPeriod: "",
-	updatedAt: "16 November 2026",
+	updatedAt: "November 16, 2026",
 	updatedAtISO: "2026-11-16",
 	version: "1.0",
 });
@@ -28,7 +28,7 @@ export const POLICY_NAV = Object.freeze([
 
 export const CURRENT_DATA = Object.freeze([
 	{ name: "Names, images and stories", purpose: "Introducing the MOIMODE team and sharing stories about personal style. Published content can be viewed by anyone visiting the website.", note: "If an image or story relates to you, see Your rights & removal below." },
-	{ name: "Your customization choices", purpose: "Displaying the colours, charms and viewing angles you choose while exploring a Crocs design.", note: "You can explore the customizer without creating an account or entering an email address." },
+	{ name: "Your customization choices", purpose: "Displaying the colors, charms and viewing angles you choose while exploring a Crocs design.", note: "You can explore the customizer without creating an account or entering an email address." },
 	{ name: "Technical connection information", purpose: "Your browser connects to services providing fonts and video. Providers may receive your IP address, browser information and request details needed to deliver these resources.", note: "The services used by the website are described under Third-party services." },
 ]);
 
