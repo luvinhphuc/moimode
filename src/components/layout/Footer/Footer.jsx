@@ -45,7 +45,7 @@ function Footer({ pathnameOverride }) {
 	};
 
 	return (
-		<footer ref={footerRef} className={`site-footer${isHome ? "" : " site-footer--compact"}`} aria-label="Móimode footer">
+		<footer ref={footerRef} className={`site-footer${isHome ? "" : " site-footer--compact"}`} aria-label="MOIMODE footer">
 			{isHome && <div className="site-footer__top">
 				<span className="site-footer__opening-label">THE END? NOT REALLY.</span>
 				<span className="site-footer__closing-label">KEEP WALKING YOUR OWN WAY. <span className="site-footer__closing-icon" aria-hidden="true">✦</span></span>
@@ -58,7 +58,7 @@ function Footer({ pathnameOverride }) {
 				</div>
 			</div>}
 			<div className="site-footer__bottom">
-				<Link className="site-footer__brand" to={ROUTE_PATHS.home} aria-label="Móimode home" onClick={pathname === ROUTE_PATHS.home ? (event) => { event.preventDefault(); backToTop(); } : undefined}>
+				<Link className="site-footer__brand" to={ROUTE_PATHS.home} aria-label="MOIMODE home" onClick={pathname === ROUTE_PATHS.home ? (event) => { event.preventDefault(); backToTop(); } : undefined}>
 					<svg className="site-footer__wordmark" viewBox="0 0 1468 315" aria-hidden="true">
 						<defs><clipPath id={wordmarkClipId}><rect width="1216" height="315" /></clipPath></defs>
 						<image href="/images/moimode-logo.svg" width="1468" height="315" clipPath={`url(#${wordmarkClipId})`} />
@@ -77,7 +77,7 @@ function Footer({ pathnameOverride }) {
 					<span className="site-footer__back-icon" aria-hidden="true"><ArrowUp size={19} strokeWidth={2.4} /></span>
 				</button>
 				<div className="site-footer__legal" data-footer-dust-exclusion="">
-					<span className="site-footer__copyright">© 2026 MÓIMODE · Independent youth advocacy project.</span>
+					<span className="site-footer__copyright">© 2026 MOIMODE · Independent youth advocacy project.</span>
 					<Link className="site-footer__policy-link" to={ROUTE_PATHS.policies}>Policies · Privacy &amp; sharing</Link>
 					<span className="site-footer__disclaimer">Not sponsored or endorsed by Crocs.</span>
 				</div>

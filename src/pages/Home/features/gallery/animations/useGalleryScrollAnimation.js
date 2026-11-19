@@ -221,7 +221,7 @@ function useGalleryScrollAnimation({ rootRef, finishRef, geometry, animated, ite
             if (started || complete) return;
             started = true;
             setInteractive(false);
-            // Lenis removes the scrollbar while stopped; keep our measured width stable.
+            // Keep the measured panel width stable while scrolling is locked.
             panel.style.width = `${geometry.width}px`;
             locked = true;
             root.dataset.galleryPhase = "stack";

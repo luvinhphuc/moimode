@@ -10,7 +10,7 @@ export function SceneLoadingStatus({ isContextLost = false, modelPending }) {
 
 	if (!isContextLost && (!isLoading || useLocalStatus) && !hasError) return null;
 	return (
-		<div className={`customizer-scene-status${hasError ? " is-error" : ""}`} role={useLocalStatus ? "status" : undefined}>
+		<div className={`customizer-scene-status${hasError ? " customizer-scene-status--error" : ""}`} role={useLocalStatus ? "status" : undefined}>
 			<span className="customizer-scene-status__dot" />
 			{hasError
 				? "MODEL UNAVAILABLE"
@@ -34,7 +34,7 @@ export class SceneErrorBoundary extends Component {
 
 	render() {
 		return this.state.hasError ? (
-			<div className="customizer-scene-status is-error">MODEL UNAVAILABLE</div>
+			<div className="customizer-scene-status customizer-scene-status--error">MODEL UNAVAILABLE</div>
 		) : (
 			this.props.children
 		);

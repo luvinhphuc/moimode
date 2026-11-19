@@ -127,12 +127,12 @@ export default async function handler(req, res, dependencies = {}) {
 			socketTimeout: 20000,
 		});
 		const info = await transporter.sendMail({
-			from: { name: "Móimode", address: SMTP_USER },
+			from: { name: "MOIMODE", address: SMTP_USER },
 			to: RECEIVER_EMAIL,
 			replyTo: values.email,
-			subject: "Móimode — New Story Submission",
+			subject: "MOIMODE — New Story Submission",
 			text: [
-				"New Móimode story submission",
+				"New MOIMODE story submission",
 				"",
 				`Name: ${values.name}`,
 				`Email: ${values.email}`,
@@ -144,7 +144,7 @@ export default async function handler(req, res, dependencies = {}) {
 			html: `<!doctype html>
 <html><body style="margin:0;padding:24px;background:#f6f1e8;color:#032b36;font-family:Arial,sans-serif">
 <main style="max-width:680px;margin:0 auto;padding:28px;border:1px solid #d9d3c8;border-radius:16px;background:#fff">
-<p style="margin:0 0 8px;font-size:12px;font-weight:bold;letter-spacing:2px">MÓIMODE / NEW STORY</p>
+<p style="margin:0 0 8px;font-size:12px;font-weight:bold;letter-spacing:2px">MOIMODE / NEW STORY</p>
 <h1 style="margin:0 0 24px;font-size:28px">A new story has arrived</h1>
 <p><strong>Name</strong><br>${escapedName}</p>
 <p><strong>Email</strong><br>${escapedEmail}</p>
@@ -170,7 +170,7 @@ export default async function handler(req, res, dependencies = {}) {
 		return response(200, "Story sent successfully.", res);
 	} catch (error) {
 		// Log transport diagnostics only; never log user content or the attachment.
-		console.error("Móimode email submission failed.", error?.code ?? "unknown");
+		console.error("MOIMODE email submission failed.", error?.code ?? "unknown");
 		return response(500, "Unable to send your story right now. Please try again.", res);
 	} finally {
 		transporter?.close?.();

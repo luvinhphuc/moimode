@@ -258,7 +258,7 @@ function MiniCustomizer({ isIntroDone, onLoadProgress, onPreviewStatus, previewS
 						view="mini"
 					/>
 				) : previewStatus === "error" ? (
-					<div className="customizer-scene-status is-error" role="status">
+					<div className="customizer-scene-status customizer-scene-status--error" role="status">
 						MODEL UNAVAILABLE
 					</div>
 				) : null}

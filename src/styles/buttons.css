@@ -1,0 +1,160 @@
+/* The Back to top button is the visual reference for action buttons. */
+@layer utilities {
+	:where(.paper-button, .story-button, .wrapped-cta, .gallery-cta, .site-footer__back, .hero-scroll-hint) {
+		@apply border-2 border-moi-ink rounded-full;
+		background: var(--button-fill, var(--color-moi-bg));
+		@apply text-moi-ink;
+		box-shadow: 4px 5px 0 var(--color-moi-ink);
+		@apply font-extrabold tracking-[0.1em] uppercase no-underline;
+		transition: translate 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+	}
+
+	:where(.paper-button, .story-button, .wrapped-cta, .gallery-cta, .site-footer__back, .hero-scroll-hint):not(:disabled):hover {
+		translate: 2px 2px;
+		box-shadow: 2px 3px 0 var(--color-moi-ink);
+		background: color-mix(in srgb, var(--button-fill, var(--color-moi-bg)) 82%, white);
+	}
+
+	.paper-button--primary,
+	.story-button {
+		--button-fill: var(--color-moi-footer);
+	}
+
+	.paper-button--back,
+	.story-button--outline {
+		--button-fill: var(--color-moi-sky);
+	}
+
+	.wrapped-cta,
+	.hero-scroll-hint {
+		--button-fill: var(--color-moi-sage);
+	}
+
+	.gallery-cta,
+	.wrapped-cta--outline {
+		--button-fill: var(--color-moi-coral);
+	}
+
+	.wrapped-cta--quiet {
+		--button-fill: var(--color-moi-sand);
+	}
+
+	:where(.paper-button, .story-button, .wrapped-cta, .gallery-cta, .site-footer__back, .hero-scroll-hint):not(:disabled):active {
+		translate: 4px 5px;
+		box-shadow: 0 0 0 var(--color-moi-ink);
+	}
+
+	:where(.paper-button, .story-button, .wrapped-cta, .gallery-cta, .site-footer__back, .hero-scroll-hint):focus-visible {
+		outline: 3px solid var(--color-moi-accent);
+		@apply outline-offset-[5px];
+	}
+
+	:where(.paper-button, .story-button, .wrapped-cta, .gallery-cta):disabled {
+		box-shadow: 2px 3px 0 var(--color-moi-ink);
+		@apply cursor-not-allowed;
+	}
+
+	:where(.paper-button--primary, .story-button:not(.story-button--outline), .wrapped-cta, .gallery-cta, .hero-scroll-hint) > :where(svg:last-child, span:last-child:has(> svg)) {
+		flex: none;
+		@apply w-[2rem] h-[2rem] p-[0.45rem] rounded-full bg-moi-ink text-moi-bg;
+	}
+
+	.gallery-cta > span:last-child {
+		@apply grid place-items-center;
+		flex: none;
+		@apply w-[2rem] h-[2rem] rounded-full bg-moi-ink text-moi-bg text-[1.15rem];
+	}
+
+	:where(.paper-button--back, .story-button--outline, .wrapped-cta--outline, .wrapped-cta--quiet) > svg:first-child {
+		flex: none;
+		@apply w-[1.9rem] h-[1.9rem] p-[0.42rem] rounded-full bg-moi-ink text-moi-bg;
+	}
+
+	:where(.stories-section__nav-button, .gallery-spotlight__control, .gallery-skip, .view-controls button, .preview-stage__toolbar > div > button, .charm-filters button, .charms-stage__topbar button, .slot-editor__actions button, .slot-editor__close, .customization-recap__title button, .story-close) {
+		@apply border-2 border-moi-ink rounded-full;
+		background: var(--button-fill, var(--color-moi-bg));
+		@apply text-moi-ink;
+		box-shadow: 3px 3px 0 var(--color-moi-ink);
+		@apply no-underline;
+		transition: translate 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+	}
+
+	:where(.stories-section__nav-button, .gallery-spotlight__control, .gallery-skip, .view-controls button, .preview-stage__toolbar > div > button, .charm-filters button, .charms-stage__topbar button, .slot-editor__actions button, .slot-editor__close, .customization-recap__title button, .story-close):not(:disabled):hover {
+		translate: 1px 1px;
+		box-shadow: 2px 2px 0 var(--color-moi-ink);
+		background: color-mix(in srgb, var(--button-fill, var(--color-moi-bg)) 82%, white);
+	}
+
+	:where(.stories-section__nav-button, .view-controls button, .preview-stage__toolbar > div > button) {
+		--button-fill: var(--color-moi-sky);
+	}
+
+	:where(.gallery-spotlight__control, .charms-stage__topbar button, .customization-recap__title button) {
+		--button-fill: var(--color-moi-sage);
+	}
+
+	:where(.gallery-skip, .slot-editor__close, .story-close) {
+		--button-fill: var(--color-moi-coral);
+	}
+
+	:where(.slot-editor__actions button) {
+		--button-fill: var(--color-moi-footer);
+	}
+
+	.charm-filters button:nth-child(4n + 1) {
+		--button-fill: var(--color-moi-sage);
+	}
+
+	.charm-filters button:nth-child(4n + 2) {
+		--button-fill: var(--color-moi-sky);
+	}
+
+	.charm-filters button:nth-child(4n + 3) {
+		--button-fill: var(--color-moi-coral);
+	}
+
+	.charm-filters button:nth-child(4n) {
+		--button-fill: var(--color-moi-footer);
+	}
+
+	:where(.stories-section__nav-button, .gallery-spotlight__control, .gallery-skip, .view-controls button, .preview-stage__toolbar > div > button, .charm-filters button, .charms-stage__topbar button, .slot-editor__actions button, .slot-editor__close, .customization-recap__title button, .story-close):not(:disabled):active {
+		translate: 3px 3px;
+		box-shadow: 0 0 0 var(--color-moi-ink);
+	}
+
+	:where(.stories-section__nav-button, .gallery-spotlight__control, .gallery-skip, .view-controls button, .preview-stage__toolbar > div > button, .charm-filters button, .charms-stage__topbar button, .slot-editor__actions button, .slot-editor__close, .customization-recap__title button, .story-close):focus-visible {
+		outline: 3px solid var(--color-moi-accent);
+		@apply outline-offset-[4px];
+	}
+
+	:where(.charms-stage__topbar button, .customization-recap__title button) {
+		padding: 0.35rem 0.65rem;
+	}
+
+	.slot-editor__close {
+		@apply w-[2rem] h-[2rem];
+	}
+
+	:where(.view-controls button.view-controls__button--active, .charm-filters button.charm-filters__button--active) {
+		@apply bg-moi-ink text-moi-bg;
+	}
+
+	:where(.view-controls button.view-controls__button--active, .charm-filters button.charm-filters__button--active):hover {
+		@apply bg-moi-ink;
+	}
+
+	.slot-editor__actions button.slot-editor__action--danger {
+		@apply bg-moi-danger-soft text-moi-danger;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:where(.paper-button, .story-button, .wrapped-cta, .gallery-cta, .site-footer__back, .hero-scroll-hint, .stories-section__nav-button, .gallery-spotlight__control, .gallery-skip, .view-controls button, .preview-stage__toolbar > div > button, .charm-filters button, .charms-stage__topbar button, .slot-editor__actions button, .slot-editor__close, .customization-recap__title button, .story-close) {
+			transition: none;
+		}
+
+		:where(.paper-button, .story-button, .wrapped-cta, .gallery-cta, .site-footer__back, .hero-scroll-hint, .stories-section__nav-button, .gallery-spotlight__control, .gallery-skip, .view-controls button, .preview-stage__toolbar > div > button, .charm-filters button, .charms-stage__topbar button, .slot-editor__actions button, .slot-editor__close, .customization-recap__title button, .story-close):hover,
+		:where(.paper-button, .story-button, .wrapped-cta, .gallery-cta, .site-footer__back, .hero-scroll-hint, .stories-section__nav-button, .gallery-spotlight__control, .gallery-skip, .view-controls button, .preview-stage__toolbar > div > button, .charm-filters button, .charms-stage__topbar button, .slot-editor__actions button, .slot-editor__close, .customization-recap__title button, .story-close):active {
+			translate: none;
+		}
+	}
+}

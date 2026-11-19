@@ -50,12 +50,13 @@ function SlotEditor({
 				/>
 			</div>
 			<div className="slot-editor__actions">
-				<button type="button" onClick={onRotate}>
+				<button type="button" className="slot-editor__action" onClick={onRotate}>
 					<RotateCw size={14} />
 					Rotate
 				</button>
 				<button
 					type="button"
+					className="slot-editor__action"
 					onClick={onReplace}
 					disabled={!selectedCharm || currentCharmId === selectedCharmId}
 				>
@@ -64,7 +65,7 @@ function SlotEditor({
 						? `Replace with ${selectedCharm.label}`
 						: "Select a charm to replace"}
 				</button>
-				<button type="button" className="is-danger" onClick={onRemove}>
+				<button type="button" className="slot-editor__action slot-editor__action--danger" onClick={onRemove}>
 					<Trash2 size={14} />
 					Remove
 				</button>

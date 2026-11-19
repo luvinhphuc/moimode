@@ -139,7 +139,7 @@ test("SMTP failures return a safe error without exposing transport details", asy
 			});
 			assert.equal(result.statusCode, 500);
 			assert.equal(result.body.message, "Unable to send your story right now. Please try again.");
-			assert.deepEqual(logs, [["Móimode email submission failed.", "EAUTH"]]);
+			assert.deepEqual(logs, [["MOIMODE email submission failed.", "EAUTH"]]);
 		} finally {
 			console.error = originalConsoleError;
 		}

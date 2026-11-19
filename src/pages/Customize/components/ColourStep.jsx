@@ -23,7 +23,7 @@ function ColourStep({
 		if (previousColour.current === colourId) return;
 		previousColour.current = colourId;
 		if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-		const selected = rootRef.current?.querySelector(".colour-swatches button.is-selected > span");
+		const selected = rootRef.current?.querySelector(".colour-swatches button.colour-swatches__option--selected > span");
 		const name = rootRef.current?.querySelector(".selected-colour strong");
 		const tweens = [
 			selected && gsap.fromTo(selected, { scale: 0.84 }, { scale: 1, duration: 0.28, ease: "back.out(2)", overwrite: true }),
@@ -49,7 +49,7 @@ function ColourStep({
 									<button
 										key={item.id}
 										type="button"
-										className={item.id === colourId ? "is-selected" : ""}
+										className={`colour-swatches__option${item.id === colourId ? " colour-swatches__option--selected" : ""}`}
 										aria-label={`Choose ${item.label}`}
 										aria-pressed={item.id === colourId}
 										onClick={() => {

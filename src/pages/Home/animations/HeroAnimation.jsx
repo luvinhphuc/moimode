@@ -77,8 +77,8 @@ function HeroAnimation({
 	useEffect(() => {
 		if (isIntroDone) return undefined;
 
-		document.body.classList.add("is-model-loading");
-		return () => document.body.classList.remove("is-model-loading");
+		document.body.classList.add("app--model-loading");
+		return () => document.body.classList.remove("app--model-loading");
 	}, [isIntroDone]);
 
 	useGSAP(
@@ -231,14 +231,14 @@ function HeroAnimation({
 				trigger: root,
 				start: "top+=80 top",
 				end: "bottom top",
-				onEnter: () => hint.classList.add("is-dismissed"),
-				onLeaveBack: () => hint.classList.remove("is-dismissed"),
+				onEnter: () => hint.classList.add("hero-scroll-hint--dismissed"),
+				onLeaveBack: () => hint.classList.remove("hero-scroll-hint--dismissed"),
 				onRefresh: (self) => {
-					hint.classList.toggle("is-dismissed", self.scroll() >= self.start);
+					hint.classList.toggle("hero-scroll-hint--dismissed", self.scroll() >= self.start);
 				},
 			});
 
-			return () => hint.classList.remove("is-dismissed");
+			return () => hint.classList.remove("hero-scroll-hint--dismissed");
 		},
 		{
 			dependencies: [isHeroReady],

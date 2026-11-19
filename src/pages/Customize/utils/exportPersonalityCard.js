@@ -49,7 +49,7 @@ export async function createPersonalityCardBlob({ result }) {
 		context.fillStyle = personality.theme;
 		context.fillRect(0, 0, WIDTH, HEIGHT);
 		const headerColor = result.primaryPersonality === "bold" ? "#ffffff" : INK;
-		text(context, "MÓIMODE  /  YOUR STYLE STORY", 100, 115, '35px "Karl ST VN", sans-serif', headerColor);
+		text(context, "MOIMODE  /  YOUR STYLE STORY", 100, 115, '35px "Karl ST VN", sans-serif', headerColor);
 		text(context, personality.name, 100, 230, '76px "Karl ST Black VN", sans-serif', headerColor);
 		text(context, personality.keywords.join("  ·  "), 103, 292, '34px "Karl ST VN", sans-serif', headerColor);
 
@@ -68,7 +68,7 @@ export async function createPersonalityCardBlob({ result }) {
 		context.stroke();
 		text(context, colour.label, 1045, 650, '42px "Karl ST Black VN", sans-serif');
 		text(context, `${result.customizationStats.charmCount} charms placed`, 875, 790, '31px "Karl ST VN", sans-serif');
-		text(context, "See your live custom design on Móimode", 875, 840, '23px "Karl ST VN", sans-serif');
+		text(context, "See your live custom design on MOIMODE", 875, 840, '23px "Karl ST VN", sans-serif');
 
 		roundedPanel(context, 100, 1220, 1400, 680, 48, PAPER);
 		text(context, "STYLE DNA", 165, 1310, '63px "Karl ST Black VN", sans-serif');

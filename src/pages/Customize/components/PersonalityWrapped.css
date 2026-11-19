@@ -4,7 +4,7 @@
 	/* Personality Wrapped page frame */
 	.wrapped {
 		--wrapped-page-gutter: clamp(1.5rem, 4vw, 4rem);
-		@apply relative isolate min-h-svh mt-[-4.75rem] overflow-hidden pt-[calc(var(--wrapped-page-gutter)+4.75rem)] px-[var(--wrapped-page-gutter)] pb-[var(--wrapped-page-gutter)] text-moi-ink bg-moi-bg transition-colors duration-[600ms];
+		@apply relative isolate min-h-svh mt-[-4.75rem] overflow-hidden pt-[calc(var(--wrapped-page-gutter)+1rem)] px-[var(--wrapped-page-gutter)] pb-[var(--wrapped-page-gutter)] text-moi-ink bg-moi-bg transition-colors duration-[600ms];
 	}
 
 	.wrapped--reveal,
@@ -18,20 +18,15 @@
 
 	/* The isolated export scene exists only while a user-requested export is running. */
 	.wrapped-export {
-		position: fixed;
-		top: 0;
-		left: -2000px;
-		pointer-events: none;
+		@apply fixed top-0 left-[-2000px] pointer-events-none;
 	}
 
 	.wrapped-export .customizer-scene {
-		width: 100%;
-		height: 100%;
+		@apply w-[100%] h-[100%];
 	}
 
 	.wrapped-shoe .customizer-scene {
-		width: 100%;
-		height: 100%;
+		@apply w-[100%] h-[100%];
 	}
 
 	.wrapped-eyebrow {
@@ -39,11 +34,7 @@
 	}
 
 	.wrapped-cta {
-		@apply inline-flex items-center justify-center gap-[0.7rem] min-h-14 px-5 py-[0.85rem] border-2 border-moi-ink rounded-full text-white bg-moi-ink font-black text-base cursor-pointer transition-transform duration-200;
-	}
-
-	.wrapped-cta:hover:not(:disabled) {
-		@apply -translate-y-[3px];
+		@apply inline-flex items-center justify-center gap-[0.7rem] max-h-14 px-5 py-[0.85rem] border-2 border-moi-ink rounded-full text-white bg-moi-ink font-black text-base cursor-pointer transition-transform duration-200;
 	}
 
 	.wrapped-cta:focus-visible,
@@ -64,8 +55,7 @@
 	}
 
 	.wrapped-shoe {
-		@apply block w-full h-full;
-		pointer-events: none;
+		@apply block w-full h-full pointer-events-none;
 	}
 
 	.wrapped-shoe-pending {
@@ -82,7 +72,7 @@
 	}
 
 	.wrapped-decode__intro h1 {
-		@apply mt-[0.65rem] mb-4 font-display text-[clamp(3.2rem,5vw,5rem)] font-black leading-[0.94] tracking-[-0.065em] uppercase;
+		@apply mt-[0.65rem] mb-4 font-display text-[clamp(3.2rem,5vw,4rem)] font-black leading-[0.94] tracking-[-0.065em] uppercase;
 	}
 
 	.wrapped-decode__intro > p:last-child {
@@ -118,17 +108,18 @@
 	}
 
 	.wrapped-decode__shoe {
-		@apply relative z-[1] col-start-2 row-span-2 self-center w-full h-[min(50vh,480px)] rotate-[-7deg] scale-110;
+		@apply relative z-[1] col-start-2 row-span-2 self-center w-full h-[min(50vh,480px)] rotate-[-7deg] scale-110 top-[-200px];
 	}
 
 	.wrapped-decode__scan {
-		@apply absolute left-[8%] right-[8%] top-[8%] z-[2] h-[3px] opacity-0 pointer-events-none;
-		background: var(--color-moi-rose);
-		box-shadow: 0 0 15px 5px color-mix(in srgb, var(--color-moi-coral) 55%, transparent);
+		@apply absolute left-[8%] right-[8%] top-[8%] z-[2] h-[3px] opacity-0 pointer-events-none bg-moi-rose;
+		box-shadow: 0 0 15px 5px
+			color-mix(in srgb, var(--color-moi-coral) 55%, transparent);
 	}
 
 	.wrapped-decode__charms {
-		@apply absolute right-0 bottom-20 z-[3] flex gap-[0.3rem] rotate-[5deg];
+		@apply absolute right-0 z-[3] flex gap-[0.3rem] rotate-[5deg];
+		bottom: calc(5rem + 200px);
 	}
 
 	.wrapped-decode__charms img {
@@ -215,7 +206,7 @@
 		@apply text-moi-ink bg-white;
 	}
 
-	/* 03 — Personalized card and style DNA */
+	/* 03 — Personalized card */
 	.wrapped-final {
 		@apply mx-auto w-full max-w-[85rem];
 	}
@@ -253,30 +244,25 @@
 	}
 
 	.wrapped-final__print-slot {
-		position: absolute;
-		z-index: 2;
-		left: 50%;
-		top: -1.125rem;
+		@apply absolute z-[2] left-[50%] top-[-1.125rem];
 		width: min(calc(100% + 2rem), calc(100vw - 2rem));
-		height: 0.625rem;
-		border-radius: 999px;
+		@apply h-[0.625rem] rounded-full;
 		background: currentColor;
 		box-shadow: 0 4px 0 rgb(3 43 54 / 14%);
 		transform: translateX(-50%);
-		pointer-events: none;
+		@apply pointer-events-none;
 	}
 
 	.wrapped-final__print-window,
 	.wrapped-final__print-transport,
 	.wrapped-final__print-develop {
-		position: relative;
-		width: 100%;
+		@apply relative w-[100%];
 		aspect-ratio: 4 / 5;
 	}
 
 	.wrapped-final__print-window {
 		clip-path: inset(0 0 0 0);
-		pointer-events: none;
+		@apply pointer-events-none;
 	}
 
 	.wrapped-final__print-transport {
@@ -311,38 +297,6 @@
 		transform: rotateY(180deg);
 	}
 
-	.wrapped-final__dna {
-		@apply mt-8 grid grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] gap-8 p-[clamp(1.5rem,3vw,2.5rem)] border-2 border-moi-ink rounded-[1.4rem] bg-moi-bg;
-	}
-
-	.wrapped-final__dna h2 {
-		@apply mt-[0.3rem] mb-[0.7rem] font-display text-[clamp(2rem,3.6vw,3.7rem)] font-black leading-[0.95] uppercase;
-	}
-
-	.wrapped-final__dna p:last-child {
-		@apply text-[1.05rem];
-	}
-
-	.wrapped-final__scores {
-		@apply grid content-center gap-[0.9rem];
-	}
-
-	.wrapped-final__score {
-		@apply grid grid-cols-[minmax(7.5rem,1fr)_minmax(6.25rem,1.5fr)_4.5rem] items-center gap-[0.7rem] text-[0.9rem] font-bold;
-	}
-
-	.wrapped-final__score > div {
-		@apply h-3 overflow-hidden rounded-2xl bg-[#d7d5cc];
-	}
-
-	.wrapped-final__score > div i {
-		@apply block h-full rounded-[inherit];
-	}
-
-	.wrapped-final__score strong {
-		@apply text-right;
-	}
-
 	.wrapped-final__actions {
 		@apply mt-[1.6rem] flex flex-wrap gap-3;
 	}
@@ -368,11 +322,11 @@
 		}
 
 		.wrapped-decode__shoe {
-			@apply col-start-1 row-auto h-[21.25rem] rotate-[-6deg];
+			@apply col-start-1 row-auto h-[21.25rem] rotate-[-6deg] top-0;
 		}
 
 		.wrapped-decode__charms {
-			@apply bottom-16;
+			@apply bottom-[4rem];
 		}
 
 		.wrapped-final__grid {
@@ -388,8 +342,7 @@
 		}
 
 		.wrapped-final__print-slot {
-			top: -0.75rem;
-			height: 0.5rem;
+			@apply top-[-0.75rem] h-[0.5rem];
 		}
 	}
 
@@ -445,14 +398,6 @@
 
 		.wrapped-final__product {
 			@apply h-[20.625rem];
-		}
-
-		.wrapped-final__dna {
-			@apply grid-cols-1;
-		}
-
-		.wrapped-final__score {
-			@apply grid-cols-[minmax(6.55rem,1fr)_minmax(3.75rem,1fr)_3.6rem] gap-[0.35rem] text-[0.75rem];
 		}
 
 		.wrapped-final__actions {

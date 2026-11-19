@@ -3,7 +3,7 @@ import {
     ArrowLeft,
     ArrowRight,
     Download,
-    Share2,
+    Send,
 } from 'lucide-react';
 
 import BrandStar from '../../../components/BrandStar.jsx';
@@ -389,8 +389,6 @@ function PersonalityWrapped({
                     duration: 0.65,
                     ease: 'power3.out',
                 }, 0);
-                timeline.from('.wrapped-final__score > div i', { scaleX: 0, transformOrigin: 'left center', duration: 0.7, stagger: 0.1, ease: 'power2.out' }, 0.35);
-                timeline.from('.wrapped-final__score strong', { y: 8, autoAlpha: 0, duration: 0.38, stagger: 0.1 }, 0.4);
 
                 // The feed matches the prototype's three brief roller pauses.
                 timeline.addLabel('feed', 0.3)
@@ -427,7 +425,7 @@ function PersonalityWrapped({
                         await navigator.share({
                             files: [file],
                             title: personality.name,
-                            text: 'My Móimode Style DNA',
+                            text: 'My MOIMODE Style DNA',
                         });
                     } catch (error) {
                         if (error.name !== 'AbortError') throw error;
@@ -669,42 +667,6 @@ function PersonalityWrapped({
                                 <p>Tap or click to flip the card</p>
                             </div>
                         </div>
-                        <div className="wrapped-final__dna">
-                            <div>
-                                <p className="wrapped-eyebrow">
-                                    YOUR STYLE DNA
-                                </p>
-                                <h2>Made from your choices.</h2>
-                                <p>
-                                    {stats.charmCount} charms ·{' '}
-                                    {stats.collectionCount} collections
-                                    {stats.topCollection
-                                        ? ` · ${collectionLabel(stats.topCollection)} on top`
-                                        : ''}
-                                </p>
-                            </div>
-                            <div className="wrapped-final__scores">
-                                {PERSONALITY_ORDER.map((key) => (
-                                    <div
-                                        className="wrapped-final__score"
-                                        key={key}
-                                    >
-                                        <span>{PERSONALITIES[key].name}</span>
-                                        <div>
-                                            <i
-                                                style={{
-                                                    width: `${result.scores[key]}%`,
-                                                    backgroundColor:
-                                                        PERSONALITIES[key]
-                                                            .theme,
-                                                }}
-                                            />
-                                        </div>
-                                        <strong>{result.scores[key]}%</strong>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
                         {actionError ? (
                             <p className="wrapped-final__notice" role="alert">
                                 {actionError}
@@ -730,7 +692,7 @@ function PersonalityWrapped({
                                 disabled={actionBusy}
                                 onClick={() => setStoryOpen(true)}
                             >
-                                <Share2 size={19} /> Share Your Story
+                                <Send size={19} /> Share Your Story
                             </button>
                             <button
                                 type="button"

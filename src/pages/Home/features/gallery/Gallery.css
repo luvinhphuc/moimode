@@ -48,10 +48,6 @@
 		@apply pointer-events-none;
 	}
 
-	.gallery-cta:hover {
-		@apply [background:var(--color-moi-accent)] transform-[translateY(-2px)];
-	}
-
 	.gallery-stack {
 		@apply absolute inset-0 z-5 pointer-events-none;
 	}
@@ -114,8 +110,7 @@
 
 	.gallery-skip {
 		@apply absolute right-6 bottom-6 z-12 min-h-[44px] [border:0] p-2 [background:transparent] text-inherit
-			[font:inherit] [text-decoration:underline] underline-offset-4 cursor-pointer;
-		@apply text-[0.75rem] font-bold;
+			[font:inherit] [text-decoration:underline] underline-offset-4 cursor-pointer text-[0.75rem] font-bold;
 	}
 
 	.gallery-skip[hidden] {
@@ -286,12 +281,12 @@
 	}
 
 	[data-gallery-mobile-reveal="pending"] {
-		opacity: 0;
+		@apply opacity-[0];
 		translate: 0 14px;
 	}
 
 	[data-gallery-mobile-reveal="visible"] {
-		opacity: 1;
+		@apply opacity-[1];
 		translate: 0 0;
 	}
 }

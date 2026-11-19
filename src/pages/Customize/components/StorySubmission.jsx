@@ -216,7 +216,7 @@ function StorySubmission({ colour, placements, result, onExportCrocs, onClose })
 
 				<div className="story-layout">
 					<aside className="story-aside" aria-label="Your style artwork">
-						<p className="story-aside__eyebrow">MÓIMODE / YOUR STYLE DNA</p>
+						<p className="story-aside__eyebrow">MOIMODE / YOUR STYLE DNA</p>
 						<div className="story-aside__artwork-wrap">
 							<img
 									src={personality.front}
@@ -237,7 +237,7 @@ function StorySubmission({ colour, placements, result, onExportCrocs, onClose })
 					<div className="story-main">
 						<ol className="story-progress" aria-label="Share your story progress">
 							{["Story", "Review"].map((label, step) => (
-								<li key={label} className={step <= progressStep ? "is-active" : ""} aria-current={step === progressStep ? "step" : undefined}>
+								<li key={label} className={`story-progress__step${step <= progressStep ? " story-progress__step--active" : ""}`} aria-current={step === progressStep ? "step" : undefined}>
 									<span className="story-progress__number">0{step + 1}</span>
 									<span>{label}</span>
 								</li>
@@ -292,7 +292,7 @@ function StorySubmission({ colour, placements, result, onExportCrocs, onClose })
 											onChange={(event) => updateField("nickname", event.target.value)}
 											aria-invalid={!!errors.nickname}
 											aria-describedby={errors.nickname ? "story-nickname-error" : undefined}
-											className={`story-field__control${errors.nickname ? " is-invalid" : ""}`}
+											className={`story-field__control${errors.nickname ? " story-field__control--invalid" : ""}`}
 											placeholder="What should we call you?"
 										/>
 										<FieldError id="story-nickname-error" message={errors.nickname} />
@@ -313,7 +313,7 @@ function StorySubmission({ colour, placements, result, onExportCrocs, onClose })
 											onChange={(event) => updateField("email", event.target.value)}
 											aria-invalid={!!errors.email}
 											aria-describedby={errors.email ? "story-email-error" : undefined}
-											className={`story-field__control${errors.email ? " is-invalid" : ""}`}
+											className={`story-field__control${errors.email ? " story-field__control--invalid" : ""}`}
 											placeholder="you@example.com"
 										/>
 										<FieldError id="story-email-error" message={errors.email} />
@@ -327,7 +327,7 @@ function StorySubmission({ colour, placements, result, onExportCrocs, onClose })
 											</label>
 											<span
 												id="story-word-count"
-												className={`story-word-count${wordCount > 100 ? " is-over-limit" : ""}`}
+												className={`story-word-count${wordCount > 100 ? " story-word-count--over-limit" : ""}`}
 												aria-live="polite"
 											>
 												{wordCount} / 100 words
@@ -343,7 +343,7 @@ function StorySubmission({ colour, placements, result, onExportCrocs, onClose })
 											onChange={(event) => updateField("story", event.target.value)}
 											aria-invalid={!!errors.story}
 											aria-describedby={`story-word-count${errors.story ? " story-text-error" : ""}`}
-											className={`story-field__control story-field__control--textarea${errors.story ? " is-invalid" : ""}`}
+											className={`story-field__control story-field__control--textarea${errors.story ? " story-field__control--invalid" : ""}`}
 											placeholder="I made these Crocs because…"
 										/>
 										<FieldError id="story-text-error" message={errors.story} />
@@ -362,7 +362,7 @@ function StorySubmission({ colour, placements, result, onExportCrocs, onClose })
 											className="story-consent__checkbox"
 										/>
 										<span>
-											I agree that Móimode may feature my nickname, story, creation and personality in The Missing Piece gallery after review. My email will remain private.
+											I agree that MOIMODE may feature my nickname, story, creation and personality in The Missing Piece gallery after review. My email will remain private.
 										</span>
 									</label>
 									<FieldError id="story-consent-error" message={errors.consent} />

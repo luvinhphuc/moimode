@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 function Preloader({ isDone = false, progress = 0 }) {
 	return createPortal(
 		<div
-			className={`model-intro ${isDone ? "is-done" : ""}`}
+			className={`model-intro ${isDone ? "model-intro--done" : ""}`}
 			data-hero="intro"
 		>
 			<span

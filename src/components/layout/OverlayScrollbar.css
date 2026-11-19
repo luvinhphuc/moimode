@@ -1,0 +1,25 @@
+@reference "../../styles/globals.css";
+
+@layer components {
+	.overlay-scrollbar {
+		@apply fixed;
+		inset: 0 0 0 auto;
+		@apply z-[110] w-[12px] pointer-events-none;
+	}
+
+	.overlay-scrollbar__thumb {
+		@apply absolute right-0 top-0 w-[12px] min-h-[32px];
+		border: 3px solid transparent;
+		@apply rounded-full;
+		background: var(--color-moi-muted) padding-box;
+		@apply cursor-grab pointer-events-auto touch-none;
+	}
+
+	.overlay-scrollbar__thumb:active {
+		@apply cursor-grabbing;
+	}
+
+	.overlay-scrollbar__thumb[hidden] {
+		@apply hidden;
+	}
+}

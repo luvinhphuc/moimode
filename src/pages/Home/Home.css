@@ -358,7 +358,7 @@
 		@apply text-[2.58rem] italic tracking-[0.08em];
 	}
 
-	.model-intro.is-done {
+	.model-intro--done {
 		@apply hidden;
 	}
 
@@ -394,7 +394,7 @@
 			[transition:opacity_0.28s_ease-out,transform_0.28s_ease-out,visibility_0s_linear_0.28s];
 	}
 
-	.hero-scroll-hint--ready:not(.is-dismissed) {
+	.hero-scroll-hint--ready:not(.hero-scroll-hint--dismissed) {
 		@apply opacity-[1] visible pointer-events-auto transform-[translate(-50%,0)_rotate(-4deg)] delay-[0s];
 	}
 
@@ -406,7 +406,7 @@
 		@apply grid place-items-center w-8 h-8 rounded-[50%] [background:var(--color-moi-rose)] text-[white];
 	}
 
-	.hero-scroll-hint--ready:not(.is-dismissed) .hero-scroll-hint__icon svg {
+	.hero-scroll-hint--ready:not(.hero-scroll-hint--dismissed) .hero-scroll-hint__icon svg {
 		@apply animate-[hero-scroll-hint-bob_1.35s_ease-in-out_infinite];
 	}
 
@@ -906,7 +906,7 @@
 	}
 
 	.hero-scroll-hint,
-	.hero-scroll-hint--ready:not(.is-dismissed) .hero-scroll-hint__icon svg {
+	.hero-scroll-hint--ready:not(.hero-scroll-hint--dismissed) .hero-scroll-hint__icon svg {
 		@apply animate-none [transition:none];
 	}
 

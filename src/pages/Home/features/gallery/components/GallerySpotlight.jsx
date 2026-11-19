@@ -11,7 +11,7 @@ function StoryImage({ item }) {
     );
 }
 
-const controlClass = "inline-flex min-h-11 min-w-11 items-center justify-center gap-3 rounded-full border border-moi-line bg-moi-bg px-4 text-sm font-bold text-moi-ink transition-colors hover:bg-moi-surface focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-moi-mid aria-disabled:cursor-default aria-disabled:opacity-35 motion-reduce:transition-none";
+const controlClass = "gallery-spotlight__control inline-flex min-h-11 min-w-11 items-center justify-center gap-3 px-4 text-sm font-bold aria-disabled:cursor-default aria-disabled:opacity-35";
 
 export default function GallerySpotlight({ spotlightRef, item, index, count, phase, onClose, onNavigate }) {
     const busy = phase !== "open";

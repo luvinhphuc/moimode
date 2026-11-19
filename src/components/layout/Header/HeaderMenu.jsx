@@ -267,7 +267,7 @@ export default function HeaderMenu({ onAction }) {
         </div>
       </section>
       <header ref={header} className="site-header">
-        <Link className="site-header__brand" to={ROUTE_PATHS.home} aria-label="Móimode home" onClick={brandClick}>
+        <Link className="site-header__brand" to={ROUTE_PATHS.home} aria-label="MOIMODE home" onClick={brandClick}>
           <span className="site-header__logo-frame"><img className="site-header__logo" src="/images/moimode-logo.svg" alt="" /><img className="site-header__logo site-header__logo--light" src="/images/moimode-logo.svg" alt="" aria-hidden="true" /></span>
         </Link>
         <button className="site-header__toggle" type="button" aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} aria-controls="site-menu" onClick={() => setOpen((value) => !value)}>

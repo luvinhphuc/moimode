@@ -18,7 +18,7 @@ function ProgressDots({ step }) {
 				<span
 					key={item.id}
 					className={
-						item.id === step ? "is-active" : item.id < step ? "is-done" : ""
+						item.id === step ? "customizer-progress__dot customizer-progress__dot--active" : item.id < step ? "customizer-progress__dot customizer-progress__dot--done" : "customizer-progress__dot"
 					}
 				/>
 			))}
@@ -32,7 +32,7 @@ function StepRail({ currentStep, onEdit }) {
 			{CUSTOMIZER_STEPS.map((item) => (
 				<li
 					key={item.id}
-					className={item.id === currentStep ? "is-active" : ""}
+					className={`step-rail__step${item.id === currentStep ? " step-rail__step--active" : ""}`}
 				>
 					<button type="button" onClick={() => onEdit(item.id)}>
 						<span>{item.id}</span>
@@ -55,7 +55,7 @@ function ViewControls({ view, onChange }) {
 				<button
 					key={id}
 					type="button"
-					className={view === id ? "is-active" : ""}
+					className={`view-controls__button${view === id ? " view-controls__button--active" : ""}`}
 					aria-pressed={view === id}
 					onClick={() => onChange(id)}
 				>

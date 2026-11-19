@@ -13,7 +13,7 @@
 	html,
 	body,
 	#root {
-		@apply min-w-[320px] min-h-svh;
+		@apply min-w-[300px] min-h-svh;
 	}
 
 	html,
@@ -21,11 +21,19 @@
 		@apply [background:var(--color-moi-bg)];
 	}
 
+	html {
+		scrollbar-width: none;
+	}
+
+	html::-webkit-scrollbar {
+		@apply hidden;
+	}
+
 	body {
 		@apply m-0 overflow-x-hidden;
 	}
 
-	body.is-model-loading {
+	body.app--model-loading {
 		@apply overflow-hidden;
 	}
 

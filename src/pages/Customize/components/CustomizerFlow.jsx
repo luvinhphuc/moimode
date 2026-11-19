@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 
 import Header from "../../../components/layout/Header/Header.jsx";
+import CustomizerDecor from "./CustomizerDecor.jsx";
 import { usePageTransition } from "../../../components/PageTransition/PageTransitionContext.js";
 import useStepEntrance from "../animations/useStepEntrance.js";
 import { gsap } from "../../../utils/gsap.js";
@@ -262,6 +263,7 @@ function CustomizerFlow({ onExit }) {
 	return (
 		<div className="customizer-shell">
 			<div className="customizer-paper-texture" aria-hidden="true" />
+			{state.phase === "customize" && <CustomizerDecor />}
 			<Header onAction={onExit} />
 			<div ref={contentRef} className="customizer-content">{currentContent}</div>
 			<p className="customizer-shell__status" aria-live="polite">
