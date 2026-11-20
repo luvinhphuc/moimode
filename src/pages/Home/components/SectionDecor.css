@@ -60,11 +60,15 @@
 		@apply top-[58%] right-[88%] w-[clamp(1.75rem,6vw,5.5rem)];
 	}
 	.section-decor--people > :nth-child(6) {
-		@apply top-[25%] right-[72%] w-[clamp(1.75rem,6vw,5.5rem)];
+		@apply top-[72%] right-[72%] w-[clamp(1.75rem,6vw,5.5rem)];
 	}
 
 	.section-decor--people > :nth-child(7) {
 		@apply top-[12%] right-[52%] w-[clamp(1.75rem,6vw,5.5rem)];
+	}
+
+	.section-decor--people > :nth-child(8) {
+		@apply top-[72%] right-[12%] w-[clamp(1.75rem,6vw,5.5rem)];
 	}
 
 	.section-decor--people-journey > svg {
